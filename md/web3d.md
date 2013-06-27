@@ -71,6 +71,11 @@ weibo:<a href="http://weibo.com/pissang" target="_blank">pissang</a>
 	- 这是flash
 
 ----------------------!SLIDE-----------------------
+<div style="text-align:center">
+<iframe width="853" height="480" src="//www.youtube.com/embed/2uo2BI6McQk" frameborder="0" allowfullscreen></iframe>
+</div>
+
+----------------------!SLIDE-----------------------
 # STAGE3D SCREENSHOT
 <div style="text-align:center">
 	<img src="imgs/ue3flash2.jpg"></img>
@@ -92,11 +97,23 @@ weibo:<a href="http://weibo.com/pissang" target="_blank">pissang</a>
 </div>
 
 ----------------------!SLIDE-----------------------
+<div style="text-align:center">
+<iframe width="853" height="480" src="//www.youtube.com/embed/BV32Cs_CMqo" frameborder="0" allowfullscreen></iframe>
+</div>
+
+----------------------!SLIDE-----------------------
 # TAKING A PHOTO
-+ 摆好场景
-+ 放置好相机
-+ 曝光
-+ PS
+<div style="text-align:center">
+<img src="http://ww2.sinaimg.cn/large/731863cajw1e5z7dybzxfj20p018g0w1.jpg" height="400px"></img>
+</div>
+
+----------------------!SLIDE-----------------------
+<ul style="text-align:center">
+    <li style="list-style:none">摆好场景</li>
+    <li style="list-style:none">放置好相机</li>
+    <li style="list-style:none">曝光</li>
+    <li style="list-style:none">PS</li>
+</ul>
 
 ----------------------!SLIDE-----------------------
 # RENDERING A SCENE
@@ -406,9 +423,31 @@ function animate() {
 ----------------------!SLIDE-----------------------
 # LIGHTNING
 
++ 点光源
+    - 烛光（理想模型）
++ 聚光灯
+    - 台灯
++ 平行光
+    - 日光
++ 面光源
+
+----------------------!SLIDE-----------------------
+# WHAT IS SHADING
+
 <div style="text-align:center">
-	<img src="imgs/lighting.png"></img>
+<iframe width="853" height="480" src="//www.youtube.com/embed/V3WmrWUEIJo" frameborder="0" allowfullscreen></iframe>
 </div>
+
+----------------------!SLIDE-----------------------
+<div style="text-align:center">
+<img src="imgs/lighting.png" style="width:500px"></img>
+</div>
+
++ Diffuse
+    - Lambert
++ Specular
+    - Blinn Phong 
+
 
 ----------------------!SLIDE-----------------------
 # SHADOWS
@@ -427,6 +466,7 @@ function animate() {
 
 ----------------------!SLIDE-----------------------
 # ADVANCED RENDERING
+
 + Normal Mapping
 + Screen Space Ambient Occlusion
 + Physically Based Lighting
@@ -457,6 +497,22 @@ function animate() {
 + Depth Of Field + Bokeh
 + Mothion Blur
 + Color Grading
+
+----------------------!SLIDE-----------------------
+# HDR
+<div style="text-align:center">
+<img src="http://upload.wikimedia.org/wikipedia/commons/b/b3/HDRI-Example.jpg" />
+</div>
+
+
+----------------------!SLIDE-----------------------
+# DOF
+
+<div style="text-align:center">
+<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Josefina_with_Bokeh.jpg/800px-Josefina_with_Bokeh.jpg" width="500px"/>
+</div>
+
++ 毒！德味！焦内如刀割般锐利！焦外如奶油般化开！
 
 ----------------------!SLIDE-----------------------
 # Rendering Worlds With Two Triangles

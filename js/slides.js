@@ -118,14 +118,14 @@ var slides = (function(){
 			    case 32: // space
 			    case 34: // PgDn
 			      next();
-			      event.preventDefault();
+			      e.preventDefault();
 			      break;
 			      
 			    case 37: // left arrow
 			    case 8: // Backspace
 			    case 33: // PgUp
 			      prev();
-			      event.preventDefault();
+			      e.preventDefault();
 			      break;
 		
 				default:
