@@ -421,6 +421,19 @@ function animate() {
 
 
 ----------------------!SLIDE-----------------------
+# MATHMATICAL IN WEBGL
+
+----------------------!SLIDE-----------------------
+# 矩阵运算
+
++ 线性变换
+    - 平移
+    - 旋转
+    - 缩放
++ 求逆和转置
++ 分解
+
+----------------------!SLIDE-----------------------
 # LIGHTNING
 
 + 点光源
@@ -478,7 +491,7 @@ function animate() {
 ----------------------!SLIDE-----------------------
 # PROCEDURE WORLD
 
-+ Water Rendering
++ Ocean Rendering
 
     - Vertex Texture Fetching
     - Perlin Noise
@@ -496,6 +509,7 @@ function animate() {
 + HDR + Tone Mapping
 + Depth Of Field + Bokeh
 + Mothion Blur
++ Lens Flares
 + Color Grading
 
 ----------------------!SLIDE-----------------------
@@ -513,6 +527,18 @@ function animate() {
 </div>
 
 + 毒！德味！焦内如刀割般锐利！焦外如奶油般化开！
+
+----------------------!SLIDE-----------------------
+# Motion Blur
+<div style="text-align:center">
+<img src="imgs/motionblur.png" />
+</div>
+
+----------------------!SLIDE-----------------------
+# Lens Flare
+<div style="text-align:center">
+<iframe width="853" height="480" src="//www.youtube.com/embed/7tneIXR1btQ" frameborder="0" allowfullscreen></iframe>
+</div>
 
 ----------------------!SLIDE-----------------------
 # Rendering Worlds With Two Triangles
