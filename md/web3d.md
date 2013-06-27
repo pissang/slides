@@ -1,6 +1,6 @@
 ---
 title:Web3D Development
-date:2013-06-25
+date:2013-06-27
 author:沈毅
 github:<a href="https://github.com/pissang" target="_blank">pissang</a>
 weibo:<a href="http://weibo.com/pissang" target="_blank">pissang</a>
@@ -9,11 +9,6 @@ weibo:<a href="http://weibo.com/pissang" target="_blank">pissang</a>
 
 <h1 class="title">WEB3D DEVELOPMENT</h1>
 
-+ Web3D简介
-+ WebGL
-+ 性能优化
-+ 资源管理
-
 ----------------------!SLIDE----------------------
 
 # Web3D 简介
@@ -21,9 +16,9 @@ weibo:<a href="http://weibo.com/pissang" target="_blank">pissang</a>
 ----------------------!SLIDE-----------------------
 # Web3D 历史
 
-+	VRML
++	VRML(上古时代)
 +	X3D(JAVA 3D)
-+	Firefox Canvas3D, Google O3D
++	Firefox Canvas3D, Google O3D(昙花一现)
 +	Flash 3D(pv3d, away3d)
 +	WebGL, Flash Stage3D
 
@@ -88,7 +83,8 @@ weibo:<a href="http://weibo.com/pissang" target="_blank">pissang</a>
 	- 基于OpenGL ES2.0标准(已提出3.0标准)
 	- 是高端大气上档次的HTML5标准之一
 + 缺点
-	- JavaScript的执行效率受限(asm.js)
+	- JavaScript的执行效率(TypedArray ? asm.js ?)
+    - 兼容性
 
 ----------------------!SLIDE-----------------------
 # WEBGL SCREENSHOT
@@ -264,6 +260,7 @@ function webGLStart() {
 + [lightgl.js](https://github.com/evanw/lightgl.js)
 + SpiderGL, GLGE, O3D
 + [Comparison of WebGL Framework APIs](http://weblog.benjaminsommer.com/blog/2012/05/13/comparison-of-webgl-framework-apis/)
++ [qtek](https://github.com/pissang/qtek)
 
 ----------------------!SLIDE-----------------------
 # USING THREE.JS
@@ -389,6 +386,20 @@ function animate() {
 + 骨骼索引
 
 ----------------------!SLIDE-----------------------
+# VERTEX BUFFER
+
+<div style="text-align:center">
+    <img src="imgs/buffers.png"></img>
+</div>
+
+----------------------!SLIDE-----------------------
+# ASSEMBLE
+
+<div style="text-align:center">
+    <img src="imgs/drawing.png"></img>
+</div>
+
+----------------------!SLIDE-----------------------
 # DCC TOOLS
 
 + 3ds Max
@@ -413,6 +424,27 @@ function animate() {
 ----------------------!SLIDE-----------------------
 # SHADERS
 
+    // Vertex
+    attribute vec3 aVertexPosition;
+
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+
+    void main(void) {
+    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+    }
+
+    // Fragment
+    precision mediump float;
+
+    void main(void) {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+
+
+----------------------!SLIDE-----------------------
+# SHADERS
+
 + 坐标变换
 + 纹理贴图
 + 光照计算
@@ -426,12 +458,19 @@ function animate() {
 ----------------------!SLIDE-----------------------
 # 矩阵运算
 
-+ 线性变换
++ 线性变换(SRT)
     - 平移
     - 旋转
     - 缩放
++ 矩阵和向量，矩阵和矩阵乘法
+    - 左乘还是右乘
 + 求逆和转置
 + 分解
+
++ [glmatrix](http://glmatrix.net/)
++ [3D数学基础](http://book.douban.com/subject/1400419/)
+
+
 
 ----------------------!SLIDE-----------------------
 # LIGHTNING
@@ -465,7 +504,10 @@ function animate() {
 ----------------------!SLIDE-----------------------
 # SHADOWS
 
++ Old School Shadows
+    - Warcraft III
 + Shadow Mapping
++ Shadow Volumn
 
 ----------------------!SLIDE-----------------------
 # ADVANCED SHADOWS
