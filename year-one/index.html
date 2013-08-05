@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta charset="utf-8" />
+        <link rel=stylesheet type=text/css href="css/slide.css" />
+        <link rel=stylesheet type=text/css href="css/desert.css" />
+        <link rel="stylesheet" type="text/css" href="css/qpf/base.css">
+        <style type="text/css">
+            .qpf-ui-label{
+                margin:10px;
+                color:#999;
+            }
+            #QtekExamples li{
+                list-style: none;
+                float:left;
+                margin:10px;
+            }
+            #QtekExamples img{
+                float:left;
+                width:360px;
+                height:180px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="Articles">
+
+            <article>
+                <h1 class="title">
+                    工作第一年
+                </h1>
+            </article>
+            
+            <article>
+                <ul style="list-style:none;">
+                    <li class="item" style="float:left;width:50%;">
+                        <h3>主修</h3>
+                        <ul style="list-style:none;">
+                            <li>前端图形(WebGL, canvas2d, svg)</li>
+                            <li>前端动画</li>
+                        </ul>
+                    </li>
+                    <li class="item" style="float:left;width:50%;">
+                        <h3>辅修</h3>
+                        <ul style="list-style:none;">
+                            <li>js代码分析</li>
+                            <li>Web App</li>
+                            <li>UI</li>
+                        </ul>
+                    </li>
+                </ul>
+            </article>
+            <article>
+                <h1>数据可视化</h1>
+                <ul>
+                    <li class="item" style="float:left;width:50%">
+                        <p>zrender</p>
+                        <ul>
+                            <li>
+                                <p>Animation</p>
+                                <ul>
+                                    <li>基于时间轴和关键帧</li>
+                                    <li>独立，高效，优雅</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <p>Transform</p>
+                                <ul>
+                                    <li>统一处理所有shape的位置，旋转，缩放变换</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="item" style="float:left;width:50%">
+                        <p>echarts</p>
+                        <ul>
+                            <li>
+                                <p>力导向布局(Force Directed Layout)</p>
+                                <ul>
+                                    <li>展现复杂的网络图的聚类比较简单有效的方式</li>
+                                    <li>基于物理公式模拟图中顶点的运动</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="item" data-action="showForceDirectedLayout"></div>
+            </article>
+            <article>
+                <h1>前端图形引擎 - <a href="https://github.com/pissang/qtek">QTEK</a></h1>
+                <ul style="text-align:center;list-style:none;">
+                    <li>Canvas 2D, WebGL</li>
+                    <li>偏底层，完备性</li>
+                    <li>很多功能都是实验性，作为技术储备</li>
+                </ul>
+            </article>
+            <article data-action="showVerticesMorphDemo">
+                <h1>
+                    QTEK - Canvas 2D
+                </h1>
+                <canvas class="screen-demo" id="VerticesMorphDemo"></canvas>
+            </article>
+            <article>
+                <div style="float:left;text-align:center;width:50%" class="item">
+                    <h3>svg</h3>
+                    <embed src="imgs/human.svg" type="image/svg+xml">
+                </div>
+                <div style="float:left;text-align:center;width:50%" class="item">
+                    <h3>canvas</h3>
+                    <canvas id="CanvasToSVGDemo" width="500px" height="500px;"></canvas>
+                </div>
+            </article>
+            <article data-action="showQtekWebGLDemo">
+                <h1>QTEK - WebGL</h1>
+                <canvas id="QtekWebGLDemo" class="screen-demo"></canvas>
+            </article>
+            <article>
+                <ul class="column-2" style="height:500px;font-size:16px;">
+                    <li>
+                        <p>场景树</p>
+                        <ul>
+                            <li>场景物体的位置旋转和缩放</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p>灯光</p>
+                        <ul>
+                            <li>点光源</li>
+                            <li>平行光</li>
+                            <li>聚光灯</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p>材质库</p>
+                        <ul>
+                            <li>Lambert</li>
+                            <li>Phong</li>
+                            <li>Wireframe</li>
+                        </ul>
+                    </li>
+                    <li>
+                        JSON格式的模型加载
+                    </li>
+                    <li>骨骼动画</li>
+                    <li>阴影(PCF, VSM)</li>
+                    <li>
+                        <p>纹理</p>
+                        <ul>
+                            <li>图片、视频、Canvas</li>
+                            <li>法线贴图(Normal Map)，高光贴图(Specular Map)</li>
+                            <li>渲染到纹理(RTT)</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p>后期处理模块(Post Processing)</p>
+                        <ul>
+                            <li>Graph Based</li>
+                            <li>HDR, Tone Mapping</li>
+                            <li>镜头特效(Depth of Field, Motion Blur, Lens Flare)</li>
+                            <li>颜色调整(LUT)</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p>摄像机控制</p>
+                        <ul>
+                            <li>第一视角</li>
+                            <li>Orbit</li>
+                        </ul>
+                    </li>
+                </ul>
+            </article>
+            <article style="text-align:center;">
+                <h3>示例</h3>
+                <ul id="QtekExamples">
+                    <li>
+                        <img src="imgs/example-shadowmap.png" />
+                    </li>
+                    <li>
+                        <img src="imgs/example-cubes.png" />
+                    </li>
+                    <li>
+                        <img src="imgs/example-normalmap.png" />
+                    </li>
+                    <li>
+                        <img src="imgs/example-instancing.png" />
+                    </li>
+                    <li>
+                        <img src="imgs/example-gaussian.png" />
+                    </li>
+                    <li>
+                        <img src="imgs/example-wireframe.png" />
+                    </li>
+                </ul>
+            </article>
+            <article style="text-align:center;">
+                <h2>TECH DEMO</h2>
+                <a href="http://pissang.github.com/qtek/sponza/sponza.html">
+                    <img src="imgs/sponza.png" />
+                </a>
+                <div class="item">
+                    <a href="http://pissang.github.com/qtek/sponza/sponza.html?texture=low&shadow=512" style="margin:20px;" target="_blank">
+                        低画质
+                    </a>
+                    <a href="http://pissang.github.com/qtek/sponza/sponza.html?texture=medium&shadow=1024" style="margin:20px;" target="_blank">
+                        中画质
+                    </a>
+                    <a href="http://pissang.github.com/qtek/sponza/sponza.html?texture=high&shadow=1024" style="margin:20px;" target="_blank">
+                        高画质
+                    </a>
+                </div>
+            </article>
+            <article>
+                <h1>js数据流分析 dfatool</h1>
+                <ul class="item" style="text-align:center;list-style:none">
+                    <li>js程序中变量数据流的分析</li>
+                    <li>变量类型和值的推导</li>
+                </ul>
+                <a class="github" href="https://github.com/pissang/dfatool" target="_blank"></a>
+            </article>
+            <article>
+            </article>
+            <article style="text-align:center;">
+                <h3>Online Playground</h3>
+                <a href="http://pissang.github.io/dfatool/example/static/index.html" target="_blank">
+                    <img src="imgs/dfatool.png" style="width:900px;"/>
+                </a>
+            </article>
+            <article>
+                <h1>UI框架 qpf</h1>
+                <ul class="item" style="text-align:center;list-style:none">
+                    <li>主要针对富客户端编辑器</li>
+                    <li>基于MVVM的Knockout, 支持Data Binding</li>
+                    <li>样式不支持低版本IE</li>
+                </ul>
+                <a class="github" href="https://github.com/pissang/qpf" target="_blank"></a>
+            </article>
+            <article/>
+                <ul style="list-style:none;">
+                    <li class="item" style="float:left;width:33%;">
+                        <h3>基础组件</h3>
+                        <ul>
+                            <li>Button</li>
+                            <li>Slider</li>
+                            <li>Spinner</li>
+                            <li>Checkbox</li>
+                            <li>Combobox</li>
+                            <li>Label</li>
+                            <li>Textfield</li>
+                        </ul>
+                    </li>
+                    <li class="item" style="float:left;width:33%;">
+                        <h3>容器</h3>
+                        <ul>
+                            <li>Panel</li>
+                            <li>Window</li>
+                            <li>HBox</li>
+                            <li>VBox</li>
+                            <li>Tab</li>
+                            <li>List</li>
+                        </ul>
+                    </li>
+                    <li class="item" style="float:left;width:33%;">
+                        <h3>Widget</h3>
+                        <ul>
+                            <li>Color Picker</li>
+                            <li>Gradient</li>
+                            <li>Vector</li>
+                        </ul>
+                    </li>
+                </ul>
+            </article>
+            <article>
+                <div style="float:left;width:50%;">
+                    <pre class="prettyprint item lang-html" id="QpfExampleCodeXML"
+                        style="margin:20px;overflow:scroll;height:250px;">
+<hbox width="100%" height="600">
+    <panel flex="1" title="Left">
+        <label> Flex 1</label>
+    </panel>
+    <panel title="Center" prefer="300">
+        <label>
+            Button
+        </label>
+        <button name="button" onclick="@binding[toggle]">
+            Enable
+        </button>
+        <label>
+            Checkbox
+        </label>
+        <checkbox checked="@binding[visible]" label="Show Textfield"></checkbox>
+        <container visible="@binding[visible]">
+            <label style="margin:10px">Textfield</label>
+            <textfield text="Hi"></textfield>
+        </container>
+        <label>
+            Combobox
+        </label>
+        <combobox value="@binding[language]" width="150">
+            <item value="1">JavaScript</item>
+            <item value="2">PHP</item>
+            <item value="3">Ruby</item>
+            <item value="4">Python</item>
+        </combobox>
+        <label>
+            Slider
+        </label>
+        <slider value="@binding[number]"></slider>
+        <label>
+            Spinner
+        </label>
+        <spinner value="@binding[number]"></spinner>
+    </panel>
+    <panel title="Right" flex="2">
+        <label> Flex 2</label>
+    </panel>
+</hbox>
+                    </pre>
+                    <pre class="item prettyprint" id="QpfExampleCodeJS" style="margin:20px;">
+var viewModel = {
+    language : ko.observable(1),
+    visible : ko.observable(true),
+    _enable : true,
+    toggle : function() {
+        this.text(viewModel._enable ? "Enable" : "Disable")
+    },
+    number : ko.observable(1)
+}
+                    </pre>
+                </div>
+                <div style="float:left;font-size:14px;width:600px;" class="item" id="QpfExampleResult" data-action="showQpfDemo">
+                </div>
+            </article>
+            <article style="text-align:center">
+                <h3>示例 - EMAGE</h3>
+                <p>在线图片处理</p>
+                <a href="http://pissang.github.io/emage/example/#/" target="_blank">
+                    <img src="imgs/emage.png" />
+                </a>
+                <a class="github" href="https://github.com/pissang/emage" target="_blank"></a>
+            </article>
+            <article style="text-align:center">
+                <h3>示例 - EPAGE</h3>
+                <p>在线页面编辑</p>
+                <a href="http://pissang.github.io/epage/static/" target="_blank">
+                    <img src="imgs/epage.png" />
+                </a>
+                <a class="github" href="https://github.com/pissang/epage" target="_blank"></a>
+            </article>
+            <article style="text-align:center">
+                <h1>FELAB</h1>
+                <p>Chrome Experiments</p>
+            </article>
+            <article style="text-align:center">
+                <h3>Node Based Compositor</h3>
+                <p>图片，视频后期合成的简陋节点编辑器</p>
+                <embed src="http://player.youku.com/player.php/sid/XNDM5NDUyMTY4/v.swf" allowFullScreen="true" quality="high" width="480" height="400" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
+            </article>
+            <article style="text-align:center;">
+                <img src="imgs/node-based-compositor.png" />
+            </article>
+            <article style="text-align:center">
+                <h3>Curve Editor</h3>
+                <p>编辑复杂的缓动效果</p>
+                <embed src="http://player.youku.com/player.php/sid/XNDQ4NTg3ODQw/v.swf" allowFullScreen="true" quality="high" width="480" height="400" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
+            </article>
+            <article style="text-align:center;list-style:none">
+                <h1>粒子特效(Curl Noise)</h1>
+                <ul class="item">
+                    <li>粒子物理计算和渲染都放在GPU端(shader代码里)</li>
+                    <li>粒子规模可以达到百万</li>
+                </ul>
+                <div class="item" data-function="showCurlNoiseDemo"></div>
+            </article>
+            </article>
+            <article>
+                <h1 class="title"> THANKS </h1>
+            </article>
+        </div>
+        <div id="SlideInfo">
+            <h1 id="Title">工作第一年</h1>
+            <ul class="aboutme">
+                <li id="Author">沈毅</li>
+                <li id="Date">2013-08-02</li>
+                <li id="Github">
+                    github : 
+                    <a href="https://github.com/pissang" target="_blank">pissang</a>
+                </li>
+                <li id="Weibo">
+                    @
+                    <a href="http://weibo.com/pissang" target="_blank">pissang</a>
+                </li>
+            </ul>
+        </div>
+
+        <script type="text/javascript" src="js/lib/showdown.js"></script>
+        <script type="text/javascript" src="js/lib/jquery.min.js"></script>
+        <script type="text/javascript" src="js/lib/prettify.js"></script>
+        <script type="text/javascript" src="js/lib/underscore.js"></script>
+        <script type="text/javascript" src="js/lib/knockout.js"></script>
+        <script type="text/javascript" src="js/lib/qtek.js"></script>
+        <script type="text/javascript" src="js/lib/qpf.js"></script>
+        <script type="text/javascript" src="js/lib/escodegen.js"></script>
+        <script type="text/javascript" src="js/lib/dfatool.js"></script>
+        <script type="text/javascript" src="js/mdslides.js"></script>
+        <script type="text/javascript" src="js/slides.js"></script>
+
+        <script type="text/javascript">
+
+            slides.init('Articles', {
+                
+                itemClass : "item",
+
+                actions : {
+                    showForceDirectedLayout : {
+                        enter : function() {
+                            $("<iframe id='WebkitDep'>")
+                                .attr("src", "./webkit-dep.html")
+                                .addClass("screen-demo")
+                                .appendTo(document.body)
+                        },
+                        leave : function() {
+                            $("#WebkitDep").remove();
+                        }
+                    },
+
+                    showVerticesMorphDemo : {
+                        enter : function() {
+                            verticesMorphDemo.run();
+                        },
+                        leave : function() {
+                            verticesMorphDemo.stop();
+                        }
+                    },
+
+                    showQtekWebGLDemo : {
+                        enter : function() {
+                            qtekWebGLDemo.run();
+                        },
+                        leave : function() {
+                            qtekWebGLDemo.stop();
+                        }
+                    },
+
+                    showQpfDemo : {
+                        enter : function() {
+                        },
+                        leave : function() {
+                        }
+                    }
+                },
+            });
+
+            prettyPrint();
+            
+            var qtek2d = qtek['2d'];
+            var qtek3d = qtek['3d'];
+            var qtekWebGLDemo = initQtekWebGLDemo();
+            var verticesMorphDemo = initVerticesMorphDemo();
+            initQpfDemo();
+            initCanvasToSVGDemo();
+
+            $(".lang-html").each(function() {
+                // Encode html
+                // http://stackoverflow.com/questions/1219860/javascript-jquery-html-encoding
+                this.innerHTML = $("<div />").text(this.innerHTML).html();
+            });
+
+            function initQpfDemo() {
+                var dom = qpf.core.XMLParser.parse($("#QpfExampleCodeXML").html());
+                eval($("#QpfExampleCodeJS").html());
+                $("#QpfExampleResult").append(dom);
+                ko.applyBindings(viewModel, dom);
+            }
+
+            function initVerticesMorphDemo() {
+
+                var segs = 30;
+                var maxRadius = 200;
+                var minRadius = 80;
+
+                var canvas = document.getElementById("VerticesMorphDemo");
+                var layer = new qtek2d.Layer({
+                    canvas : canvas
+                });
+                layer.resize(window.innerWidth, window.innerHeight);
+
+                var pointsPrev = generatePoints();
+                var pointsNext = generatePoints();
+
+                var pathPrev = new qtek2d.shape.Path();
+                pathPrev.pushPoints(pointsPrev);
+                var pathNext = new qtek2d.shape.Path();
+                pathNext.pushPoints(pointsNext); 
+                pathNext.smooth();
+                pathPrev.smooth();
+
+                var path = new qtek2d.shape.Path({
+                    style : new qtek2d.Style({
+                        fill : 'white',
+                        stroke : '#017592',
+                        lineWidth : 2
+                    }),
+                    stroke : true,
+                    closePath : true
+                });
+                pointsPrev.forEach(function(point){
+                    path.pushPoints([point.clone()]);
+                })
+                path.smooth();
+                path.position.set(canvas.width / 2, canvas.height / 2);
+                layer.add(path);
+
+                var animation = new qtek.animation.Animation({
+                    stage : layer
+                });
+                var deferred = animation.animate({
+                    target : pathPrev,
+                    interpolate : function(prev, next, percent) {
+                        for (var i = 0; i < prev.length; i++) {
+                            path.segments[i].point.lerp(prev[i].point, next[i].point, percent);
+                            path.segments[i].handleIn.lerp(prev[i].handleIn, next[i].handleIn, percent);
+                            path.segments[i].handleOut.lerp(prev[i].handleOut, next[i].handleOut, percent);
+                        }
+                        return prev;
+                    },
+                }).when(1000, {
+                    segments : pathNext.segments
+                }, 'CubicOut')
+                .done(function(){
+                    pathNext.segments.forEach(function(seg, i){
+                        pathPrev.segments[i] = seg;
+                    })
+                    pathNext.segments.length = 0;
+                    pathNext.pushPoints(generatePoints());
+                    pathNext.smooth();
+                    deferred.delay(500).start();
+                }).delay(500).start();
+
+                function generatePoints(){
+                    var points = [];
+                    for (var i = 0; i < segs; i ++) {
+                        var theta = 2 * Math.PI / segs * i;
+                        var r = randomInRange(minRadius, maxRadius);
+                        points.push(new qtek.core.Vector2(r * Math.sin(theta), r * Math.cos(theta)));
+                    }
+                    return points;
+                }
+
+                return {
+                    run : function() {
+                        animation.start();
+                    },
+                    stop : function() {
+                        animation.stop();
+                    }
+                }
+            }
+
+            function initCanvasToSVGDemo() {
+                var canvas = document.getElementById("CanvasToSVGDemo");
+                var svgLoader = new qtek.loader.SVG();
+
+                svgLoader.on("load", function(root){
+                    layer.add(root);
+                    layer.render();
+                });
+
+                var layer = new qtek2d.Layer({
+                    canvas : canvas
+                });
+                svgLoader.load("imgs/human.svg");
+            }
+
+            function initQtekWebGLDemo() {
+                var canvas = document.getElementById("QtekWebGLDemo");
+                var renderer = new qtek3d.Renderer({
+                    canvas : canvas,
+                    color : [0, 0, 0, 0]
+                });
+                renderer.resize(window.innerWidth, window.innerHeight);
+                var scene = new qtek3d.Scene();
+                var camera = new qtek3d.camera.Perspective({
+                    aspect : renderer.canvas.width/renderer.canvas.height,
+                    far : 500
+                });
+                camera.position.set(-10, 15, 20);
+                camera.lookAt(new qtek.core.Vector3(0, 4, 0));
+
+                var loader = new qtek.loader.three.Model();
+                loader.load("models/dragon.js");
+                var root = new qtek3d.Node();
+                scene.add(root);
+                var material = new qtek3d.Material({
+                    shader : qtek3d.shader.library.get('buildin.wireframe'),
+                    transparent : true
+                });
+                material.setUniform('color', [1.0, 1.0, 1.0]);
+                material.setUniform('lineWidth', 0.7);
+                loader.on("load", function(meshList) {
+                    meshList.forEach(function(mesh) {
+                        mesh.geometry.generateBarycentric();
+                        mesh.material = material;
+                        root.add(mesh);
+                    });
+                    // First pass;
+                    renderer.render(scene, camera);
+                });
+
+                var _interval;
+                return {
+                    run : function() {
+                        _interval = setInterval(function() {
+                            root.rotation.rotateY(Math.PI/500);
+                            renderer.render(scene, camera);
+                        }, 30);
+                    },
+                    stop : function() {
+                        clearInterval(_interval);
+                    }
+                }
+            }
+
+            function randomInRange(a, b) {
+                return a + (b - a) * Math.random();
+            }
+
+
+        </script>
+    </body>
+</html>
