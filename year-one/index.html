@@ -28,7 +28,7 @@
 
             <article>
                 <h1 class="title">
-                    工作第一年
+                    2013年工作述职
                 </h1>
             </article>
             
@@ -364,9 +364,9 @@ var viewModel = {
                 <p>编辑复杂的缓动效果</p>
                 <embed src="http://player.youku.com/player.php/sid/XNDQ4NTg3ODQw/v.swf" allowFullScreen="true" quality="high" width="480" height="400" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
             </article>
-            <article style="text-align:center;list-style:none">
+            <article style="text-align:center;">
                 <h1>粒子特效(Curl Noise)</h1>
-                <ul class="item">
+                <ul class="item" style="list-style:none;">
                     <li>粒子物理计算和渲染都放在GPU端(shader代码里)</li>
                     <li>粒子规模可以达到百万</li>
                 </ul>
@@ -378,7 +378,7 @@ var viewModel = {
             </article>
         </div>
         <div id="SlideInfo">
-            <h1 id="Title">工作第一年</h1>
+            <h1 id="Title">2013年工作述职</h1>
             <ul class="aboutme">
                 <li id="Author">沈毅</li>
                 <li id="Date">2013-08-02</li>
@@ -451,20 +451,12 @@ var viewModel = {
                 },
             });
 
-            prettyPrint();
-            
             var qtek2d = qtek['2d'];
             var qtek3d = qtek['3d'];
             var qtekWebGLDemo = initQtekWebGLDemo();
             var verticesMorphDemo = initVerticesMorphDemo();
             initQpfDemo();
             initCanvasToSVGDemo();
-
-            $(".lang-html").each(function() {
-                // Encode html
-                // http://stackoverflow.com/questions/1219860/javascript-jquery-html-encoding
-                this.innerHTML = $("<div />").text(this.innerHTML).html();
-            });
 
             function initQpfDemo() {
                 var dom = qpf.core.XMLParser.parse($("#QpfExampleCodeXML").html());
@@ -625,6 +617,13 @@ var viewModel = {
                 return a + (b - a) * Math.random();
             }
 
+            $(".lang-html").each(function() {
+                // Encode html
+                // http://stackoverflow.com/questions/1219860/javascript-jquery-html-encoding
+                this.innerHTML = $("<div />").text(this.innerHTML).html();
+            });
+
+            prettyPrint();
 
         </script>
     </body>
