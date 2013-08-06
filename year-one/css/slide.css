@@ -181,9 +181,13 @@ iframe.screen-demo{
 	z-index: 10;
 }
 
-li{
+article li{
 	/*height: 40px;*/
 	margin:20px 0px;
+}
+
+.qpf-ui-combobox li{
+	margin:0px;
 }
 
 img{
