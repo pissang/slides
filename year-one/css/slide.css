@@ -6,7 +6,7 @@
 }
 
 html,h1,h2,h3,h4,h5{
-	font-family: "Lato", "FZLanTingHeiS-UL-GB", sans-serif;
+	font-family: "FZLanTingHeiS-UL-GB", sans-serif;
 	font-weight: 100;
 }
 
@@ -182,7 +182,8 @@ iframe.screen-demo{
 }
 
 li{
-	min-height: 40px;
+	/*height: 40px;*/
+	margin:20px 0px;
 }
 
 img{

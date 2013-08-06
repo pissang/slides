@@ -132,11 +132,11 @@ li,
 	transform:translate(30px, 0px);
 }
 
-li.action{
+article li.action{
 	display: none;
 }
 
-li{
+article li{
 	min-height: 40px;
 }
 

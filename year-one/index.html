@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title></title>
+        <title>2013年工作述职</title>
         <meta charset="utf-8" />
         <link rel=stylesheet type=text/css href="css/slide.css" />
         <link rel=stylesheet type=text/css href="css/desert.css" />
@@ -60,14 +60,15 @@
                             <li>
                                 <p>Animation</p>
                                 <ul>
-                                    <li>基于时间轴和关键帧</li>
+                                    <li>基于时间轴，关键帧关键帧插值</li>
                                     <li>独立，高效，优雅</li>
                                 </ul>
                             </li>
                             <li>
                                 <p>Transform</p>
                                 <ul>
-                                    <li>统一处理所有shape的位置，旋转，缩放变换</li>
+                                    <li>加了一个矩阵类和向量类</li>
+                                    <li>统一所有shape的位置，旋转，缩放变换为矩阵操作</li>
                                 </ul>
                             </li>
                         </ul>
@@ -79,7 +80,8 @@
                                 <p>力导向布局(Force Directed Layout)</p>
                                 <ul>
                                     <li>展现复杂的网络图的聚类比较简单有效的方式</li>
-                                    <li>基于物理公式模拟图中顶点的运动</li>
+                                    <li>公式基于Graph Drawing by Force-directed Placement一文</li>
+                                    <li>粒子运动使用verlet积分</li>
                                 </ul>
                             </li>
                         </ul>
@@ -87,12 +89,17 @@
                 </ul>
                 <div class="item" data-action="showForceDirectedLayout"></div>
             </article>
-            <article>
-                <h1>前端图形引擎 - <a href="https://github.com/pissang/qtek">QTEK</a></h1>
+            <article style="text-align:center">
+                <h3>前端图形引擎 - <a href="https://github.com/pissang/qtek">QTEK</a></h3>
                 <ul style="text-align:center;list-style:none;">
                     <li>Canvas 2D, WebGL</li>
-                    <li>偏底层，完备性</li>
+                    <li>接口偏底层，完备性</li>
                     <li>很多功能都是实验性，作为技术储备</li>
+                    <li class="item">
+                        <a href="http://www.nissan-stagejuk3d.com/" target="_blank">
+                            <img src="imgs/nissan-stagejuk3d.png" width="500px;"/>
+                        </a>
+                    </li>
                 </ul>
             </article>
             <article data-action="showVerticesMorphDemo">
@@ -100,6 +107,26 @@
                     QTEK - Canvas 2D
                 </h1>
                 <canvas class="screen-demo" id="VerticesMorphDemo"></canvas>
+            </article>
+            <article>
+                <ul>
+                    <li>场景树管理</li>
+                    <li>分层绘制</li>
+                    <li>
+                        <p>
+                            常用图形
+                        </p>
+                        <ul>
+                            <li>圆，矩形，直线</li>
+                            <li>扇形，圆弧，圆角矩形</li>
+                            <li>文字(支持自动换行和行高的TextBox),图片</li>
+                            <li>Path(Paper.js), Path(svg)</li>
+                            <li>html</li>
+                        </ul>
+                    </li>
+                    <li>所有图形的包围盒计算</li>
+                    <li>svg加载</li>
+                </ul>
             </article>
             <article>
                 <div style="float:left;text-align:center;width:50%" class="item">
@@ -132,7 +159,7 @@
                         </ul>
                     </li>
                     <li>
-                        <p>材质库</p>
+                        <p>内置材质库</p>
                         <ul>
                             <li>Lambert</li>
                             <li>Phong</li>
@@ -195,7 +222,7 @@
             </article>
             <article style="text-align:center;">
                 <h2>TECH DEMO</h2>
-                <a href="http://pissang.github.com/qtek/sponza/sponza.html">
+                <a href="http://ecomfe.baidu.com/qtek/tests/sponza.html" target="_blank">
                     <img src="imgs/sponza.png" />
                 </a>
                 <div class="item">
@@ -210,11 +237,14 @@
                     </a>
                 </div>
             </article>
-            <article>
+            <article style="text-align:center">
                 <h1>js数据流分析 dfatool</h1>
-                <ul class="item" style="text-align:center;list-style:none">
-                    <li>js程序中变量数据流的分析</li>
-                    <li>变量类型和值的推导</li>
+                <p>js程序中变量数据流的分析</p>
+                <ul class="item" style="list-style:none">
+                    <li>使用esprima生成Parser API格式的AST</li>
+                    <li>遍历AST得到所有作用域以及作用域里的变量</li>
+                    <li>找出所有赋值表达式然后作推导(变量替换，函数值传递，属性查找）</li>
+                    <li>得到变量类型和值的推测</li>
                 </ul>
                 <a class="github" href="https://github.com/pissang/dfatool" target="_blank"></a>
             </article>
@@ -229,6 +259,7 @@
                 <ul class="item" style="text-align:center;list-style:none">
                     <li>主要针对富客户端编辑器</li>
                     <li>基于MVVM的Knockout, 支持Data Binding</li>
+                    <li>使用RequireJS进行模块化开发</li>
                     <li>样式不支持低版本IE</li>
                 </ul>
                 <a class="github" href="https://github.com/pissang/qpf" target="_blank"></a>
@@ -308,6 +339,10 @@
             Spinner
         </label>
         <spinner value="@binding[number]"></spinner>
+        <vector>
+            <spinner value="1024"></spinner>
+            <spinner value="768"></spinner>
+        </vector>
     </panel>
     <panel title="Right" flex="2">
         <label> Flex 2</label>
@@ -356,6 +391,10 @@ var viewModel = {
             </article>
             <article style="text-align:center;">
                 <img src="imgs/node-based-compositor.png" />
+                <ul style="list-style:none;">
+                    <li>第一次使用SeaJS作模块化加载</li>
+                    <li>第一次使用Backbone作为MVC框架</li>
+                </ul>
             </article>
             <article style="text-align:center">
                 <h3>Curve Editor</h3>
@@ -368,11 +407,10 @@ var viewModel = {
                     <li>粒子物理计算和渲染都放在GPU端(shader代码里)</li>
                     <li>粒子规模可以达到百万</li>
                 </ul>
-                <div class="item" data-function="showCurlNoiseDemo"></div>
             </article>
-            </article>
-            <article>
-                <h1 class="title"> THANKS </h1>
+            <article style="text-align:center;" data-action="playCurlNoise">
+                <video src="video/curlnoise.mov" id="CurlNoiseVideo"  style="position:absolute;left:0px;right:0px;top:0px;bottom:20px" loop></video>
+                <h1 class="title item" style="position:absolute;left:0px;right:0px;top:200px;"> THANKS </h1>
             </article>
         </div>
         <div id="SlideInfo">
@@ -404,6 +442,13 @@ var viewModel = {
         <script type="text/javascript" src="js/slides.js"></script>
 
         <script type="text/javascript">
+
+            var qtek2d = qtek['2d'];
+            var qtek3d = qtek['3d'];
+            var qtekWebGLDemo = initQtekWebGLDemo();
+            var verticesMorphDemo = initVerticesMorphDemo();
+            initQpfDemo();
+            initCanvasToSVGDemo();
 
             slides.init('Articles', {
                 
@@ -445,16 +490,18 @@ var viewModel = {
                         },
                         leave : function() {
                         }
+                    },
+
+                    playCurlNoise : {
+                        enter : function(){
+                            document.getElementById("CurlNoiseVideo").play();
+                        },
+                        leave : function(){
+                            document.getElementById("CurlNoiseVideo").pause();
+                        }
                     }
                 },
             });
-
-            var qtek2d = qtek['2d'];
-            var qtek3d = qtek['3d'];
-            var qtekWebGLDemo = initQtekWebGLDemo();
-            var verticesMorphDemo = initVerticesMorphDemo();
-            initQpfDemo();
-            initCanvasToSVGDemo();
 
             function initQpfDemo() {
                 var dom = qpf.core.XMLParser.parse($("#QpfExampleCodeXML").html());

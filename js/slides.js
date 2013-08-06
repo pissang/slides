@@ -9,6 +9,7 @@ var slides = (function() {
 	
 	var	locked = false;
 	var	currentSlide = 0;
+	var prevSlide = 0;
 	var	currentAppearIndex = -1;
 	var	baseURL = "";
 
@@ -164,27 +165,38 @@ var slides = (function() {
 		articles[page].classList.remove('prev');
 		articles[page].classList.remove('next');
 	
-		currentSlide = page;
+		if (currentSlide !== page) {
+			prevSlide = currentSlide;
+			currentSlide = page;
+
+			var article = articles[currentSlide];
+			var functionName = article.getAttribute('data-action');
+			if (functionName) {	
+				if (enterActions[functionName]) {
+					enterActions[functionName](article);
+				}
+			}
+			var article = articles[prevSlide];
+			var functionName = article.getAttribute('data-action');
+			if (functionName) {	
+				if (leaveActions[functionName]) {
+					leaveActions[functionName](article);
+				}
+			}
+		}	
 		
 		document.location.href = baseURL + '#'+page+'~'+appearIndex;
 	}
 	
 	function leave(back) {
 
-		if (currentAppearIndex === -1) {
-			var item = articles[currentSlide];
-			if (!item) {
-				return;
-			}
-		} else {
-			var item  = appearQueue[currentSlide][currentAppearIndex];
-			if (! item) {
-				return ;
-			}
-			if (back) {
-				item.classList.remove('show');
-				item.classList.add('hidden');
-			}
+		var item  = appearQueue[currentSlide][currentAppearIndex];
+		if (! item) {
+			return ;
+		}
+		if (back) {
+			item.classList.remove('show');
+			item.classList.add('hidden');
 		}
 
 		var functionName = item.getAttribute('data-action');
@@ -198,19 +210,12 @@ var slides = (function() {
 
 	function enter() {
 		
-		if (currentAppearIndex === -1) {
-			var item = articles[currentSlide];
-			if (!item) {
-				return;
-			}
-		} else {
-			var item  = appearQueue[currentSlide][currentAppearIndex];
-			if (! item) {
-				return ;
-			}
-			item.classList.remove('hidden');
-			item.classList.add('show');
+		var item  = appearQueue[currentSlide][currentAppearIndex];
+		if (! item) {
+			return ;
 		}
+		item.classList.remove('hidden');
+		item.classList.add('show');
 
 		var functionName = item.getAttribute('data-action');
 		if (functionName) {
