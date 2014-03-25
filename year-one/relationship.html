@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Webkit Class Dependencies</title>
+</head>
+<body>
+    <div id="Main" style="width:1280px; height:600px;"></div>
+    <script type="text/javascript" src="http://ecomfe.github.io/echarts/doc/asset/js/esl/esl.js"></script>
+    <script type="text/javascript">
+
+        require.config({
+            paths: {
+                'js': 'http://ecomfe.github.io/echarts/doc/asset/js/esl/js'
+            },
+            packages: [
+                {
+                    name: 'echarts',
+                    location: '../../../echarts/src',
+                    main: 'echarts'
+                },
+                {
+                    name: 'zrender',
+                    // location: 'http://ecomfe.github.io/zrender/src',
+                    location: '../../../zrender/src',
+                    main: 'zrender'
+                }
+            ]
+        });
+
+        var echarts;
+        require(['echarts/echarts',
+                './relationship',
+                'echarts/chart/force'],
+            
+            function(ec, data) {
+
+                myChart = ec.init(document.getElementById("Main"));
+
+                myChart.setOption(data, true);
+            }
+        )
+
+    </script>
+</body>
+</html>

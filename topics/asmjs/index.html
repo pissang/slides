@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ASM.js & Emscripten</title>
+        <meta charset="utf-8" />
+        <link rel=stylesheet type=text/css href="../../css/slide.css" />
+        <link rel=stylesheet type=text/css href="../../css/desert.css" />
+        <style type="text/css">
+            h1 {
+                margin-top: 200px;
+            }
+            h2 {
+                text-align: center;
+            }
+            .label {
+                padding: 5px 20px;
+                border-radius: 8px;
+            }
+            li {
+                list-style: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="Articles">
+            <article>
+                <h1 class="title">ASM.js & Emscripten</h1>
+            </article>
+            <article>
+                <h1>题外话 - 又是一年GDC</h1>
+                <div style="text-align:center">
+                    <img src="imgs/ue4.png" alt="" style="vertical-align:middle" width="220"/>
+                    <img src="imgs/Unity_Pri_In.png" style="margin-left:100px; vertical-align:middle" height="160">
+                </div>
+            </article>
+            <article>
+                <h1>ASM.js</h1>
+            </article>
+            <article>
+                <h2>Epic Citadel</h2>
+                <div style="text-align:center">
+                    <a href="https://www.unrealengine.com/html5/" target="_blank">
+                        <img src="imgs/epic-citadel.jpg" alt="">
+                    </a>
+                </div>
+            </article>
+            <article>
+                <h1>Emscripten</h1>
+                <h3 style="text-align:center" class="item">黑科技</h3>
+                <p style="text-align:center; font-size:30px;" class="item">
+                    <b style="background-color: #CE3338;" class="label">
+                        C/C++
+                    </b>
+
+                    =>
+
+                    <b style="background-color: #3C76F1;" class="label">
+                    LLVM
+                    </b>
+
+                    =>
+
+                    <b style="background-color: #37518A;" class="label">
+                    Emscripten
+                    </b>
+
+                    =>
+
+                    <b style="background-color: #E7DB4B;" class="label">
+                    JavaScript
+                    </b>
+                    
+                </p>
+            </article>
+            <article>
+                <h2>Ammo.js</h2>
+                <div style="text-align:center" class="item">
+                    <img src="imgs/ammo1.png" alt="" height="400"/>
+                    <img src="imgs/ammo2.png" alt="" height="400"/>
+                </div>
+            </article>
+            <article>
+                <h2>HEAP With Typed Array</h2>
+                <pre class="prettyprint item">
+var buffer = new ArrayBuffer(TOTAL_MEMORY);
+HEAP8 = new Int8Array(buffer);
+HEAP16 = new Int16Array(buffer);
+HEAP32 = new Int32Array(buffer);
+HEAPU8 = new Uint8Array(buffer);
+HEAPU16 = new Uint16Array(buffer);
+HEAPU32 = new Uint32Array(buffer);
+HEAPF32 = new Float32Array(buffer);
+HEAPF64 = new Float64Array(buffer);
+                </pre>
+
+                <pre class="prettyprint item">
+function setValue(ptr, value, type, noSafe) {
+  type = type || 'i8';
+  if (type.charAt(type.length-1) === '*') type = 'i32'; // pointers are 32-bit
+    switch(type) {
+      case 'i1': HEAP8[(ptr)]=value; break;
+      case 'i8': HEAP8[(ptr)]=value; break;
+      case 'i16': HEAP16[((ptr)>>1)]=value; break;
+      case 'i32': HEAP32[((ptr)>>2)]=value; break;
+      case 'i64': (tempI64 = [value>>>0,Math.min(Math.floor((value)/4294967296), 4294967295)>>>0],HEAP32[((ptr)>>2)]=tempI64[0],HEAP32[(((ptr)+(4))>>2)]=tempI64[1]); break;
+      case 'float': HEAPF32[((ptr)>>2)]=value; break;
+      case 'double': HEAPF32[((ptr)>>2)]=value; break;
+      default: abort('invalid type for setValue: ' + type);
+    }
+}
+                </pre>
+            </article>
+            <article>
+                <pre class="prettyprint">
+function btContinuousDynamicsWorld(arg0, arg1, arg2, arg3) {
+    this.ptr = _emscripten_bind_btContinuousDynamicsWorld__btContinuousDynamicsWorld_p4(arg0.ptr, arg1.ptr, arg2.ptr, arg3.ptr);
+  btContinuousDynamicsWorld.prototype.__cache__[this.ptr] = this;
+  this.__class__ = btContinuousDynamicsWorld;
+}
+btContinuousDynamicsWorld.prototype.__cache__ = {};
+Module['btContinuousDynamicsWorld'] = btContinuousDynamicsWorld;
+btContinuousDynamicsWorld.prototype['getNumCollisionObjects'] = function() {
+    return _emscripten_bind_btContinuousDynamicsWorld__getNumCollisionObjects_p0(this.ptr);
+}
+btContinuousDynamicsWorld.prototype['setWorldUserInfo'] = function(arg0) {
+    _emscripten_bind_btContinuousDynamicsWorld__setWorldUserInfo_p1(this.ptr, arg0);
+}
+btContinuousDynamicsWorld.prototype['addConstraint'] = function(arg0, arg1) {
+  if (arg1 === undefined)
+    _emscripten_bind_btContinuousDynamicsWorld__addConstraint_p1(this.ptr, arg0.ptr);
+  else 
+    _emscripten_bind_btContinuousDynamicsWorld__addConstraint_p2(this.ptr, arg0.ptr, arg1);
+}
+btContinuousDynamicsWorld.prototype['getWorldUserInfo'] = function() {
+    return _emscripten_bind_btContinuousDynamicsWorld__getWorldUserInfo_p0(this.ptr);
+}
+btContinuousDynamicsWorld.prototype['contactPairTest'] = function(arg0, arg1, arg2) {
+    _emscripten_bind_btContinuousDynamicsWorld__contactPairTest_p3(this.ptr, arg0.ptr, arg1.ptr, arg2.ptr);
+}
+                </pre>
+            </article>
+            <article>
+                <h3>Unsigned Int in JavaScript</h3>
+                <pre class="prettyprint item" style="font-size:20px;">
+// signed 32-bit integers
+// 2147483648 is "10000000000000000000000000000000"
+(4.6 | 0) === 4
+(2147483648 | 0) === -2147483648
+
+// unsigned 32-bit integers
+(-4 >>> 0) === 4294967292
+                </pre>
+                <div class="item">
+                    <p style="width:600px;line-height:25px;">
+                     The operands of all bitwise operators are converted to signed 32-bit integers in big-endian order and in two's complement format
+                    </p>
+                </div>
+            </article>
+            <article>
+                <h1>ASM.js</h1>
+            </article>
+            <article>
+                <h2>
+                    Type Annotation
+                </h2>
+                <pre class="prettyprint item" style="font-size:20px;">
+// Unsigned Int
+a = a | 0;
+
+// Double
+a = +a;
+                </pre>
+            </article>
+            <article style="text-align:center">
+                <h2>AOT(Ahead of Time) Compiling</h2>
+                <div class="item">
+                    <img src="imgs/aot.png" alt="">
+                </div>
+                <h3 class="item">Validation Rules</h3>
+                <ul>
+                    <li class="item">Modules</li>
+                    <li class="item">Exports declarations</li>
+                    <li class="item">Function and variable declarations(mutable immutable)</li>
+                    <li class="item">Expressions</li>
+                </ul>
+            </article>
+            <article>
+                <img src="imgs/error1.png" alt="">
+                <img src="imgs/error2.png" alt="">
+            </article>
+            <article>
+                <h2>Example Code</h2>
+                <pre class="prettyprint item">
+function asmModule(stdlib, foreign, heap) {
+    "use asm";
+
+    var F4 = new stdlib.Float32Array(heap);
+    var random = foreign.random;
+
+    function main(x) {
+        var i = 0, br = 0, brr = 0;
+
+        for(i = 1; (i | 0) < 16; i = (i | 0) + 1 | 0) {
+            br = (255 - (((func() | 0) * 96) | 0)) | 0;
+            brr = (br + i) | 0;
+        }
+
+        // usually reads/writes from types arrays (like F4)
+        // a lot as well
+    }
+
+    return { main: main };
+}
+                </pre>
+            </article>
+            <article>
+                <h2>
+                    Performance
+                </h2>
+            </article>
+            <article>
+                <h1>LLJS</h1>
+            </article>
+            <article>
+                <h1>ThankS</h1>
+            </article>
+        </div>
+        <div id="SlideInfo">
+            <h1 id="Title">ASM.js & Emscripten</h1>
+            <ul class="aboutme">
+                <li id="Author">沈毅</li>
+                <li id="Date">2014-03-27</li>
+                <li id="Github">
+                    github : 
+                    <a href="https://github.com/pissang" target="_blank">pissang</a>
+                </li>
+                <li id="Weibo">
+                    @
+                    <a href="http://weibo.com/pissang" target="_blank">pissang</a>
+                </li>
+            </ul>
+        </div>
+
+        <script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
+        <script type="text/javascript" src="../../js/lib/prettify.js"></script>
+        <script type="text/javascript" src="../../js/mdslides.js"></script>
+        <script type="text/javascript" src="../../js/slides.js"></script>
+
+        <script type="text/javascript">
+
+            $(".lang-html").each(function() {
+                // Encode html
+                // http://stackoverflow.com/questions/1219860/javascript-jquery-html-encoding
+                this.innerHTML = $("<div />").text(this.innerHTML).html();
+            });
+
+            prettyPrint();
+
+            slides.init('Articles', {
+                
+                itemClass : 'item',
+
+                actions : {
+
+                }
+            })
+        </script>
+    </body>
+</html>
