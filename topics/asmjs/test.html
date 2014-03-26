@@ -4,7 +4,7 @@
     </head>
     <body>
         <script type="text/javascript">
-
+        
             function DiagModule(stdlib, foreign, heap) {
                 "use asm";
 
@@ -21,13 +21,17 @@
                     x = +x;
                     y = +y;
                     x = +10;
-                    return +sqrt(square(x) + square(y));
+                    return +sqrt(+square(x) + +square(y));
                 }
 
-                return { diag: diag };
+                return {
+                    diag: diag,
+                    square : square
+                };
             }
 
             var module = DiagModule(window);
+            alert(module.square(10));
         </script>
     </body>
 </html>

@@ -6,6 +6,11 @@
         <link rel=stylesheet type=text/css href="../../css/slide.css" />
         <link rel=stylesheet type=text/css href="../../css/desert.css" />
         <style type="text/css">
+            /*
+            html,h1,h2,h3,h4,h5{
+                font-family: "Lato", sans-serif;
+            }
+            */
             h1 {
                 margin-top: 200px;
             }
@@ -15,6 +20,8 @@
             .label {
                 padding: 5px 20px;
                 border-radius: 8px;
+                margin:10px;
+                display: inline-block;
             }
             li {
                 list-style: none;
@@ -46,30 +53,33 @@
             </article>
             <article>
                 <h1>Emscripten</h1>
-                <h3 style="text-align:center" class="item">黑科技</h3>
-                <p style="text-align:center; font-size:30px;" class="item">
-                    <b style="background-color: #CE3338;" class="label">
-                        C/C++
-                    </b>
+                <div style="text-align:center; font-size:30px; margin-top:20px;" >
+                    <span class="item" style="display:inline-block;">
+                        <b style="background-color: #CE3338;" class="label">
+                            C/C++
+                        </b>
+                    </span>
 
-                    =>
+                    <span class="item" style="display:inline-block;">
+                        =>
+                        <b style="background-color: #3C76F1;" class="label">
+                        LLVM
+                        </b>
+                    </span>
 
-                    <b style="background-color: #3C76F1;" class="label">
-                    LLVM
-                    </b>
+                    <span class="item" style="display:inline-block;">
+                        =>
+                        <b style="background-color: #37518A;" class="label">
+                        Emscripten
+                        </b>
+                    </span>
 
-                    =>
-
-                    <b style="background-color: #37518A;" class="label">
-                    Emscripten
-                    </b>
-
-                    =>
-
-                    <b style="background-color: #E7DB4B;" class="label">
-                    JavaScript
-                    </b>
-                    
+                    <span class="item" style="display:inline-block;">
+                        =>
+                        <b style="background-color: #E7DB4B;" class="label">
+                        JavaScript
+                        </b>
+                    </span>
                 </p>
             </article>
             <article>
@@ -142,6 +152,9 @@ btContinuousDynamicsWorld.prototype['contactPairTest'] = function(arg0, arg1, ar
             <article>
                 <h3>Unsigned Int in JavaScript</h3>
                 <pre class="prettyprint item" style="font-size:20px;">
+// Double
++"1" === 1
+
 // signed 32-bit integers
 // 2147483648 is "10000000000000000000000000000000"
 (4.6 | 0) === 4
@@ -159,22 +172,47 @@ btContinuousDynamicsWorld.prototype['contactPairTest'] = function(arg0, arg1, ar
             <article>
                 <h1>ASM.js</h1>
             </article>
+            <article style="text-align:center">
+                <h2>JIT in SpiderMonkey</h2>
+                <img src="imgs/jit-diagram.png" alt="" class="item">
+                <!--
+                <div style="text-align:center; font-size:20px;margin-top:40px">
+                    <span class="item" style="display:inline-block;">
+                        <b style="background-color: #CE3338;" class="label">
+                            Interpreter
+                        </b>
+                    </span>
+                    <span class="item" style="display:inline-block;">                    
+                        =>
+                        <b style="background-color: #3C76F1;" class="label">
+                            JaegerMonkey (JIT Code)
+                        </b>
+                    </span>
+                    <span class="item" style="display:inline-block;">
+                        =>
+                        <b style="background-color: #378A44;" class="label">
+                            IonMonkey (Optimized JIT Code)
+                        </b>
+                    </span>
+                </div>
+                -->
+                <p class="item" style="width:700px;margin:40px auto;">
+                    Most doesn’t get warm enough to Baseline-compile <br />
+                </p>
+                <p class="item" style="width:700px;margin:40px auto;">
+                    Most warm code doesn’t get hot enough to Ion-compile
+                </p>
+            </article>
             <article>
-                <h2>
-                    Type Annotation
-                </h2>
-                <pre class="prettyprint item" style="font-size:20px;">
-// Unsigned Int
-a = a | 0;
-
-// Double
-a = +a;
-                </pre>
+                <div style="padding:100px 300px; line-height:60px; font-size:40px;">
+                    Emscripten-generated code has enough type information
+                </div>
             </article>
             <article style="text-align:center">
-                <h2>AOT(Ahead of Time) Compiling</h2>
-                <div class="item">
-                    <img src="imgs/aot.png" alt="">
+                <h2>AOT Compiling (OrdinMonkey)</h2>
+                <div>
+                    <!-- <img src="imgs/aot.png" alt="" class="item"> -->
+                    <img src="imgs/aot-diagram.png" alt="" class="item">
                 </div>
                 <h3 class="item">Validation Rules</h3>
                 <ul>
@@ -184,9 +222,23 @@ a = +a;
                     <li class="item">Expressions</li>
                 </ul>
             </article>
-            <article>
-                <img src="imgs/error1.png" alt="">
-                <img src="imgs/error2.png" alt="">
+            <article style="text-align:center;font-size:24px;line-height:50px;">
+                <h2>Benefits</h2>
+                <ul>
+                    <li class="item">
+                        unboxed representations of integers and floating-point numbers;
+                    </li>
+                    <li class="item">
+                        absence of runtime type checks;
+                    </li>
+                    <li class="item">
+                        absence of garbage collection;
+                    </li>
+                    <li class="item">
+                        efficient heap loads and stores (with implementation strategies varying by platform).
+                    </li>
+
+                </ul>
             </article>
             <article>
                 <h2>Example Code</h2>
@@ -212,6 +264,24 @@ function asmModule(stdlib, foreign, heap) {
     return { main: main };
 }
                 </pre>
+            </article>
+            <article>
+                <h2>
+                    Type Annotation
+                </h2>
+                <pre class="prettyprint item" style="font-size:20px;">
+// Unsigned Int
+a = a | 0;
+
+// Double
+a = +a;
+                </pre>
+            </article>
+            <article style="text-align:center">
+                <img src="imgs/error1.png" alt="" class="item" width="700" style="margin:30px auto;display:block;">
+                <img src="imgs/error2.png" alt="" class="item" width="700" style="margin:30px auto;display:block;">
+                <img src="imgs/error3.png" alt="" class="item" width="700" style="margin:30px auto;display:block;">
+                <img src="imgs/error4.png" alt="" class="item" width="700" style="margin:30px auto;display:block;">
             </article>
             <article>
                 <h2>
