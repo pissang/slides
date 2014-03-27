@@ -6,11 +6,11 @@
         <link rel=stylesheet type=text/css href="../../css/slide.css" />
         <link rel=stylesheet type=text/css href="../../css/desert.css" />
         <style type="text/css">
-            
+            /*
             html,h1,h2,h3,h4,h5{
                 font-family: "Lato", sans-serif;
             }
-            
+            */
             h1 {
                 margin-top: 200px;
             }
@@ -102,21 +102,30 @@ HEAPU32 = new Uint32Array(buffer);
 HEAPF32 = new Float32Array(buffer);
 HEAPF64 = new Float64Array(buffer);
                 </pre>
-
+            </article>
+            <article>
+                <h2>Vector3 Normalize Example</h2>
                 <pre class="prettyprint item">
-function setValue(ptr, value, type, noSafe) {
-  type = type || 'i8';
-  if (type.charAt(type.length-1) === '*') type = 'i32'; // pointers are 32-bit
-    switch(type) {
-      case 'i1': HEAP8[(ptr)]=value; break;
-      case 'i8': HEAP8[(ptr)]=value; break;
-      case 'i16': HEAP16[((ptr)>>1)]=value; break;
-      case 'i32': HEAP32[((ptr)>>2)]=value; break;
-      case 'i64': (tempI64 = [value>>>0,Math.min(Math.floor((value)/4294967296), 4294967295)>>>0],HEAP32[((ptr)>>2)]=tempI64[0],HEAP32[(((ptr)+(4))>>2)]=tempI64[1]); break;
-      case 'float': HEAPF32[((ptr)>>2)]=value; break;
-      case 'double': HEAPF32[((ptr)>>2)]=value; break;
-      default: abort('invalid type for setValue: ' + type);
-    }
+function normalize(v3) {
+    var len = Math.sqrt(v3.x * v3.x + v3.y * v3.y + v3.z * v3.z);
+    v3.x /= len; v3.y /= len; v3.z /= len;
+    return v3;
+}
+                </pre>
+                <pre class="prettyprint item">
+function _emscripten_bind_btVector3__normalize_p0(r1){
+    var r2,r3,r4,r5,r6,r7,r8;
+    r2=r1|0;
+    r3=HEAPF32[r2>>2];
+    r4=r1+4|0;
+    r5=HEAPF32[r4>>2];
+    r6=r1+8|0;
+    r7=HEAPF32[r6>>2];
+    r8=1/Math.sqrt(r3*r3+r5*r5+r7*r7);
+    HEAPF32[r2>>2]=r3*r8;
+    HEAPF32[r4>>2]=r5*r8;
+    HEAPF32[r6>>2]=r7*r8;
+    return r1;
 }
                 </pre>
             </article>
@@ -329,7 +338,7 @@ a = +a;
                 itemClass : 'item',
 
                 actions : {
-                    
+
                 }
             })
         </script>
