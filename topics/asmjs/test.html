@@ -11,6 +11,7 @@
                 // Variable Declarations
                 var sqrt = stdlib.Math.sqrt;
 
+
                 // Function Declarations
                 function square(x) {
                     x = +x;
@@ -21,6 +22,7 @@
                     x = +x;
                     y = +y;
                     x = +10;
+                    var c = [];
                     return +sqrt(+square(x) + +square(y));
                 }
 
@@ -31,7 +33,6 @@
             }
 
             var module = DiagModule(window);
-            alert(module.square(10));
         </script>
     </body>
 </html>
