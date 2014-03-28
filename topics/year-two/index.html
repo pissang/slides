@@ -87,7 +87,16 @@
                     <li class="item">
                         <h4>找出和优化会被v8 deoptimize的代码</h4>
                         <ul>
-                            <li class="item">
+                            <li>
+                                <span class="item">优化前
+                                    <img src="imgs/before-opt0.jpeg" alt="" height = "50"  style="vertical-align:middle">
+                                </span>
+                                <span class="item">
+                                    优化后
+                                    <img src="imgs/after-opt0.jpeg" alt="" height="50"  style="vertical-align:middle">
+                                </span>
+                            </li>
+                            <li class="item" style="margin-top:20px;">
                                 5000个物体的场景的update从几十ms降到5ms
                             </li>
                         </ul>
@@ -98,7 +107,10 @@
                     <li class="item">
                         <h4>顶点数据和动画数据使用TypedArray保存, 减少GC开销</h4>
                         <ul>
-                            <li class="item">
+                            <li class="item" style="list-style:none">
+                                <img src="imgs/before-opt1.jpeg" alt="">
+                            </li>
+                            <li class="item" style="margin-top:20px;">
                                 提升场景加载的速度 (Bootcamp demo中的场景加载从10s+降到几百ms)
                             </li>
                         </ul>
@@ -119,14 +131,21 @@
             </article>
             <article>
                 <h2>完整的HDR Pipeline以及镜头特效</h2>
-                <div class="item" data-action="HDR" style="height:500px;"></div>
+                <!-- <div class="item" data-action="HDR" style="height:500px;"></div> -->
+                <img src="http://ww1.sinaimg.cn/large/6d3f08cbjw1eb7yuefgsjj21hc0tuwkw.jpg" alt="" style="width:100%;max-width:2000px;">
+            </article>
+            <article style="text-align:center">
+                <img src="imgs/original.jpg" alt="" />
+            </article>
+            <article>
+                <img src="http://ww1.sinaimg.cn/large/6d3f08cbjw1edi69x884rj21hc0wgqf8.jpg" alt="" style="width:100%;max-width:2000px;">
             </article>
             <article style="text-align:center">
                 <h2>阴影的改进</h2>
                 <img src="imgs/bootcamp.png" alt="">
             </article>
             <article>
-                <h1>动画</h1>
+                <h1>人物动画</h1>
             </article>
             <article>
                 <h2>Blending & Blend Tree</h2>
