@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>工作第二年</title>
+        <meta charset="utf-8" />
+        <link rel=stylesheet type=text/css href="../../css/slide.css" />
+        <link rel=stylesheet type=text/css href="../../css/desert.css" />
+        <style type="text/css">
+            /*
+            html,h1,h2,h3,h4,h5{
+                font-family: "Lato", sans-serif;
+            }
+            */
+            h1 {
+                margin-top: 200px;
+            }
+            h2 {
+                text-align: center;
+            }
+            .label {
+                padding: 5px 20px;
+                border-radius: 8px;
+                margin:10px;
+                display: inline-block;
+            }
+
+            #Articles article {
+                padding: 30px 100px;
+            }
+
+            iframe {
+                border-style: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="Articles">
+            <article>
+                <h1 class="title">工作第二年</h1>
+            </article>
+            <article>
+                <h1>Echarts & ZRender</h1>
+            </article>
+            <article>
+                <h2>ZRender</h2>
+                <ul>
+                    <li class="item">
+                        <h4>动画模块改进</h4>
+                        <ul>
+                            <li class="item">
+                                性能
+                            </li>
+                            <li class="item">
+                                关键帧之间Spline插值
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </article>
+            <article>
+                <h2>Echarts</h2>
+                <ul>
+                    <li class="item">
+                        <h3 style="font-size:20px;">
+                            Chord图
+                        </h3>
+                        <img src="imgs/chord.png" alt="" class="item" width="400px;">
+                    </li>
+                    <li class="item">
+                        <h3 style="font-size:20px;">
+                            地图数据压缩 (1.65M -> 315k )
+                        </h3>
+                    </li>
+                    <li class="item">
+                        <h3 style="font-size:20px;">
+                            多维数据操作ndarray
+                        </h3>
+                    </li>
+                </ul>
+            </article>
+            <article>
+                <h1>WebGL引擎QTEK</h1>
+            </article>
+            <article>
+                <h2>性能提升</h2>
+                <ul>
+                    <li class="item">
+                        <h4>找出和优化会被v8 deoptimize的代码</h4>
+                        <ul>
+                            <li class="item">
+                                5000个物体的场景的update从几十ms降到5ms
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="item">
+                        缓存和合并, 减少gl call
+                    </li>
+                    <li class="item">
+                        <h4>顶点数据和动画数据使用TypedArray保存, 减少GC开销</h4>
+                        <ul>
+                            <li class="item">
+                                提升场景加载的速度 (Bootcamp demo中的场景加载从10s+降到几百ms)
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </article>
+            <article style="text-align:center">
+                <h2>Sponza Demo</h2>
+                <p>10fps -> 60fps</p>
+                <img src="imgs/sponza.png" />
+            </article>
+            <article>
+                <h1>画面提升</h1>
+            </article>
+            <article>
+                <h2>基于物理模型的渲染</h2>
+                <div class="item" data-action="IBL" style="height:500px;"></div>
+            </article>
+            <article>
+                <h2>完整的HDR Pipeline以及镜头特效</h2>
+                <div class="item" data-action="HDR" style="height:500px;"></div>
+            </article>
+            <article style="text-align:center">
+                <h2>阴影的改进</h2>
+                <img src="imgs/bootcamp.png" alt="">
+            </article>
+            <article>
+                <h1>动画</h1>
+            </article>
+            <article>
+                <h2>Blending & Blend Tree</h2>
+                <div class="item" data-action="animation" style="height:500px;"></div>
+            </article>
+            <article>
+                <h1>粒子特效</h1>
+            </article>
+            <article>
+                <div class="item" data-action="particle" style="height:100%"></div>
+            </article>
+            <article>
+                <h1>物理引擎</h1>
+                <ul>
+                    <li class="item">
+                        基于Ammo.js
+                    </li>
+                    <li class="item">
+                        使用WebWorker，通信数据统一打包成ArrayBuffer
+                    </li>
+                </ul>
+            </article>
+            <article>
+                <div class="item" data-action="physics" style="height:100%"></div>
+            </article>
+            <article>
+                <div class="item" data-action="physics2" style="height:100%"></div>
+            </article>
+            <article style="text-align:center">
+                <h2>Bootcamp demo</h2>
+                <img src="imgs/bootcamp.png" alt="">
+            </article>
+            <article>
+                <h1>ThankS</h1>
+            </article>
+        </div>
+        <div id="SlideInfo">
+            <h1 id="Title">工作第二年</h1>
+            <ul class="aboutme">
+                <li id="Author">沈毅</li>
+                <li id="Date">2014-03-28</li>
+                <li id="Github">
+                    github : 
+                    <a href="https://github.com/pissang" target="_blank">pissang</a>
+                </li>
+                <li id="Weibo">
+                    @
+                    <a href="http://weibo.com/pissang" target="_blank">pissang</a>
+                </li>
+            </ul>
+        </div>
+
+        <script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
+        <script type="text/javascript" src="../../js/lib/prettify.js"></script>
+        <script type="text/javascript" src="../../js/mdslides.js"></script>
+        <script type="text/javascript" src="../../js/slides.js"></script>
+
+        <script type="text/javascript">
+
+            $(".lang-html").each(function() {
+                // Encode html
+                // http://stackoverflow.com/questions/1219860/javascript-jquery-html-encoding
+                this.innerHTML = $("<div />").text(this.innerHTML).html();
+            });
+
+            prettyPrint();
+
+            slides.init('Articles', {
+                
+                itemClass : 'item',
+
+                actions : {
+                    IBL : {
+                        enter : function(item) {
+                            $("<iframe id='IBL'>")
+                                .attr("src", "http://localhost/qtek/tests/IBL.html")
+                                .css({
+                                    width : '100%',
+                                    height : '100%'
+                                })
+                                .appendTo(item);
+                        },
+                        leave : function() {
+                            $("#IBL").remove();
+                        }
+                    },
+
+                    HDR : {
+                        enter : function(item) {
+
+                            $("<iframe id='IBL'>")
+                                .attr("src", "http://localhost/qtek/tests/lensflare.html")
+                                .css({
+                                    width : '100%',
+                                    height : '100%'
+                                })
+                                .appendTo(item);
+                        },
+
+                        leave : function() {
+                            $('#HDR').remove();
+                        }
+                    },
+
+                    animation : {
+                        enter : function(item) {
+                            $("<iframe id='animation'>")
+                                .attr("src", "http://localhost/qtek-bootcamp/soldier.html")
+                                .css({
+                                    width : '100%',
+                                    height : '100%'
+                                })
+                                .appendTo(item);
+                        },
+
+                        leave : function() {
+                            $('#animation').remove();
+                        }
+                    },
+
+                    particle : {
+                        enter : function(item) {
+                            $("<iframe id='particle'>")
+                                .attr("src", "http://localhost/qtek/tests/particle.html")
+                                .css({
+                                    width : '100%',
+                                    height : '100%'
+                                })
+                                .appendTo(item);
+                        },
+                        leave : function() {
+                            $("#particle").remove();
+                        }
+                    },
+
+                    physics : {
+                        enter : function(item) {
+                            $("<iframe id='physics'>")
+                                .attr("src", "http://localhost/qtek-physics/tests/barrel.html")
+                                .css({
+                                    width : '100%',
+                                    height : '100%'
+                                })
+                                .appendTo(item);
+                        },
+                        leave : function() {
+                            $("#physics").remove();
+                        }
+                    },
+
+                    physics2 : {
+                        enter : function(item) {
+                            $("<iframe id='physics2'>")
+                                .attr("src", "http://localhost/qtek-physics/tests/interact.html")
+                                .css({
+                                    width : '100%',
+                                    height : '100%'
+                                })
+                                .appendTo(item);
+                        },
+                        leave : function() {
+                            $("#physics2").remove();
+                        }
+                    },
+                }
+            })
+        </script>
+    </body>
+</html>
