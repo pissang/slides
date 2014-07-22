@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>工作第二年</title>
+        <title>2014年工作述职</title>
         <meta charset="utf-8" />
         <link rel=stylesheet type=text/css href="../../css/slide.css" />
         <link rel=stylesheet type=text/css href="../../css/desert.css" />
@@ -27,135 +27,197 @@
             #Articles article {
                 padding: 30px 100px;
             }
+            
+            .schedule-list {
+                width: 300px;
+                margin: 0px auto;
+            }
+
+            .schedule-list li {
+                list-style: none;
+                padding: 10px 30px;
+                border: 1px solid white;
+                border-radius: 4px;
+                margin: 20px;
+                line-height: 50px;
+                text-align: center;
+            }
+
+            .schedule-list.small li {
+                padding: 5px 15px;
+                border: 1px solid white;
+                border-radius: 4px;
+                margin: 20px;
+                line-height: 40px;
+                height: 30px;
+            }
 
             iframe {
                 border-style: none;
+            }
+
+            img {
+                max-width: 1000px;
             }
         </style>
     </head>
     <body>
         <div id="Articles">
             <article>
-                <h1 class="title">工作第二年</h1>
+                <h1 class="title">2014年工作述职</h1>
             </article>
             <article>
-                <h1>Echarts & ZRender</h1>
+                <div style="text-align:center">
+                    <img src="imgs/echarts.png" style="vertical-align:middle; margin:100px;" width="300px" alt="">
+                    <img src="imgs/qtek.png" style="vertical-align:middle; margin:100px;"  width="300px;" alt="">
+                </div>
+            </article>
+            <article style="text-align:center">
+                <img src="imgs/echarts.png" width="400px;" />
             </article>
             <article>
-                <h2>ZRender</h2>
+                <ul class="schedule-list" style="width:400px;">
+                    <li>动画模块改进</li>
+                    <li>层级管理</li>
+                    <li>和弦图</li>
+                    <li>力导向图的重写</li>
+                    <li>地图数据压缩</li>
+                </ul>
+            </article>
+            <article>
+                <h2>动画模块改进</h2>
                 <ul>
                     <li class="item">
-                        <h4>动画模块改进</h4>
+                        <h4>性能优化</h4>
                         <ul>
-                            <li class="item">
-                                性能
-                            </li>
-                            <li class="item">
-                                关键帧之间Spline插值
-                            </li>
+                            <li>1w个对象, 每个对象10个关键帧, 一帧~10ms</li>
                         </ul>
                     </li>
+                    <li class="item">
+                        <h4>
+                            关键帧之间Spline插值
+                        </h4>
+                    </li>
+                </ul>
+                <div class="item" data-action="orbitAnimation" style="width:100%; height: 300px;"></div>
+            </article>
+            <article>
+                <h2>Shape 的层级管理</h2>
+                <div class="item" data-action="drawHierarchy" style="width: 100%; height: 400px;"></div>
+            </article>
+            <article>
+                <h2>和弦图</h2>
+                <div class="item" data-action="drawChord" style="width: 100%; height: 400px;"></div>
+            </article>
+            <article>
+                <h2>力导向图的重写</h2>
+                <div class="item" style="width:30%;height: 400px; float:left;border-right: 1px solid white; box-sizing:border-box">
+                    <ul style="line-height: 40px;">
+                        <li class="item">布局计算放入 Web Worker</li>
+                        <li class="item">四叉树优化 <br /> O(n2) -> O(nlogn)</li>
+                        <li class="item">ZRender 重绘的优化</li>
+                        <li class="item">webkit内核依赖图的收敛速度降低到 1s 左右</li>
+                    </ul>
+                </div>
+                <div class="item" data-action="drawForce" style="width: 70%; height: 400px; float:left;"></div>
+            </article>
+            <article>
+                <h2>地图数据压缩</h2>
+                <ul>
+                    <li>UTF-8 压缩算法</li>
+                    <li>1.65M -> 315K</li>
+                </ul>
+            </article>
+            <article style="text-align:center">
+                <img src="imgs/qtek.png" style="vertical-align:middle; margin:100px;"  width="300px;" alt="">
+            </article>
+            <article style="text-align:center">
+                <ul class="schedule-list">
+                    <li>性能优化</li>
+                    <li>动画系统</li>
+                    <li>粒子特效</li>
+                    <li>物理引擎</li>
+                    <li>易用性</li>
                 </ul>
             </article>
             <article>
-                <h2>Echarts</h2>
-                <ul>
-                    <li class="item">
-                        <h3 style="font-size:20px;">
-                            Chord图
-                        </h3>
-                        <img src="imgs/chord.png" alt="" class="item" width="400px;">
-                    </li>
-                    <li class="item">
-                        <h3 style="font-size:20px;">
-                            地图数据压缩 (1.65M -> 315k )
-                        </h3>
-                    </li>
-                    <li class="item">
-                        <h3 style="font-size:20px;">
-                            多维数据操作ndarray
-                        </h3>
-                    </li>
-                </ul>
+                <h1>性能优化</h1>
             </article>
             <article>
-                <h1>WebGL引擎QTEK</h1>
-            </article>
-            <article>
-                <h2>性能提升</h2>
                 <ul>
                     <li class="item">
-                        <h4>找出和优化会被v8 deoptimize的代码</h4>
+                        <h4>1. 代码层面的优化</h4>
                         <ul>
-                            <li>
-                                <span class="item">优化前
+                            <li class="item">
+                                <span>优化前
                                     <img src="imgs/before-opt0.jpeg" alt="" height = "50"  style="vertical-align:middle">
                                 </span>
-                                <span class="item">
+                                <span>
                                     优化后
                                     <img src="imgs/after-opt0.jpeg" alt="" height="50"  style="vertical-align:middle">
                                 </span>
                             </li>
                             <li class="item" style="margin-top:20px;">
-                                5000个物体的场景的update从几十ms降到5ms
+                                5000个物体的场景每一帧的更新需要几十ms => 1w个物体只需要 2~3ms
                             </li>
                         </ul>
                     </li>
                     <li class="item">
-                        缓存和合并, 减少gl call
-                    </li>
-                    <li class="item">
-                        <h4>顶点数据和动画数据使用TypedArray保存, 减少GC开销</h4>
+                        <h4>2. 减少GC开销, 顶点数据和动画数据使用TypedArray保存</h4>
                         <ul>
                             <li class="item" style="list-style:none">
                                 <img src="imgs/before-opt1.jpeg" alt="">
                             </li>
                             <li class="item" style="margin-top:20px;">
-                                提升场景加载的速度 (Bootcamp demo中的场景加载从10s+降到几百ms)
+                                100w+ 顶点和 1k+ 物体的场景加载从10s+降到几百ms
                             </li>
                         </ul>
+                    </li>
+                    <li class="item">
+                        3. 通过裁剪减少 draw call
+                    </li>
+                    <li class="item">
+                        4. 缓存和合并, 减少 gl call
                     </li>
                 </ul>
             </article>
             <article style="text-align:center">
                 <h2>Sponza Demo</h2>
                 <p>10fps -> 60fps</p>
-                <img src="imgs/sponza.png" />
+                <img src="imgs/sponza.jpg" />
             </article>
             <article>
                 <h1>画面提升</h1>
             </article>
-            <article>
-                <h2>基于物理模型的渲染</h2>
-                <div class="item" data-action="IBL" style="height:500px;"></div>
+            <article style="text-align:center">
+                <h2>基于物理模型的材质</h2>
+                <img src="imgs/pbs.png" />
             </article>
-            <article>
+            <article style="text-align:center">
                 <h2>完整的HDR Pipeline以及镜头特效</h2>
-                <!-- <div class="item" data-action="HDR" style="height:500px;"></div> -->
-                <img src="http://ww1.sinaimg.cn/large/6d3f08cbjw1eb7yuefgsjj21hc0tuwkw.jpg" alt="" style="width:100%;max-width:2000px;">
+                <img src="http://ww1.sinaimg.cn/large/6d3f08cbjw1eb7yuefgsjj21hc0tuwkw.jpg" alt="" style="width:90%;max-width:2000px;">
             </article>
             <article style="text-align:center">
-                <img src="imgs/original.jpg" alt="" />
-            </article>
-            <article>
-                <img src="http://ww1.sinaimg.cn/large/6d3f08cbjw1edi69x884rj21hc0wgqf8.jpg" alt="" style="width:100%;max-width:2000px;">
+                <div style="position:relative; margin:0px auto; width: 100%; height: 100%;">
+                    <img src="imgs/pp-before.jpg" style="position:absolute;left:0px;top:0px;max-width:2000px;width:100%;" alt="" />
+                    <img src="imgs/pp-after.jpg" class="item" style="position:absolute;left:0px;top:0px;max-width:2000px;width:100%;" alt="" />
+                </div>
             </article>
             <article style="text-align:center">
-                <h2>阴影的改进</h2>
-                <img src="imgs/bootcamp.png" alt="">
+                <h2>阴影的改进(PSSM)</h2>
+                <div style="position:relative; margin:0px auto; width: 100%;">
+                    <img src="imgs/pssm-before.jpg" style="position:absolute;left:0px;top:0px;max-width:2000px;width:100%;" alt="" />
+                    <img src="imgs/pssm-after.jpg" class="item"  style="position:absolute;left:0px;top:0px;max-width:2000px;width:100%;" alt="" />
+                </div>
             </article>
             <article>
-                <h1>人物动画</h1>
+                <h1>动画系统</h1>
             </article>
             <article>
-                <h2>Blending & Blend Tree</h2>
-                <div class="item" data-action="animation" style="height:500px;"></div>
+                <h2>动画混合</h2>
             </article>
             <article>
                 <h1>粒子特效</h1>
-            </article>
-            <article>
-                <div class="item" data-action="particle" style="height:100%"></div>
             </article>
             <article>
                 <h1>物理引擎</h1>
@@ -169,21 +231,69 @@
                 </ul>
             </article>
             <article>
-                <div class="item" data-action="physics" style="height:100%"></div>
-            </article>
-            <article>
-                <div class="item" data-action="physics2" style="height:100%"></div>
+                <h1>易用性</h1>
             </article>
             <article style="text-align:center">
-                <h2>Bootcamp demo</h2>
-                <img src="imgs/bootcamp.png" alt="">
+                <h3>
+                    API
+                </h3>
+                <img src="imgs/qtek-api.png" alt="" >
+            </article>
+            <article style="text-align:center">
+                <h3>
+                    Online playground
+                </h3>
+                <img src="imgs/qtek-playground.png" alt="">
+            </article>
+            <article style="text-align:center">
+                <h2>第一人称射击 DEMO</h2>
+                <img src="imgs/bootcamp.jpg" alt="">
+            </article>
+            <article style="text-align:center">
+                <h2>应用 - 世界杯彩蛋</h2>
+                <img src="imgs/worldcup.jpg" alt="">
+            </article>
+            <article style="text-align:center">
+                <h1>WebGL加速2D渲染</h1>
+            </article>
+            <article>
+                <ul class="schedule-list small">
+                    <li style="height: 70px;">矢量的 Path 渲染 (Line, Bezier, Arc)</li>
+                    <li>Image</li>
+                    <li>Text</li>
+                    <li>Transform</li>
+                    <li>Caching & Batching</li>
+                    <li style="opacity: 0.5">Gradient & Pattern</li>
+                    <li style="opacity: 0.5">Shadow</li>
+                    <li style="opacity: 0.5">Clip</li>
+                </ul>
+            </article>
+            <article style="text-align:center;">
+                <h2>矢量的 Path 渲染</h2>
+                <div class="item" data-action="drawSVG" style="height:400px;">
+                    <div style="width:33.333%; float:left">
+                        <embed style="height:400px;" src="assets/tiger.svg" type="image/svg+xml">
+                        <h3 style="margin-top:-30px;">SVG</h3>
+                    </div>
+                    <div class="item"  style="width:33.333%; float:left">
+                        <canvas id="render-canvas" style="height:400px;"></canvas>
+                        <h3 style="margin-top:-30px;">Canvas</h3>
+                    </div>
+                    <div class="item"  style="width:33.333%; float:left">
+                        <canvas id="render-webgl" style="height:400px;"></canvas>
+                        <h3 style="margin-top:-30px;">WebGL</h3>
+                    </div>
+                </div>
+            </article>
+            <article>
+                <canvas class="item" data-action="drawSVG3D" style="width:100%;height:100%;"></canvas>
             </article>
             <article>
                 <h1>ThankS</h1>
             </article>
         </div>
         <div id="SlideInfo">
-            <h1 id="Title">工作第二年</h1>
+            <h1 id="Title">2014年工作述职</h1>
             <ul class="aboutme">
                 <li id="Author">沈毅</li>
                 <li id="Date">2014-03-28</li>
@@ -200,118 +310,16 @@
 
         <script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
         <script type="text/javascript" src="../../js/lib/prettify.js"></script>
-        <script type="text/javascript" src="../../js/mdslides.js"></script>
         <script type="text/javascript" src="../../js/slides.js"></script>
+        <script type="text/javascript" src="../../js/lib/esl.js"></script>
+        <script type="text/javascript" src="../../js/lib/echarts-original.js"></script>
+        <script type="text/javascript" src="../../js/lib/zrender-original.js"></script>
+        <script type="text/javascript" src="../../js/lib/dagre.js"></script>
+        <script type="text/javascript" src="../../js/lib/qtek.amd.min.js"></script>
+        <script type="text/javascript" src="../../js/lib/qtek-2d.amd.min.js"></script>
 
         <script type="text/javascript">
-
-            $(".lang-html").each(function() {
-                // Encode html
-                // http://stackoverflow.com/questions/1219860/javascript-jquery-html-encoding
-                this.innerHTML = $("<div />").text(this.innerHTML).html();
-            });
-
-            prettyPrint();
-
-            slides.init('Articles', {
-                
-                itemClass : 'item',
-
-                actions : {
-                    IBL : {
-                        enter : function(item) {
-                            $("<iframe id='IBL'>")
-                                .attr("src", "http://localhost/qtek/tests/IBL.html")
-                                .css({
-                                    width : '100%',
-                                    height : '100%'
-                                })
-                                .appendTo(item);
-                        },
-                        leave : function() {
-                            $("#IBL").remove();
-                        }
-                    },
-
-                    HDR : {
-                        enter : function(item) {
-
-                            $("<iframe id='IBL'>")
-                                .attr("src", "http://localhost/qtek/tests/lensflare.html")
-                                .css({
-                                    width : '100%',
-                                    height : '100%'
-                                })
-                                .appendTo(item);
-                        },
-
-                        leave : function() {
-                            $('#HDR').remove();
-                        }
-                    },
-
-                    animation : {
-                        enter : function(item) {
-                            $("<iframe id='animation'>")
-                                .attr("src", "http://localhost/qtek-bootcamp/soldier.html")
-                                .css({
-                                    width : '100%',
-                                    height : '100%'
-                                })
-                                .appendTo(item);
-                        },
-
-                        leave : function() {
-                            $('#animation').remove();
-                        }
-                    },
-
-                    particle : {
-                        enter : function(item) {
-                            $("<iframe id='particle'>")
-                                .attr("src", "http://localhost/qtek/tests/particle.html")
-                                .css({
-                                    width : '100%',
-                                    height : '100%'
-                                })
-                                .appendTo(item);
-                        },
-                        leave : function() {
-                            $("#particle").remove();
-                        }
-                    },
-
-                    physics : {
-                        enter : function(item) {
-                            $("<iframe id='physics'>")
-                                .attr("src", "http://localhost/qtek-physics/tests/barrel.html")
-                                .css({
-                                    width : '100%',
-                                    height : '100%'
-                                })
-                                .appendTo(item);
-                        },
-                        leave : function() {
-                            $("#physics").remove();
-                        }
-                    },
-
-                    physics2 : {
-                        enter : function(item) {
-                            $("<iframe id='physics2'>")
-                                .attr("src", "http://localhost/qtek-physics/tests/interact.html")
-                                .css({
-                                    width : '100%',
-                                    height : '100%'
-                                })
-                                .appendTo(item);
-                        },
-                        leave : function() {
-                            $("#physics2").remove();
-                        }
-                    },
-                }
-            })
+            require(['js/main']);
         </script>
     </body>
 </html>

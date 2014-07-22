@@ -211,7 +211,7 @@ var slides = (function() {
 	function enter() {
 		
 		var item  = appearQueue[currentSlide][currentAppearIndex];
-		if (! item) {
+		if (!item) {
 			return ;
 		}
 		item.classList.remove('hidden');

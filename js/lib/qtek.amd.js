@@ -1,419 +1,9 @@
- (function(factory){
- 	// AMD
- 	if( typeof define !== "undefined" && define["amd"] ){
- 		define( ["exports"], factory.bind(window) );
- 	// No module loader
- 	}else{
- 		factory( window["qtek"] = {} );
- 	}
 
-})(function(_exports){
-
-/**
- * almond 0.2.5 Copyright (c) 2011-2012, The Dojo Foundation All Rights Reserved.
- * Available via the MIT or new BSD license.
- * see: http://github.com/jrburke/almond for details
- */
-//Going sloppy to avoid 'use strict' string cost, but strict practices should
-//be followed.
-/*jslint sloppy: true */
-/*global setTimeout: false */
-
-var requirejs, require, define;
-(function (undef) {
-    var main, req, makeMap, handlers,
-        defined = {},
-        waiting = {},
-        config = {},
-        defining = {},
-        hasOwn = Object.prototype.hasOwnProperty,
-        aps = [].slice;
-
-    function hasProp(obj, prop) {
-        return hasOwn.call(obj, prop);
-    }
-
-    /**
-     * Given a relative module name, like ./something, normalize it to
-     * a real name that can be mapped to a path.
-     * @param {String} name the relative name
-     * @param {String} baseName a real name that the name arg is relative
-     * to.
-     * @returns {String} normalized name
-     */
-    function normalize(name, baseName) {
-        var nameParts, nameSegment, mapValue, foundMap,
-            foundI, foundStarMap, starI, i, j, part,
-            baseParts = baseName && baseName.split("/"),
-            map = config.map,
-            starMap = (map && map['*']) || {};
-
-        //Adjust any relative paths.
-        if (name && name.charAt(0) === ".") {
-            //If have a base name, try to normalize against it,
-            //otherwise, assume it is a top-level require that will
-            //be relative to baseUrl in the end.
-            if (baseName) {
-                //Convert baseName to array, and lop off the last part,
-                //so that . matches that "directory" and not name of the baseName's
-                //module. For instance, baseName of "one/two/three", maps to
-                //"one/two/three.js", but we want the directory, "one/two" for
-                //this normalization.
-                baseParts = baseParts.slice(0, baseParts.length - 1);
-
-                name = baseParts.concat(name.split("/"));
-
-                //start trimDots
-                for (i = 0; i < name.length; i += 1) {
-                    part = name[i];
-                    if (part === ".") {
-                        name.splice(i, 1);
-                        i -= 1;
-                    } else if (part === "..") {
-                        if (i === 1 && (name[2] === '..' || name[0] === '..')) {
-                            //End of the line. Keep at least one non-dot
-                            //path segment at the front so it can be mapped
-                            //correctly to disk. Otherwise, there is likely
-                            //no path mapping for a path starting with '..'.
-                            //This can still fail, but catches the most reasonable
-                            //uses of ..
-                            break;
-                        } else if (i > 0) {
-                            name.splice(i - 1, 2);
-                            i -= 2;
-                        }
-                    }
-                }
-                //end trimDots
-
-                name = name.join("/");
-            } else if (name.indexOf('./') === 0) {
-                // No baseName, so this is ID is resolved relative
-                // to baseUrl, pull off the leading dot.
-                name = name.substring(2);
-            }
-        }
-
-        //Apply map config if available.
-        if ((baseParts || starMap) && map) {
-            nameParts = name.split('/');
-
-            for (i = nameParts.length; i > 0; i -= 1) {
-                nameSegment = nameParts.slice(0, i).join("/");
-
-                if (baseParts) {
-                    //Find the longest baseName segment match in the config.
-                    //So, do joins on the biggest to smallest lengths of baseParts.
-                    for (j = baseParts.length; j > 0; j -= 1) {
-                        mapValue = map[baseParts.slice(0, j).join('/')];
-
-                        //baseName segment has  config, find if it has one for
-                        //this name.
-                        if (mapValue) {
-                            mapValue = mapValue[nameSegment];
-                            if (mapValue) {
-                                //Match, update name to the new value.
-                                foundMap = mapValue;
-                                foundI = i;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (foundMap) {
-                    break;
-                }
-
-                //Check for a star map match, but just hold on to it,
-                //if there is a shorter segment match later in a matching
-                //config, then favor over this star map.
-                if (!foundStarMap && starMap && starMap[nameSegment]) {
-                    foundStarMap = starMap[nameSegment];
-                    starI = i;
-                }
-            }
-
-            if (!foundMap && foundStarMap) {
-                foundMap = foundStarMap;
-                foundI = starI;
-            }
-
-            if (foundMap) {
-                nameParts.splice(0, foundI, foundMap);
-                name = nameParts.join('/');
-            }
-        }
-
-        return name;
-    }
-
-    function makeRequire(relName, forceSync) {
-        return function () {
-            //A version of a require function that passes a moduleName
-            //value for items that may need to
-            //look up paths relative to the moduleName
-            return req.apply(undef, aps.call(arguments, 0).concat([relName, forceSync]));
-        };
-    }
-
-    function makeNormalize(relName) {
-        return function (name) {
-            return normalize(name, relName);
-        };
-    }
-
-    function makeLoad(depName) {
-        return function (value) {
-            defined[depName] = value;
-        };
-    }
-
-    function callDep(name) {
-        if (hasProp(waiting, name)) {
-            var args = waiting[name];
-            delete waiting[name];
-            defining[name] = true;
-            main.apply(undef, args);
-        }
-
-        if (!hasProp(defined, name) && !hasProp(defining, name)) {
-            throw new Error('No ' + name);
-        }
-        return defined[name];
-    }
-
-    //Turns a plugin!resource to [plugin, resource]
-    //with the plugin being undefined if the name
-    //did not have a plugin prefix.
-    function splitPrefix(name) {
-        var prefix,
-            index = name ? name.indexOf('!') : -1;
-        if (index > -1) {
-            prefix = name.substring(0, index);
-            name = name.substring(index + 1, name.length);
-        }
-        return [prefix, name];
-    }
-
-    /**
-     * Makes a name map, normalizing the name, and using a plugin
-     * for normalization if necessary. Grabs a ref to plugin
-     * too, as an optimization.
-     */
-    makeMap = function (name, relName) {
-        var plugin,
-            parts = splitPrefix(name),
-            prefix = parts[0];
-
-        name = parts[1];
-
-        if (prefix) {
-            prefix = normalize(prefix, relName);
-            plugin = callDep(prefix);
-        }
-
-        //Normalize according
-        if (prefix) {
-            if (plugin && plugin.normalize) {
-                name = plugin.normalize(name, makeNormalize(relName));
-            } else {
-                name = normalize(name, relName);
-            }
-        } else {
-            name = normalize(name, relName);
-            parts = splitPrefix(name);
-            prefix = parts[0];
-            name = parts[1];
-            if (prefix) {
-                plugin = callDep(prefix);
-            }
-        }
-
-        //Using ridiculous property names for space reasons
-        return {
-            f: prefix ? prefix + '!' + name : name, //fullName
-            n: name,
-            pr: prefix,
-            p: plugin
-        };
-    };
-
-    function makeConfig(name) {
-        return function () {
-            return (config && config.config && config.config[name]) || {};
-        };
-    }
-
-    handlers = {
-        require: function (name) {
-            return makeRequire(name);
-        },
-        exports: function (name) {
-            var e = defined[name];
-            if (typeof e !== 'undefined') {
-                return e;
-            } else {
-                return (defined[name] = {});
-            }
-        },
-        module: function (name) {
-            return {
-                id: name,
-                uri: '',
-                exports: defined[name],
-                config: makeConfig(name)
-            };
-        }
-    };
-
-    main = function (name, deps, callback, relName) {
-        var cjsModule, depName, ret, map, i,
-            args = [],
-            usingExports;
-
-        //Use name if no relName
-        relName = relName || name;
-
-        //Call the callback to define the module, if necessary.
-        if (typeof callback === 'function') {
-
-            //Pull out the defined dependencies and pass the ordered
-            //values to the callback.
-            //Default to [require, exports, module] if no deps
-            deps = !deps.length && callback.length ? ['require', 'exports', 'module'] : deps;
-            for (i = 0; i < deps.length; i += 1) {
-                map = makeMap(deps[i], relName);
-                depName = map.f;
-
-                //Fast path CommonJS standard dependencies.
-                if (depName === "require") {
-                    args[i] = handlers.require(name);
-                } else if (depName === "exports") {
-                    //CommonJS module spec 1.1
-                    args[i] = handlers.exports(name);
-                    usingExports = true;
-                } else if (depName === "module") {
-                    //CommonJS module spec 1.1
-                    cjsModule = args[i] = handlers.module(name);
-                } else if (hasProp(defined, depName) ||
-                           hasProp(waiting, depName) ||
-                           hasProp(defining, depName)) {
-                    args[i] = callDep(depName);
-                } else if (map.p) {
-                    map.p.load(map.n, makeRequire(relName, true), makeLoad(depName), {});
-                    args[i] = defined[depName];
-                } else {
-                    throw new Error(name + ' missing ' + depName);
-                }
-            }
-
-            ret = callback.apply(defined[name], args);
-
-            if (name) {
-                //If setting exports via "module" is in play,
-                //favor that over return value and exports. After that,
-                //favor a non-undefined return value over exports use.
-                if (cjsModule && cjsModule.exports !== undef &&
-                        cjsModule.exports !== defined[name]) {
-                    defined[name] = cjsModule.exports;
-                } else if (ret !== undef || !usingExports) {
-                    //Use the return value from the function.
-                    defined[name] = ret;
-                }
-            }
-        } else if (name) {
-            //May just be an object definition for the module. Only
-            //worry about defining if have a module name.
-            defined[name] = callback;
-        }
-    };
-
-    requirejs = require = req = function (deps, callback, relName, forceSync, alt) {
-        if (typeof deps === "string") {
-            if (handlers[deps]) {
-                //callback in this case is really relName
-                return handlers[deps](callback);
-            }
-            //Just return the module wanted. In this scenario, the
-            //deps arg is the module name, and second arg (if passed)
-            //is just the relName.
-            //Normalize module name, if it contains . or ..
-            return callDep(makeMap(deps, callback).f);
-        } else if (!deps.splice) {
-            //deps is a config object, not an array.
-            config = deps;
-            if (callback.splice) {
-                //callback is an array, which means it is a dependency list.
-                //Adjust args if there are dependencies
-                deps = callback;
-                callback = relName;
-                relName = null;
-            } else {
-                deps = undef;
-            }
-        }
-
-        //Support require(['a'])
-        callback = callback || function () {};
-
-        //If relName is a function, it is an errback handler,
-        //so remove it.
-        if (typeof relName === 'function') {
-            relName = forceSync;
-            forceSync = alt;
-        }
-
-        //Simulate async callback;
-        if (forceSync) {
-            main(undef, deps, callback, relName);
-        } else {
-            //Using a non-zero value because of concern for what old browsers
-            //do, and latest browsers "upgrade" to 4 if lower value is used:
-            //http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#dom-windowtimers-settimeout:
-            //If want a value immediately, use require('id') instead -- something
-            //that works in almond on the global level, but not guaranteed and
-            //unlikely to work in other AMD implementations.
-            setTimeout(function () {
-                main(undef, deps, callback, relName);
-            }, 4);
-        }
-
-        return req;
-    };
-
-    /**
-     * Just drops the config on the floor, but returns req in case
-     * the config return value is used.
-     */
-    req.config = function (cfg) {
-        config = cfg;
-        if (config.deps) {
-            req(config.deps, config.callback);
-        }
-        return req;
-    };
-
-    define = function (name, deps, callback) {
-
-        //This module may not have dependencies
-        if (!deps.splice) {
-            //deps is not an array, so probably means
-            //an object literal or factory function for
-            //the value. Adjust args.
-            callback = deps;
-            deps = [];
-        }
-
-        if (!hasProp(defined, name) && !hasProp(waiting, name)) {
-            waiting[name] = [name, deps, callback];
-        }
-    };
-
-    define.amd = {
-        jQuery: true
-    };
-}());
+define('qtek/qtek.amd',[],function() {
+    console.log('Loaded qtek');
+    console.log('Author : https://github.com/pissang/');
+});
+define('qtek', ['qtek/qtek.amd'], function (main) { return main; });
 
 define('qtek/core/mixin/derive',['require'],function(require) {
 
@@ -421,11 +11,11 @@ define('qtek/core/mixin/derive',['require'],function(require) {
 
     /**
      * Extend a sub class from base class
-     * @param {object|Function} makeDefaultOpt default option of this sub class, method of the sub can use this.xxx to access this option
-     * @param {Function} [initialize] Initialize after the sub class is instantiated
+     * @param {object|function} makeDefaultOpt default option of this sub class, method of the sub can use this.xxx to access this option
+     * @param {function} [initialize] Initialize after the sub class is instantiated
      * @param {Object} [proto] Prototype methods/properties of the sub class
      * @memberOf qtek.core.mixin.derive.
-     * @return {Function}
+     * @return {function}
      */
     function derive(makeDefaultOpt, initialize/*optional*/, proto/*optional*/) {
 
@@ -544,7 +134,7 @@ define('qtek/core/mixin/notifier',[],function() {
 
             var hdls = this.__handlers__[name];
             var l = hdls.length, i = -1, args = arguments;
-            // Optimize advise from backbone
+            // Optimize from backbone
             switch (args.length) {
                 case 1: 
                     while (++i < l)
@@ -575,7 +165,7 @@ define('qtek/core/mixin/notifier',[],function() {
         /**
          * Register event handler
          * @param  {string} name
-         * @param  {Function} action
+         * @param  {function} action
          * @param  {Object} [context]
          * @chainable
          */
@@ -600,7 +190,7 @@ define('qtek/core/mixin/notifier',[],function() {
         /**
          * Register event, event will only be triggered once and then removed
          * @param  {string} name
-         * @param  {Function} action
+         * @param  {function} action
          * @param  {Object} [context]
          * @chainable
          */
@@ -617,9 +207,9 @@ define('qtek/core/mixin/notifier',[],function() {
         },
 
         /**
-         * Alias of once('before' + name)
+         * Alias of on('before' + name)
          * @param  {string} name
-         * @param  {Function} action
+         * @param  {function} action
          * @param  {Object} [context]
          * @chainable
          */
@@ -632,9 +222,9 @@ define('qtek/core/mixin/notifier',[],function() {
         },
 
         /**
-         * Alias of once('after' + name)
+         * Alias of on('after' + name)
          * @param  {string} name
-         * @param  {Function} action
+         * @param  {function} action
          * @param  {Object} [context]
          * @chainable
          */
@@ -648,7 +238,7 @@ define('qtek/core/mixin/notifier',[],function() {
 
         /**
          * Alias of on('success')
-         * @param  {Function} action
+         * @param  {function} action
          * @param  {Object} [context]
          * @chainable
          */
@@ -658,7 +248,7 @@ define('qtek/core/mixin/notifier',[],function() {
 
         /**
          * Alias of on('error')
-         * @param  {Function} action
+         * @param  {function} action
          * @param  {Object} [context]
          * @chainable
          */
@@ -668,7 +258,7 @@ define('qtek/core/mixin/notifier',[],function() {
 
         /**
          * Alias of on('success')
-         * @param  {Function} action
+         * @param  {function} action
          * @param  {Object} [context]
          * @chainable
          */
@@ -697,7 +287,7 @@ define('qtek/core/mixin/notifier',[],function() {
         /**
          * If registered the event handler
          * @param  {string}  name
-         * @param  {Function}  action
+         * @param  {function}  action
          * @return {boolean}
          */
         has : function(name, action) {
@@ -834,7 +424,7 @@ define('qtek/core/util',['require'],function(require){
         },
         /**
          * @param  {Object|Array} obj
-         * @param  {Function} iterator
+         * @param  {function} iterator
          * @param  {Object} [context]
          * @memberOf qtek.core.util
          */
@@ -7820,12 +7410,7 @@ define('qtek/Node',['require','./core/Base','./core/util','./math/Vector3','./ma
                 console.warn('Remove operation can cause unpredictable error when in iterating');
             }
 
-            var idx = this._children.indexOf(node);
-            if (idx < 0) {
-                return;
-            }
-
-            this._children.splice(idx, 1);
+            this._children.splice(this._children.indexOf(node), 1);
             node.parent = null;
 
             if (this.scene) {
@@ -8688,8 +8273,6 @@ define('qtek/math/Ray',['require','../core/Base','./Vector3','glmatrix'],functio
     var Vector3 = require('./Vector3');
     var glMatrix = require('glmatrix');
     var vec3 = glMatrix.vec3;
-    
-    var EPSILON = 1e-5;
 
     /**
      * @constructor
@@ -8749,182 +8332,9 @@ define('qtek/math/Ray',['require','../core/Base','./Vector3','glmatrix'],functio
             this.direction_dirty = true;
         },
 
-        // http://www.scratchapixel.com/lessons/3d-basic-lessons/lesson-7-intersecting-simple-shapes/ray-box-intersection/
-        /**
-         * Calculate intersection point between ray and bounding box
-         * @param {qtek.math.BoundingBox} bbox
-         * @param {qtek.math.Vector3}
-         * @return {qtek.math.Vector3}
-         */
-        intersectBoundingBox: function(bbox, out) {
-            var dir = this.direction._array;
-            var origin = this.origin._array;
-            var min = bbox.min._array;
-            var max = bbox.max._array;
-
-            var invdirx = 1 / dir[0];
-            var invdiry = 1 / dir[1];
-            var invdirz = 1 / dir[2];
-
-            var tmin, tmax, tymin, tymax, tzmin, tzmax;
-            if (invdirx >= 0) {
-                tmin = (min[0] - origin[0]) * invdirx;
-                tmax = (max[0] - origin[0]) * invdirx;
-            } else {
-                tmax = (min[0] - origin[0]) * invdirx;
-                tmin = (max[0] - origin[0]) * invdirx;
-            }
-            if (invdiry >= 0) {
-                tymin = (min[1] - origin[1]) * invdiry;
-                tymax = (max[1] - origin[1]) * invdiry;
-            } else {
-                tymax = (min[1] - origin[1]) * invdiry;
-                tymin = (max[1] - origin[1]) * invdiry;
-            }
-
-            if ((tmin > tymax) || (tymin > tmax)) {
-                return null;
-            }
-
-            if (tymin > tmin || tmin !== tmin) {
-                tmin = tymin;
-            }
-            if (tymax < tmax || tmax !== tmax) {
-                tmax = tymax;
-            }
-
-            if (invdirz >= 0) {
-                tzmin = (min[2] - origin[2]) * invdirz;
-                tzmax = (max[2] - origin[2]) * invdirz;
-            } else {
-                tzmax = (min[2] - origin[2]) * invdirz;
-                tzmin = (max[2] - origin[2]) * invdirz;
-            }
-
-            if ((tmin > tzmax) || (tzmin > tmax)) {
-                return null;
-            }
-
-            if (tzmin > tmin || tmin !== tmin) {
-                tmin = tzmin;
-            }
-            if (tzmax < tmax || tmax !== tmax) {
-                tmax = tzmax;
-            }
-            if (tmax < 0) {
-                return null;
-            }
-
-            var t = tmin >= 0 ? tmin : tmax;
-
-            if (!out) {
-                out = new Vector3();
-            }
-            vec3.scaleAndAdd(out._array, origin, dir, t);
-            return out;
-        },
-
-        // http://en.wikipedia.org/wiki/Möller–Trumbore_intersection_algorithm
-        /**
-         * Calculate intersection point between ray and three triangle vertices
-         * @param {qtek.math.Vector3} a
-         * @param {qtek.math.Vector3} b
-         * @param {qtek.math.Vector3} c
-         * @param {boolean}           singleSided, CW triangle will be ignored
-         * @param {qtek.math.Vector3} out
-         * @return {qtek.math.Vector3}
-         */
-        intersectTriangle : (function() {
+        // http://www.graphics.cornell.edu/pubs/1997/MT97.html
+        intersectTriangle : function() {
             
-            var eBA = vec3.create();
-            var eCA = vec3.create();
-            var AO = vec3.create();
-            var vCross = vec3.create();
-
-            return function(a, b, c, singleSided, out) {
-                var dir = this.direction._array;
-                var origin = this.origin._array;
-                a = a._array;
-                b = b._array;
-                c = c._array;
-
-                vec3.sub(eBA, b, a);
-                vec3.sub(eCA, c, a);
-
-                vec3.cross(vCross, eCA, dir);
-
-                var det = vec3.dot(eBA, vCross);
-
-                if (singleSided) {
-                    if (det > -EPSILON) {
-                        return null;
-                    }
-                }
-                else {
-                    if (det > -EPSILON && det < EPSILON) {
-                        return null;
-                    }
-                }
-
-                vec3.sub(AO, origin, a);
-                var u = vec3.dot(vCross, AO) / det;
-                if (u < 0 || u > 1) {
-                    return null;
-                }
-
-                vec3.cross(vCross, eBA, AO);
-                var v = vec3.dot(dir, vCross) / det;
-
-                if (v < 0 || v > 1 || (u + v > 1)) {
-                    return null;
-                }
-
-                vec3.cross(vCross, eBA, eCA);
-                var t = -vec3.dot(AO, vCross) / det;
-
-                if (t < 0) {
-                    return null;
-                }
-
-                if (!out) {
-                    out = new Vector3();
-                }
-                vec3.scaleAndAdd(out._array, origin, dir, t);
-
-                return out;
-            }
-        })(),
-
-        /**
-         * Apply an affine transform matrix to the ray
-         * @return {qtek.math.Matrix4} matrix
-         */
-        applyTransform: function(matrix) {
-            Vector3.add(this.direction, this.direction, this.origin);
-            Vector3.transformMat4(this.origin, this.origin, matrix);
-            Vector3.transformMat4(this.direction, this.direction, matrix);
-
-            Vector3.sub(this.direction, this.direction, this.origin);
-            Vector3.normalize(this.direction, this.direction);
-        },
-
-        /**
-         * Copy values from another ray
-         * @param {qtek.math.Ray} ray
-         */
-        copy: function(ray) {
-            Vector3.copy(this.origin, ray.origin);
-            Vector3.copy(this.direction, ray.direction);
-        },
-
-        /**
-         * Clone a new ray
-         * @return {qtek.math.Ray}
-         */
-        clone: function() {
-            var ray = new Ray();
-            ray.copy(this);
-            return ray;
         }
     };
 
@@ -10267,14 +9677,15 @@ define('qtek/DynamicGeometry',['require','./Geometry','./core/util','./math/Vect
         },
 
         generateVertexNormals : function() {
-            var faces = this.faces;
-            var len = faces.length;
-            var positions = this.attributes.position.value;
-            var normals = this.attributes.normal.value;
+            var faces = this.faces
+            var len = faces.length
+            var positions = this.attributes.position.value
+            var normals = this.attributes.normal.value
             var normal = vec3.create();
 
-            var v21 = vec3.create(), v32 = vec3.create();
+            var v12 = vec3.create(), v23 = vec3.create();
 
+            var difference = positions.length - normals.length;
             for (var i = 0; i < normals.length; i++) {
                 vec3.set(normals[i], 0.0, 0.0, 0.0);
             }
@@ -10293,9 +9704,9 @@ define('qtek/DynamicGeometry',['require','./Geometry','./core/util','./math/Vect
                 var p2 = positions[i2];
                 var p3 = positions[i3];
 
-                vec3.sub(v21, p1, p2);
-                vec3.sub(v32, p2, p3);
-                vec3.cross(normal, v21, v32);
+                vec3.sub(v12, p1, p2);
+                vec3.sub(v23, p2, p3);
+                vec3.cross(normal, v12, v23);
                 // Weighted by the triangle area
                 vec3.add(normals[i1], normals[i1], normal);
                 vec3.add(normals[i2], normals[i2], normal);
@@ -10317,10 +9728,12 @@ define('qtek/DynamicGeometry',['require','./Geometry','./core/util','./math/Vect
             var normals = this.attributes.normal.value;
             var normal = vec3.create();
 
-            var v21 = vec3.create(), v32 = vec3.create();
+            var v12 = vec3.create(), v23 = vec3.create();
 
             var isCopy = normals.length === positions.length;
-            
+            //   p1
+            //  /  \
+            // p3---p2
             for (var i = 0; i < len; i++) {
                 var face = faces[i];
                 var i1 = face[0];
@@ -10330,9 +9743,9 @@ define('qtek/DynamicGeometry',['require','./Geometry','./core/util','./math/Vect
                 var p2 = positions[i2];
                 var p3 = positions[i3];
 
-                vec3.sub(v21, p1, p2);
-                vec3.sub(v32, p2, p3);
-                vec3.cross(normal, v21, v32);
+                vec3.sub(v12, p1, p2);
+                vec3.sub(v23, p2, p3);
+                vec3.cross(normal, v12, v23);
 
                 if (isCopy) {
                     vec3.copy(normals[i1], normal);
@@ -11551,6 +10964,58 @@ define('qtek/Joint',['require','./Node','./core/Base'],function(require) {
 
     return Joint;
 });
+define('qtek/Layer',['require','./core/Base'],function(require) {
+
+    var Base = require('./core/Base');
+
+    var Layer = Base.derive(function() {
+        return {
+            renderer : null,
+            scene : null,
+            camera : null,
+
+            picking : null
+        }
+    }, {
+        render : function() {
+            if (this.picking) {
+                this.picking.update(this.scene, this.camera);
+            }
+            this.renderer.render(this.scene, this.camera);
+        },
+
+        setPicking : function(picking) {
+            this.picking = picking;
+            if (this.renderer) {
+                picking.resize(this.renderer.width, this.renderer.height);
+            }
+        },
+
+        resize : function(width, height) {
+            if (this.renderer) {
+                this.renderer.resize(width, height);
+            }
+            if (this.picking) {
+                this.picking.resize(width, height);
+            }
+        },
+
+        setZ : function(z) {
+            this.z = z;
+            this.renderer.canvas.style.zIndex = z;
+        },
+
+        pick : function(x, y) {
+            // Mouse picking
+            if (this.picking) {
+                return this.picking.pick(x, y);
+            }
+        }
+    });
+
+
+    return Layer;
+} );
 /**
  * Mainly do the parse and compile of shader string
  * Support shader code chunk import and export
@@ -13096,98 +12561,11 @@ define('qtek/StaticGeometry',['require','./Geometry','./core/util','./math/Bound
         },
 
         generateVertexNormals : function() {
-            var faces = this.faces;
-            var positions = this.attributes.position.value;
-            var normals = this.attributes.normal.value;
-
-            if (!normals || normals.length !== positions.length) {
-                normals = this.attributes.normal.value = new Float32Array(positions.length);
-            } else {
-                // Reset
-                for (var i = 0; i < normals.length; i++) {
-                    normals[i] = 0;
-                }
-            }
-
-            var p1 = vec3.create();
-            var p2 = vec3.create();
-            var p3 = vec3.create();
-
-            var v21 = vec3.create();
-            var v32 = vec3.create();
-
-            var n = vec3.create();
-
-            for (var f = 0; f < faces.length;) {
-                var i1 = faces[f++];
-                var i2 = faces[f++];
-                var i3 = faces[f++];
-
-                vec3.set(p1, positions[i1*3], positions[i1*3+1], positions[i1*3+2]);
-                vec3.set(p2, positions[i2*3], positions[i2*3+1], positions[i2*3+2]);
-                vec3.set(p3, positions[i3*3], positions[i3*3+1], positions[i3*3+2]);
-
-                vec3.sub(v21, p1, p2);
-                vec3.sub(v32, p2, p3);
-                vec3.cross(n, v21, v32);
-                // Weighted by the triangle area
-                for (var i = 0; i < 3; i++) {
-                    normals[i1*3+i] = normals[i1*3+i] + n[i];
-                    normals[i2*3+i] = normals[i2*3+i] + n[i];
-                    normals[i3*3+i] = normals[i3*3+i] + n[i];
-                }
-            }
-
-            for (var i = 0; i < normals.length;) {
-                vec3.set(n, normals[i], normals[i+1], normals[i+2]);
-                vec3.normalize(n, n);
-                normals[i++] = n[0];
-                normals[i++] = n[1];
-                normals[i++] = n[2];
-            }
+            console.warn('Static Geometry doesn\'t support normal generate');
         },
 
         generateFaceNormals : function() {
-            if (!this.isUniqueVertex()) {
-                this.generateUniqueVertex();
-            }
-
-            var faces = this.faces;
-            var positions = this.attributes.position.value;
-            var normals = this.attributes.normal.value;
-
-            var p1 = vec3.create();
-            var p2 = vec3.create();
-            var p3 = vec3.create();
-
-            var v21 = vec3.create();
-            var v32 = vec3.create();
-            var n = vec3.create();
-
-            if (!normals) {
-                normals = this.attributes.position.value = new Float32Array(positions.length);
-            }
-            for (var f = 0; f < faces.length;) {
-                var i1 = faces[f++];
-                var i2 = faces[f++];
-                var i3 = faces[f++];
-
-                vec3.set(p1, positions[i1*3], positions[i1*3+1], positions[i1*3+2]);
-                vec3.set(p2, positions[i2*3], positions[i2*3+1], positions[i2*3+2]);
-                vec3.set(p3, positions[i3*3], positions[i3*3+1], positions[i3*3+2]);
-
-                vec3.sub(v21, p1, p2);
-                vec3.sub(v32, p2, p3);
-                vec3.cross(n, v21, v32);
-
-                vec3.normalize(n, n);
-
-                for (var i = 0; i < 3; i++) {
-                    normals[i1*3+i] = n[i];
-                    normals[i2*3+i] = n[i];
-                    normals[i3*3+i] = n[i];
-                }
-            }
+            console.warn('Static Geometry doesn\'t support normal generate');
         },
 
         generateTangents : function() {
@@ -15457,7 +14835,7 @@ define('qtek/Renderer',['require','./core/Base','./core/util','./Light','./Mesh'
         /**
          * Convert screen coords to normalized device coordinates(NDC)
          * Screen coords can get from mouse event, it is positioned relative to canvas element
-         * NDC can be used in ray casting with Camera.prototype.castRay methods
+         * NDC can be used in ray casting with Camera.castRay methods
          * 
          * @param  {number}       x
          * @param  {number}       y
@@ -16437,10 +15815,10 @@ define('qtek/animation/Clip',['require','./easing'],function(require) {
      * @param {number} [opts.gap]
      * @param {number} [opts.playbackRatio]
      * @param {boolean|number} [opts.loop] If loop is a number, it indicate the loop count of animation
-     * @param {string|Function} [opts.easing]
-     * @param {Function} [opts.onframe]
-     * @param {Function} [opts.ondestroy]
-     * @param {Function} [opts.onrestart]
+     * @param {string|function} [opts.easing]
+     * @param {function} [opts.onframe]
+     * @param {function} [opts.ondestroy]
+     * @param {function} [opts.onrestart]
      */
     var Clip = function(opts) {
 
@@ -16494,21 +15872,21 @@ define('qtek/animation/Clip',['require','./easing'],function(require) {
 
         if (typeof(opts.onframe) !== 'undefined') {
             /**
-             * @type {Function}
+             * @type {function}
              */
             this.onframe = opts.onframe;
         }
 
         if (typeof(opts.ondestroy) !== 'undefined') {
             /**
-             * @type {Function}
+             * @type {function}
              */
             this.ondestroy = opts.ondestroy;
         }
 
         if (typeof(opts.onrestart) !== 'undefined') {
             /**
-             * @type {Function}
+             * @type {function}
              */
             this.onrestart = opts.onrestart;
         }
@@ -16779,9 +16157,9 @@ define('qtek/animation/Animation',['require','./Clip','../core/Base'],function(r
          * @param  {Object} target
          * @param  {Object} [options]
          * @param  {boolean} [options.loop]
-         * @param  {Function} [options.getter]
-         * @param  {Function} [options.setter]
-         * @param  {Function} [options.interpolater]
+         * @param  {function} [options.getter]
+         * @param  {function} [options.setter]
+         * @param  {function} [options.interpolater]
          * @return {qtek.animation.Animation._Deferred}
          */
         animate : function(target, options) {
@@ -16837,23 +16215,6 @@ define('qtek/animation/Animation',['require','./Clip','../core/Base'],function(r
         }
     }
 
-    function _cloneValue(value) {
-        if (_isArrayLike(value)) {
-            var len = value.length;
-            if (_isArrayLike(value[0])) {
-                var ret = [];
-                for (var i = 0; i < len; i++) {
-                    ret.push(arraySlice.call(value[i]));
-                }
-                return ret;
-            } else {
-                return arraySlice.call(value)
-            }
-        } else {
-            return value;
-        }
-    }
-
     function _catmullRomInterpolateArray(
         p0, p1, p2, p3, t, t2, t3, out, arrDim
     ) {
@@ -16894,9 +16255,9 @@ define('qtek/animation/Animation',['require','./Clip','../core/Base'],function(r
      * 
      * @param {Object} target
      * @param {boolean} loop
-     * @param {Function} getter
-     * @param {Function} setter
-     * @param {Function} interpolater
+     * @param {function} getter
+     * @param {function} setter
+     * @param {function} interpolater
      */
     function _Deferred(target, loop, getter, setter, interpolater) {
         this._tracks = {};
@@ -16941,9 +16302,7 @@ define('qtek/animation/Animation',['require','./Clip','../core/Base'],function(r
                     if (time !== 0) {
                         this._tracks[propName].push({
                             time : 0,
-                            value : _cloneValue(
-                                this._getter(this._target, propName)
-                            )
+                            value : this._getter(this._target, propName)
                         });   
                     }
                 }
@@ -16956,7 +16315,7 @@ define('qtek/animation/Animation',['require','./Clip','../core/Base'],function(r
         },
         /**
          * callback when running animation
-         * @param  {Function} callback callback have two args, animating target and current percent
+         * @param  {function} callback callback have two args, animating target and current percent
          * @return {qtek.animation.Animation._Deferred}
          * @memberOf qtek.animation.Animation._Deferred.prototype
          */
@@ -17022,7 +16381,18 @@ define('qtek/animation/Animation',['require','./Clip','../core/Base'],function(r
                 var kfValues = [];
                 for (var i = 0; i < trackLen; i++) {
                     kfPercents.push(keyframes[i].time / trackMaxTime);
-                    kfValues.push(keyframes[i].value);
+                    if (isValueArray) {
+                        if (arrDim == 2) {
+                            kfValues[i] = [];
+                            for (var j = 0; j < firstVal.length; j++) {
+                                kfValues[i].push(arraySlice.call(keyframes[i].value[j]));
+                            }
+                        } else {
+                            kfValues.push(arraySlice.call(keyframes[i].value));
+                        }
+                    } else {
+                        kfValues.push(keyframes[i].value);
+                    }
                 }
 
                 // Cache the key of last frame to speed up when 
@@ -17168,7 +16538,7 @@ define('qtek/animation/Animation',['require','./Clip','../core/Base'],function(r
         },
         /**
          * Callback after animation finished
-         * @param {Function} func
+         * @param {function} func
          * @return {qtek.animation.Animation._Deferred}
          * @memberOf qtek.animation.Animation._Deferred.prototype
          */
@@ -17191,6 +16561,272 @@ define('qtek/animation/Animation',['require','./Clip','../core/Base'],function(r
     return Animation;
 });
 
+define('qtek/core/Event',['require','./Base'], function(require) {
+
+    var Base = require('./Base');
+
+    var QEvent = Base.derive({
+        cancelBubble : false
+    }, {
+        stopPropagation : function() {
+            this.cancelBubble = true;
+        }
+    });
+
+    QEvent['throw'] = function(eventType, target, props) {
+        
+        var e = new QEvent(props);
+
+        e.type = eventType;
+        e.target = target;
+
+        // enable bubbling
+        while (target && !e.cancelBubble ) {
+            e.currentTarget = target;
+            target.trigger(eventType, e);
+
+            target = target.parent;
+        }
+    }
+
+    return QEvent;
+} );
+define('qtek/camera/Perspective',['require','../Camera'],function(require) {
+
+    var Camera = require('../Camera');
+
+    /**
+     * @constructor qtek.camera.Perspective
+     * @extends qtek.Camera
+     */
+    var Perspective = Camera.derive(
+    /** @lends qtek.camera.Perspective# */
+    {
+        /**
+         * @type {number}
+         */
+        fov : 50,
+        /**
+         * @type {number}
+         */
+        aspect : 1,
+        /**
+         * @type {number}
+         */
+        near : 0.1,
+        /**
+         * @type {number}
+         */
+        far : 2000
+    },
+    /** @lends qtek.camera.Perspective.prototype */
+    {
+        
+        updateProjectionMatrix : function() {
+            var rad = this.fov / 180 * Math.PI;
+            this.projectionMatrix.perspective(rad, this.aspect, this.near, this.far);
+        },
+        /**
+         * @return {qtek.camera.Perspective}
+         */
+        clone: function() {
+            var camera = Camera.prototype.clone.call(this);
+            camera.fov = this.fov;
+            camera.aspect = this.aspect;
+            camera.near = this.near;
+            camera.far = this.far;
+
+            return camera;
+        }
+    });
+
+    return Perspective;
+} );
+define('qtek/Stage',['require','./core/Base','./Layer','./animation/Animation','./core/Event','./Scene','./Renderer','./camera/Perspective'],function(require) {
+
+    var Base = require('./core/Base');
+    var Layer = require('./Layer');
+    var Animation = require('./animation/Animation');
+    var QEvent = require('./core/Event');
+
+    var Scene3D = require('./Scene');
+    var Renderer3D = require('./Renderer');
+    var Camera3D = require('./camera/Perspective');
+    
+    var Stage = Base.derive(function() {
+        return {
+            container : null,
+
+            width : 100,
+            height : 100,
+
+            _layers : [],
+
+            _layersSorted : [],
+
+            _mouseOverEl : null
+        }
+    }, function() {
+        
+        if (!this.container) {
+            this.container = document.createElement('div');
+        }
+        if (this.container.style.position !== 'absolute' &&
+            this.container.style.position !== 'fixed') {
+            this.container.style.position = 'relative';
+        }
+
+        if (this.width) {
+            this.container.style.width = this.width + 'px';
+        } else {
+            this.width = Math.max(this.container.clientWidth, 1);
+        }
+        if (this.height) {
+            this.container.style.height = this.height + 'px';
+        } else {
+            this.height = Math.max(this.container.clientHeight, 1);
+        }
+
+        this.container.addEventListener("click", this._eventProxy.bind(this, 'click'));
+        this.container.addEventListener("dblclick", this._eventProxy.bind(this, 'dblclick'));
+        this.container.addEventListener("mousemove", this._mouseMoveHandler.bind(this));
+        this.container.addEventListener("mousedown", this._eventProxy.bind(this, 'mousedown'));
+        this.container.addEventListener("mouseup", this._eventProxy.bind(this, 'mouseup'));
+        this.container.addEventListener("mouseout", this._mouseOutHandler.bind(this));
+
+        this.animation = new Animation();
+        this.animation.start();
+
+        this.animation.on('frame', function(frameTime) {
+            this.trigger('frame', frameTime);
+        }, this);
+    }, {
+        createLayer3D : function(options) {
+            options = options || {};
+            options.renderer = options.renderer || new Renderer3D();
+            if (!options.camera) {
+                options.camera = new Camera3D();
+                options.camera.position.z = 1;
+                options.camera.aspect = this.width / this.height;
+            }
+            options.scene = options.scene || new Scene3D();
+
+            var layer = new Layer(options);
+            this.addLayer(layer);
+
+            return layer;
+        },
+
+        addLayer : function(layer) {
+            if (!layer.renderer) {
+                console.warn('Layer don\'t have renderer');
+                return;
+            } else if (!layer.renderer.canvas) {
+                console.warn('Layer renderer don\'t have canvas');
+                return;
+            }
+            var canvas = layer.renderer.canvas;
+
+            layer.renderer.resize(this.width, this.height);
+
+            canvas.style.position = 'absolute';
+            canvas.style.left = '0px';
+            canvas.style.top = '0px';
+
+            this.container.appendChild(canvas);
+
+            this._layers.push(layer);
+            this._layersSorted = this._layers.slice().sort(function(a, b){
+                if (a.z === b.z)
+                    return a.__GUID__ > b.__GUID__ ? 1 : -1;
+                return a.z > b.z ? 1 : -1 ;
+            });
+        },
+
+        removeLayer : function(layer) {
+            this._layers.splice(this._layers.indexOf(layer), 1);
+
+            this.container.removeChild(layer.canvas);
+        },
+
+        resize : function(width, height) {
+            this.width = width;
+            this.height = height;
+
+            for (var i = 0; i < this._layers.length; i++) {
+                this._layers[i].resize(width, height);
+                if (this._layers[i].camera instanceof Camera3D) {
+                    this._layers[i].camera.aspect = width / height;
+                }
+            }
+        },
+
+        render : function() {
+            for (var i = 0; i < this._layers.length; i++) {
+                this._layers[i].render();
+            }
+        },
+
+        _eventProxy : function(type, e) {
+            var e2 = this._assembleEvent(e);
+            var el = this._findTrigger(e2);
+            if (el) {
+                QEvent['throw'](type, el, e2);
+            }
+            this.trigger(type, e2);
+        },
+
+        _mouseMoveHandler : function(e) {
+            var el = this._findTrigger(e);
+            if (el) {
+                QEvent['throw']('mousemove', el, this._assembleEvent(e));
+            }
+
+            if (this._mouseOverEl !== el) {
+                if (this._mouseOverEl) {
+                    QEvent['throw']('mouseout', this._mouseOverEl, this._assembleEvent(e));
+                }
+                if (el) {
+                    QEvent['throw']('mouseover', el, this._assembleEvent(e));
+                }
+                this._mouseOverEl = el;
+            }
+        },
+
+        _mouseOutHandler : function(e) {
+            if (this._mouseOverEl) {
+                QEvent['throw']('mouseout', this._mouseOverEl, this._assembleEvent(e));
+            }
+        },
+
+        _findTrigger : function(e) {
+            var container = this.container;
+            var x = e.x;
+            var y = e.y;
+
+            for (var i = this._layersSorted.length - 1; i >= 0 ; i--) {
+                var layer = this._layersSorted[i];
+                var el = layer.pick(x, y);
+                if (el) {
+                    return el;
+                }
+            }
+        },
+
+        _assembleEvent : function(e){
+            var clientRect = this.container.getBoundingClientRect();
+            return {
+                pageX : e.pageX,
+                pageY : e.pageY,
+                x : e.pageX - clientRect.left - document.body.scrollLeft,
+                y : e.pageY - clientRect.top - document.body.scrollTop
+            }
+        }
+
+    });
+
+    return Stage;
+});
 // 1D Blend clip of blend tree
 // http://docs.unity3d.com/Documentation/Manual/1DBlending.html
 define('qtek/animation/Blend1DClip',['require','./Clip'],function(require) {
@@ -17223,10 +16859,10 @@ define('qtek/animation/Blend1DClip',['require','./Clip'],function(require) {
      * @param {number} [opts.gap]
      * @param {number} [opts.playbackRatio]
      * @param {boolean|number} [opts.loop] If loop is a number, it indicate the loop count of animation
-     * @param {string|Function} [opts.easing]
-     * @param {Function} [opts.onframe]
-     * @param {Function} [opts.ondestroy]
-     * @param {Function} [opts.onrestart]
+     * @param {string|function} [opts.easing]
+     * @param {function} [opts.onframe]
+     * @param {function} [opts.ondestroy]
+     * @param {function} [opts.onrestart]
      * @param {object[]} [opts.inputs]
      * @param {number} [opts.position]
      * @param {qtek.animation.Clip} [opts.output]
@@ -17644,10 +17280,10 @@ define('qtek/animation/Blend2DClip',['require','./Clip','../util/delaunay','../m
      * @param {number} [opts.gap]
      * @param {number} [opts.playbackRatio]
      * @param {boolean|number} [opts.loop] If loop is a number, it indicate the loop count of animation
-     * @param {string|Function} [opts.easing]
-     * @param {Function} [opts.onframe]
-     * @param {Function} [opts.ondestroy]
-     * @param {Function} [opts.onrestart]
+     * @param {string|function} [opts.easing]
+     * @param {function} [opts.onframe]
+     * @param {function} [opts.ondestroy]
+     * @param {function} [opts.onrestart]
      * @param {object[]} [opts.inputs]
      * @param {qtek.math.Vector2} [opts.position]
      * @param {qtek.animation.Clip} [opts.output]
@@ -17794,10 +17430,10 @@ define('qtek/animation/TransformClip',['require','./Clip','glmatrix'],function(r
      * @param {number} [opts.gap]
      * @param {number} [opts.playbackRatio]
      * @param {boolean|number} [opts.loop] If loop is a number, it indicate the loop count of animation
-     * @param {string|Function} [opts.easing]
-     * @param {Function} [opts.onframe]
-     * @param {Function} [opts.ondestroy]
-     * @param {Function} [opts.onrestart]
+     * @param {string|function} [opts.easing]
+     * @param {function} [opts.onframe]
+     * @param {function} [opts.ondestroy]
+     * @param {function} [opts.onrestart]
      * @param {object[]} [opts.keyFrames]
      */
     var TransformClip = function(opts) {
@@ -18105,10 +17741,10 @@ define('qtek/animation/SamplerClip',['require','./Clip','./TransformClip','glmat
      * @param {number} [opts.gap]
      * @param {number} [opts.playbackRatio]
      * @param {boolean|number} [opts.loop] If loop is a number, it indicate the loop count of animation
-     * @param {string|Function} [opts.easing]
-     * @param {Function} [opts.onframe]
-     * @param {Function} [opts.ondestroy]
-     * @param {Function} [opts.onrestart]
+     * @param {string|function} [opts.easing]
+     * @param {function} [opts.onframe]
+     * @param {function} [opts.ondestroy]
+     * @param {function} [opts.onrestart]
      */
     var SamplerClip = function(opts) {
 
@@ -18976,57 +18612,6 @@ define('qtek/camera/Orthographic',['require','../Camera'],function(require) {
     });
 
     return Orthographic;
-} );
-define('qtek/camera/Perspective',['require','../Camera'],function(require) {
-
-    var Camera = require('../Camera');
-
-    /**
-     * @constructor qtek.camera.Perspective
-     * @extends qtek.Camera
-     */
-    var Perspective = Camera.derive(
-    /** @lends qtek.camera.Perspective# */
-    {
-        /**
-         * @type {number}
-         */
-        fov : 50,
-        /**
-         * @type {number}
-         */
-        aspect : 1,
-        /**
-         * @type {number}
-         */
-        near : 0.1,
-        /**
-         * @type {number}
-         */
-        far : 2000
-    },
-    /** @lends qtek.camera.Perspective.prototype */
-    {
-        
-        updateProjectionMatrix : function() {
-            var rad = this.fov / 180 * Math.PI;
-            this.projectionMatrix.perspective(rad, this.aspect, this.near, this.far);
-        },
-        /**
-         * @return {qtek.camera.Perspective}
-         */
-        clone: function() {
-            var camera = Camera.prototype.clone.call(this);
-            camera.fov = this.fov;
-            camera.aspect = this.aspect;
-            camera.near = this.near;
-            camera.far = this.far;
-
-            return camera;
-        }
-    });
-
-    return Perspective;
 } );
 define('qtek/compositor/Graph',['require','../core/Base'],function(require) {
 
@@ -20041,36 +19626,6 @@ define('qtek/compositor/TextureNode',['require','./Node','../FrameBuffer','./tex
 
     return TextureNode;
 });
-define('qtek/core/Event',['require','./Base'], function(require) {
-
-    var Base = require('./Base');
-
-    var QEvent = Base.derive({
-        cancelBubble : false
-    }, {
-        stopPropagation : function() {
-            this.cancelBubble = true;
-        }
-    });
-
-    QEvent['throw'] = function(eventType, target, props) {
-        
-        var e = new QEvent(props);
-
-        e.type = eventType;
-        e.target = target;
-
-        // enable bubbling
-        while (target && !e.cancelBubble ) {
-            e.currentTarget = target;
-            target.trigger(eventType, e);
-
-            target = target.parent;
-        }
-    }
-
-    return QEvent;
-} );
 define('qtek/core/LinkedList',['require'],function(require) {
     
     /**
@@ -20257,7 +19812,7 @@ define('qtek/core/LinkedList',['require'],function(require) {
     }
 
     /**
-     * @param  {Function} cb
+     * @param  {function} cb
      * @param  {} context
      */
     LinkedList.prototype.forEach = function(cb, context) {
@@ -20390,6 +19945,12 @@ define('qtek/core/LRU',['require','./LinkedList'],function(require) {
 
     return LRU;
 });
+;
+define("qtek/deferred/Renderer", function(){});
+
+;
+define("qtek/deferred/StandardMaterial", function(){});
+
 define('qtek/geometry/Cone',['require','../DynamicGeometry','../math/BoundingBox','glmatrix'],function(require) {
 
     var DynamicGeometry = require('../DynamicGeometry');
@@ -20597,7 +20158,7 @@ define('qtek/geometry/Cube',['require','../DynamicGeometry','./Plane','../math/M
                     var attrArray = planes[pos].attributes[attrName].value;
                     for (var i = 0; i < attrArray.length; i++) {
                         var value = attrArray[i];
-                        if (self.inside && attrName === "normal") {
+                        if (this.inside && attrName === "normal") {
                             value[0] = -value[0];
                             value[1] = -value[1];
                             value[2] = -value[2];
@@ -21552,17 +21113,7 @@ define('qtek/loader/GLTF',['require','../core/Base','../core/request','../core/u
         /**
          * @type {string}
          */
-        shaderName : 'buildin.physical',
-
-        /**
-         * @type {boolean}
-         */
-        includeCamera: true,
-
-        /**
-         * @type {boolean}
-         */
-        includeLight: true,
+        shaderName : 'buildin.physical'
     },
 
     /** @lends qtek.loader.GLTF.prototype */
@@ -22178,7 +21729,7 @@ define('qtek/loader/GLTF',['require','../core/Base','../core/request','../core/u
             for (var name in json.nodes) {
                 var nodeInfo = json.nodes[name];
                 var node;
-                if (nodeInfo.camera && this.includeCamera) {
+                if (nodeInfo.camera) {
                     var cameraInfo = json.cameras[nodeInfo.camera];
 
                     if (cameraInfo.projection === "perspective") {
@@ -22197,7 +21748,7 @@ define('qtek/loader/GLTF',['require','../core/Base','../core/request','../core/u
                     node.setName(nodeInfo.name);
                     lib.cameras[nodeInfo.name] = node;
                 }
-                else if (nodeInfo.lights && this.includeLight) {
+                else if (nodeInfo.lights) {
                     var lights = [];
                     for (var i = 0; i < nodeInfo.lights.length; i++) {
                         var lightInfo = json.lights[nodeInfo.lights[i]];
@@ -25004,7 +24555,7 @@ define('qtek/particleSystem/ParticleRenderable',['require','../Renderable','../m
 });
 define('qtek/picking/color.essl',[],function () { return '@export buildin.picking.color.vertex\n\nuniform mat4 worldViewProjection : WORLDVIEWPROJECTION;\n\nattribute vec3 position : POSITION;\n\n#ifdef SKINNING\nattribute vec3 weight : WEIGHT;\nattribute vec4 joint : JOINT;\n\nuniform mat4 skinMatrix[JOINT_NUMBER] : SKIN_MATRIX;\n#endif\n\nvoid main(){\n\n    vec3 skinnedPosition = position;\n\n    #ifdef SKINNING\n        \n        @import buildin.chunk.skin_matrix\n\n        skinnedPosition = (skinMatrixWS * vec4(position, 1.0)).xyz;\n    #endif\n\n    gl_Position = worldViewProjection * vec4(skinnedPosition, 1.0);\n}\n\n@end\n\n@end\n@export buildin.picking.color.fragment\n\nuniform vec4 color : [1.0, 1.0, 1.0, 1.0];\n\nvoid main(){\n    gl_FragColor = color;\n}\n\n@end';});
 
-define('qtek/picking/PixelPicking',['require','../core/Base','../FrameBuffer','../texture/Texture2D','../Shader','../Material','./color.essl'],function (require) {
+define('qtek/picking/Pixel',['require','../core/Base','../FrameBuffer','../texture/Texture2D','../Shader','../Material','./color.essl'],function (require) {
 
     var Base = require('../core/Base');
     var FrameBuffer = require('../FrameBuffer');
@@ -25036,10 +24587,6 @@ define('qtek/picking/PixelPicking',['require','../core/Base','../FrameBuffer','.
             _idOffset : 0
         }
     }, function() {
-        if (this.renderer) {
-            this.width = this.renderer.width;
-            this.height = this.renderer.height;
-        }
         this.init();
     }, {
         init : function() {
@@ -25155,160 +24702,6 @@ define('qtek/picking/PixelPicking',['require','../core/Base','../FrameBuffer','.
     }
 
     return PixelPicking;
-});
-define('qtek/picking/RayPicking',['require','../core/Base','../math/Ray','../math/Vector2','../math/Vector3','../math/Matrix4','../Renderable','../StaticGeometry','../core/glenum'],function(require) {
-    
-    var Base = require('../core/Base');
-    var Ray = require('../math/Ray');
-    var Vector2 = require('../math/Vector2');
-    var Vector3 = require('../math/Vector3');
-    var Matrix4 = require('../math/Matrix4');
-    var Renderable = require('../Renderable');
-    var StaticGeometry = require('../StaticGeometry');
-    var glenum = require('../core/glenum');
-
-    var RayPicking = Base.derive({
-        scene: null,
-        camera: null,
-        renderer: null
-    }, function() {
-        this._ray = new Ray();
-        this._ndc = new Vector2();
-    }, {
-
-        pick: function(x, y) {
-            var out = this.pickAll(x, y);
-            return out[0] || null;
-        },
-
-        pickAll: function(x, y) {
-            this.renderer.screenToNdc(x, y, this._ndc);
-            this.camera.castRay(this._ndc, this._ray);
-
-            var output = [];
-
-            this._intersectNode(this.scene, output);
-
-            output.sort(this._intersectionCompareFunc);
-
-            return output;
-        },
-
-        _intersectNode: function(node, out) {
-            if ((node instanceof Renderable) && node.geometry) {
-                if (node.geometry.isUseFace()) {
-                    this._intersectRenderable(node, out);
-                }
-            }
-            for (var i = 0; i < node._children.length; i++) {
-                this._intersectNode(node._children[i], out);
-            }
-        },
-
-        _intersectRenderable: (function() {
-            
-            var v1 = new Vector3();
-            var v2 = new Vector3();
-            var v3 = new Vector3();
-            var intersectionPoint = new Vector3();
-            var ray = new Ray();
-            var worldInverse = new Matrix4();
-
-            return function(renderable, out) {
-                
-                ray.copy(this._ray);
-                Matrix4.invert(worldInverse, renderable.worldTransform);
-
-                ray.applyTransform(worldInverse);
-
-                var geometry = renderable.geometry;
-                if (geometry.boundingBox) {
-                    if (!ray.intersectBoundingBox(geometry.boundingBox)) {
-                        return false;
-                    }
-                }
-                var isStatic = geometry instanceof StaticGeometry;
-                var cullBack = (renderable.cullFace === glenum.BACK && renderable.frontFace === glenum.CCW)
-                            || (renderable.cullFace === glenum.FRONT && renderable.frontFace === glenum.CW);
-
-                if (isStatic) {
-                    var faces = geometry.faces;
-                    var positions = geometry.attributes.position.value;
-                    for (var i = 0; i < faces.length;) {
-                        var i1 = faces[i++] * 3;
-                        var i2 = faces[i++] * 3;
-                        var i3 = faces[i++] * 3;
-
-                        v1._array[0] = positions[i1];
-                        v1._array[1] = positions[i1 + 1];
-                        v1._array[2] = positions[i1 + 2];
-
-                        v2._array[0] = positions[i2];
-                        v2._array[1] = positions[i2 + 1];
-                        v2._array[2] = positions[i2 + 2];
-                        
-                        v3._array[0] = positions[i3];
-                        v3._array[1] = positions[i3 + 1];
-                        v3._array[2] = positions[i3 + 2];
-
-                        var point;
-                        if (cullBack) {
-                            point = ray.intersectTriangle(v1, v2, v3, renderable.culling, intersectionPoint);
-                        } else {
-                            point = ray.intersectTriangle(v1, v3, v2, renderable.culling, intersectionPoint);
-                        }
-                        if (point) {
-                            var pointW = new Vector3();
-                            Vector3.transformMat4(pointW, point, renderable.worldTransform);
-                            out.push(new RayPicking.Intersection(
-                                pointW, renderable, [[i1, i2, i3]], Vector3.dist(pointW, this._ray.origin)
-                            ));
-                        }
-                    }
-                } else {
-                    var faces = geometry.faces;
-                    var positions = geometry.attributes.position.value;
-                    for (var i = 0; i < faces.length; i++) {
-                        var face = faces[i];
-                        var i1 = face[0];
-                        var i2 = face[1];
-                        var i3 = face[2];
-
-                        v1.setArray(positions[i1]);
-                        v2.setArray(positions[i2]);
-                        v3.setArray(positions[i3]);
-
-                        var point;
-                        if (cullBack) {
-                            point = ray.intersectTriangle(v1, v2, v3, renderable.culling, intersectionPoint);
-                        } else {
-                            point = ray.intersectTriangle(v1, v3, v2, renderable.culling, intersectionPoint);
-                        }
-                        if (point) {
-                            var pointW = new Vector3();
-                            Vector3.transformMat4(pointW, point, renderable.worldTransform);
-                            out.push(new RayPicking.Intersection(
-                                pointW, renderable, [i1, i2, i3], Vector3.dist(pointW, this._ray.origin)
-                            ));
-                        }
-                    }
-                }
-            };
-        })(),
-
-        _intersectionCompareFunc: function(a, b) {
-            return a.distance - b.distance;
-        }
-    });
-
-    RayPicking.Intersection = function(point, target, tri, distance) {
-        this.point = point;
-        this.target = target;
-        this.triangle = tri;
-        this.distance = distance;
-    }
-
-    return RayPicking;
 });
 define('qtek/plugin/FirstPersonControl',['require','../core/Base','../math/Vector3','../math/Matrix4','../math/Quaternion'],function(require) {
 
@@ -27861,8 +27254,8 @@ define('qtek/util/texture',['require','../Texture','../texture/Texture2D','../te
     var textureUtil = {
         /**
          * @param  {string|object} path
-         * @param  {Function} [onsuccess]
-         * @param  {Function} [onerror]
+         * @param  {function} [onsuccess]
+         * @param  {function} [onerror]
          * @return {qtek.Texture}
          *
          * @memberOf qtek.util.texture
@@ -27919,8 +27312,8 @@ define('qtek/util/texture',['require','../Texture','../texture/Texture2D','../te
          * @param  {string} path
          * @param  {qtek.texture.TextureCube} cubeMap
          * @param  {qtek.Renderer} renderer
-         * @param  {Function} [onsuccess]
-         * @param  {Function} [onerror]
+         * @param  {function} [onsuccess]
+         * @param  {function} [onerror]
          * 
          * @memberOf qtek.util.texture
          */
@@ -28031,167 +27424,3 @@ define('qtek/util/texture',['require','../Texture','../texture/Texture2D','../te
 
     return textureUtil;
 });
-/** @namespace qtek */
-/** @namespace qtek.math */
-/** @namespace qtek.animation */
-/** @namespace qtek.async */
-/** @namespace qtek.camera */
-/** @namespace qtek.compositor */
-/** @namespace qtek.core */
-/** @namespace qtek.geometry */
-/** @namespace qtek.helper */
-/** @namespace qtek.light */
-/** @namespace qtek.loader */
-/** @namespace qtek.particleSystem */
-/** @namespace qtek.plugin */
-/** @namespace qtek.prePass */
-/** @namespace qtek.shader */
-/** @namespace qtek.texture */
-/** @namespace qtek.util */
-define('qtek/qtek',['require','qtek/Camera','qtek/DynamicGeometry','qtek/FrameBuffer','qtek/Geometry','qtek/Joint','qtek/Light','qtek/Material','qtek/Mesh','qtek/Node','qtek/Renderable','qtek/Renderer','qtek/Scene','qtek/Shader','qtek/Skeleton','qtek/StaticGeometry','qtek/Texture','qtek/animation/Animation','qtek/animation/Blend1DClip','qtek/animation/Blend2DClip','qtek/animation/Clip','qtek/animation/SamplerClip','qtek/animation/SkinningClip','qtek/animation/TransformClip','qtek/animation/easing','qtek/async/Task','qtek/async/TaskGroup','qtek/camera/Orthographic','qtek/camera/Perspective','qtek/compositor/Compositor','qtek/compositor/Graph','qtek/compositor/Node','qtek/compositor/Pass','qtek/compositor/SceneNode','qtek/compositor/TextureNode','qtek/compositor/texturePool','qtek/core/Base','qtek/core/Cache','qtek/core/Event','qtek/core/LRU','qtek/core/LinkedList','qtek/core/glenum','qtek/core/glinfo','qtek/core/mixin/derive','qtek/core/mixin/notifier','qtek/core/request','qtek/core/util','qtek/geometry/Cone','qtek/geometry/Cube','qtek/geometry/Cylinder','qtek/geometry/Plane','qtek/geometry/Sphere','qtek/light/Ambient','qtek/light/Directional','qtek/light/Point','qtek/light/Spot','qtek/loader/FX','qtek/loader/GLTF','qtek/loader/ThreeModel','qtek/math/BoundingBox','qtek/math/Frustum','qtek/math/Matrix2','qtek/math/Matrix2d','qtek/math/Matrix3','qtek/math/Matrix4','qtek/math/Plane','qtek/math/Quaternion','qtek/math/Ray','qtek/math/Value','qtek/math/Vector2','qtek/math/Vector3','qtek/math/Vector4','qtek/particleSystem/Emitter','qtek/particleSystem/Field','qtek/particleSystem/ForceField','qtek/particleSystem/Particle','qtek/particleSystem/ParticleRenderable','qtek/picking/PixelPicking','qtek/picking/RayPicking','qtek/plugin/FirstPersonControl','qtek/plugin/InfinitePlane','qtek/plugin/OrbitControl','qtek/plugin/Skybox','qtek/plugin/Skydome','qtek/prePass/EnvironmentMap','qtek/prePass/Reflection','qtek/prePass/ShadowMap','qtek/shader/library','qtek/texture/Texture2D','qtek/texture/TextureCube','qtek/util/dds','qtek/util/delaunay','qtek/util/hdr','qtek/util/mesh','qtek/util/texture','glmatrix'], function(require){
-	
-	var exportsObject =  {
-	"Camera": require('qtek/Camera'),
-	"DynamicGeometry": require('qtek/DynamicGeometry'),
-	"FrameBuffer": require('qtek/FrameBuffer'),
-	"Geometry": require('qtek/Geometry'),
-	"Joint": require('qtek/Joint'),
-	"Light": require('qtek/Light'),
-	"Material": require('qtek/Material'),
-	"Mesh": require('qtek/Mesh'),
-	"Node": require('qtek/Node'),
-	"Renderable": require('qtek/Renderable'),
-	"Renderer": require('qtek/Renderer'),
-	"Scene": require('qtek/Scene'),
-	"Shader": require('qtek/Shader'),
-	"Skeleton": require('qtek/Skeleton'),
-	"StaticGeometry": require('qtek/StaticGeometry'),
-	"Texture": require('qtek/Texture'),
-	"animation": {
-		"Animation": require('qtek/animation/Animation'),
-		"Blend1DClip": require('qtek/animation/Blend1DClip'),
-		"Blend2DClip": require('qtek/animation/Blend2DClip'),
-		"Clip": require('qtek/animation/Clip'),
-		"SamplerClip": require('qtek/animation/SamplerClip'),
-		"SkinningClip": require('qtek/animation/SkinningClip'),
-		"TransformClip": require('qtek/animation/TransformClip'),
-		"easing": require('qtek/animation/easing')
-	},
-	"async": {
-		"Task": require('qtek/async/Task'),
-		"TaskGroup": require('qtek/async/TaskGroup')
-	},
-	"camera": {
-		"Orthographic": require('qtek/camera/Orthographic'),
-		"Perspective": require('qtek/camera/Perspective')
-	},
-	"compositor": {
-		"Compositor": require('qtek/compositor/Compositor'),
-		"Graph": require('qtek/compositor/Graph'),
-		"Node": require('qtek/compositor/Node'),
-		"Pass": require('qtek/compositor/Pass'),
-		"SceneNode": require('qtek/compositor/SceneNode'),
-		"TextureNode": require('qtek/compositor/TextureNode'),
-		"texturePool": require('qtek/compositor/texturePool')
-	},
-	"core": {
-		"Base": require('qtek/core/Base'),
-		"Cache": require('qtek/core/Cache'),
-		"Event": require('qtek/core/Event'),
-		"LRU": require('qtek/core/LRU'),
-		"LinkedList": require('qtek/core/LinkedList'),
-		"glenum": require('qtek/core/glenum'),
-		"glinfo": require('qtek/core/glinfo'),
-		"mixin": {
-			"derive": require('qtek/core/mixin/derive'),
-			"notifier": require('qtek/core/mixin/notifier')
-		},
-		"request": require('qtek/core/request'),
-		"util": require('qtek/core/util')
-	},
-	"geometry": {
-		"Cone": require('qtek/geometry/Cone'),
-		"Cube": require('qtek/geometry/Cube'),
-		"Cylinder": require('qtek/geometry/Cylinder'),
-		"Plane": require('qtek/geometry/Plane'),
-		"Sphere": require('qtek/geometry/Sphere')
-	},
-	"light": {
-		"Ambient": require('qtek/light/Ambient'),
-		"Directional": require('qtek/light/Directional'),
-		"Point": require('qtek/light/Point'),
-		"Spot": require('qtek/light/Spot')
-	},
-	"loader": {
-		"FX": require('qtek/loader/FX'),
-		"GLTF": require('qtek/loader/GLTF'),
-		"ThreeModel": require('qtek/loader/ThreeModel')
-	},
-	"math": {
-		"BoundingBox": require('qtek/math/BoundingBox'),
-		"Frustum": require('qtek/math/Frustum'),
-		"Matrix2": require('qtek/math/Matrix2'),
-		"Matrix2d": require('qtek/math/Matrix2d'),
-		"Matrix3": require('qtek/math/Matrix3'),
-		"Matrix4": require('qtek/math/Matrix4'),
-		"Plane": require('qtek/math/Plane'),
-		"Quaternion": require('qtek/math/Quaternion'),
-		"Ray": require('qtek/math/Ray'),
-		"Value": require('qtek/math/Value'),
-		"Vector2": require('qtek/math/Vector2'),
-		"Vector3": require('qtek/math/Vector3'),
-		"Vector4": require('qtek/math/Vector4')
-	},
-	"particleSystem": {
-		"Emitter": require('qtek/particleSystem/Emitter'),
-		"Field": require('qtek/particleSystem/Field'),
-		"ForceField": require('qtek/particleSystem/ForceField'),
-		"Particle": require('qtek/particleSystem/Particle'),
-		"ParticleRenderable": require('qtek/particleSystem/ParticleRenderable')
-	},
-	"picking": {
-		"PixelPicking": require('qtek/picking/PixelPicking'),
-		"RayPicking": require('qtek/picking/RayPicking')
-	},
-	"plugin": {
-		"FirstPersonControl": require('qtek/plugin/FirstPersonControl'),
-		"InfinitePlane": require('qtek/plugin/InfinitePlane'),
-		"OrbitControl": require('qtek/plugin/OrbitControl'),
-		"Skybox": require('qtek/plugin/Skybox'),
-		"Skydome": require('qtek/plugin/Skydome')
-	},
-	"prePass": {
-		"EnvironmentMap": require('qtek/prePass/EnvironmentMap'),
-		"Reflection": require('qtek/prePass/Reflection'),
-		"ShadowMap": require('qtek/prePass/ShadowMap')
-	},
-	"shader": {
-		"library": require('qtek/shader/library')
-	},
-	"texture": {
-		"Texture2D": require('qtek/texture/Texture2D'),
-		"TextureCube": require('qtek/texture/TextureCube')
-	},
-	"util": {
-		"dds": require('qtek/util/dds'),
-		"delaunay": require('qtek/util/delaunay'),
-		"hdr": require('qtek/util/hdr'),
-		"mesh": require('qtek/util/mesh'),
-		"texture": require('qtek/util/texture')
-	}
-};
-
-    var glMatrix = require('glmatrix');
-    exportsObject.glMatrix = glMatrix;
-    
-    return exportsObject;
-});
-define('qtek', ['qtek/qtek'], function (main) { return main; });
-
-var qtek = require("qtek");
-
-for(var name in qtek){
-	_exports[name] = qtek[name];
-}
-
-})
