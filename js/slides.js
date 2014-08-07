@@ -26,6 +26,8 @@ var slides = (function() {
 		if (typeof(container) == 'string') {
 			container = g(container );
 		}
+		container.style.display = 'block';
+
 		opt = opt || {};
 
 		if (opt.actions) {

@@ -132,11 +132,13 @@
                 <img src="imgs/qtek.png" style="vertical-align:middle; margin:100px;"  width="300px;" alt="">
             </article>
             <article style="text-align:center">
-                <ul class="schedule-list">
+                <ul class="schedule-list small">
                     <li>性能优化</li>
+                    <li>画面提升</li>
                     <li>动画系统</li>
                     <li>粒子特效</li>
                     <li>物理引擎</li>
+                    <li>模型数据交换格式</li>
                     <li>易用性</li>
                 </ul>
             </article>
@@ -146,7 +148,7 @@
             <article>
                 <ul>
                     <li class="item">
-                        <h4>1. 代码层面的优化</h4>
+                        <h4>1. 代码优化</h4>
                         <ul>
                             <li class="item">
                                 <span>优化前
@@ -214,9 +216,6 @@
                 <h1>动画系统</h1>
             </article>
             <article>
-                <h2>动画混合</h2>
-            </article>
-            <article>
                 <h1>粒子特效</h1>
             </article>
             <article>
@@ -229,6 +228,12 @@
                         使用WebWorker，通信数据统一打包成ArrayBuffer
                     </li>
                 </ul>
+            </article>
+            <article style="text-align:center;">
+                <h1>通用模型数据交换格式</h1>
+                <a href="https://github.com/KhronosGroup/glTF" target="_blank">
+                    <img src="imgs/glTF_500.png" style="width: 400px;" alt="">
+                </a>
             </article>
             <article>
                 <h1>易用性</h1>
@@ -245,16 +250,19 @@
                 </h3>
                 <img src="imgs/qtek-playground.png" alt="">
             </article>
+            <article>
+                <h1>应用</h1>
+            </article>
             <article style="text-align:center">
                 <h2>第一人称射击 DEMO</h2>
                 <img src="imgs/bootcamp.jpg" alt="">
             </article>
             <article style="text-align:center">
-                <h2>应用 - 世界杯彩蛋</h2>
+                <h2>世界杯彩蛋</h2>
                 <img src="imgs/worldcup.jpg" alt="">
             </article>
             <article style="text-align:center">
-                <h1>WebGL加速2D渲染</h1>
+                <h1>WebGL加速2D渲染 - ZRender-X</h1>
             </article>
             <article>
                 <ul class="schedule-list small">
@@ -287,6 +295,24 @@
             </article>
             <article>
                 <canvas class="item" data-action="drawSVG3D" style="width:100%;height:100%;"></canvas>
+            </article>
+            <article>
+                <h2>Benchmark.js - Chrome (1k shapes)</h2>
+                <div class="item" style="height:500px" data-action="zrChromeBench"></div>
+                <div style="font-size: 14px; line-height: 25px;">
+                    静态 - 平移缩放浏览整个画布 <br />
+                    半静态 - 修改每个 shape 的变换，颜色，透明度 <br />
+                    动态 - 每次 path 都是重新计算 <br />
+                </div>
+            </article>
+            <article>
+                <h2>Benchmark.js - Firefox (1k shapes)</h2>
+                <div class="item" style="height:500px" data-action="zrFirefoxBench"></div>
+                <div style="font-size: 14px; line-height: 25px;">
+                    静态 - 平移缩放浏览整个画布 <br />
+                    半静态 - 修改每个 shape 的变换，颜色，透明度 <br />
+                    动态 - 每次 path 都是重新计算 <br />
+                </div>
             </article>
             <article>
                 <h1>ThankS</h1>

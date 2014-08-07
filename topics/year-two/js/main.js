@@ -15,6 +15,8 @@ define(function(require) {
     var orbit = require('./orbit');
     var svg = require('./svg');
     var svg3d = require('./svg3d');
+    var zrChromeBench = require('./zrChromeBench');
+    var zrFirefoxBench = require('./zrFirefoxBench');
 
     $(".lang-html").each(function() {
         // Encode html
@@ -192,6 +194,24 @@ define(function(require) {
             },
             leave: function() {
                 svg3d.dispose();
+            }
+        },
+
+        zrChromeBench: {
+            enter: function(dom) {
+                zrChromeBench.init(dom);
+            },
+            leave: function() {
+                zrChromeBench.dispose();
+            }
+        },
+
+        zrFirefoxBench: {
+            enter: function(dom) {
+                zrFirefoxBench.init(dom);
+            },
+            leave: function() {
+                zrFirefoxBench.dispose();
             }
         }
     }
