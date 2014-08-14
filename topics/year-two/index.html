@@ -68,12 +68,12 @@
             </article>
             <article>
                 <div style="text-align:center">
-                    <img src="imgs/echarts.png" style="vertical-align:middle; margin:100px;" width="300px" alt="">
-                    <img src="imgs/qtek.png" style="vertical-align:middle; margin:100px;"  width="300px;" alt="">
+                    <img data-src="imgs/echarts.png" style="vertical-align:middle; margin:100px;" width="300px" alt="">
+                    <img data-src="imgs/qtek.png" style="vertical-align:middle; margin:100px;"  width="300px;" alt="">
                 </div>
             </article>
             <article style="text-align:center">
-                <img src="imgs/echarts.png" width="400px;" />
+                <img data-src="imgs/echarts.png" width="400px;" />
             </article>
             <article>
                 <ul class="schedule-list" style="width:400px;">
@@ -121,6 +121,17 @@
                 </div>
                 <div class="item" data-action="drawForce" style="width: 70%; height: 400px; float:left;"></div>
             </article>
+            <article style="text-align:center;">
+                <h2>应用 - 和知识图谱合作的小时代专题</h2>
+                <a href="http://tupu.baidu.com/zhuanti/xiaoshidai/" target="_blank">
+                    <img width="700" src="imgs/xiaoshidai.jpg" alt="">
+                </a>
+                <div style="font-size: 16px; line-height: 30px;">
+                    力导向布局 <br />
+                    ZRender自定义绘制 <br />
+                    用WebGL绘制焦外模糊，背景粒子等复杂特效 <br />
+                </div>
+            </article>
             <article>
                 <h2>地图数据压缩</h2>
                 <ul>
@@ -129,7 +140,7 @@
                 </ul>
             </article>
             <article style="text-align:center">
-                <img src="imgs/qtek.png" style="vertical-align:middle; margin:100px;"  width="300px;" alt="">
+                <img data-src="imgs/qtek.png" style="vertical-align:middle; margin:100px;"  width="300px;" alt="">
             </article>
             <article style="text-align:center">
                 <ul class="schedule-list small">
@@ -145,71 +156,117 @@
             <article>
                 <h1>性能优化</h1>
             </article>
-            <article>
-                <ul>
-                    <li class="item">
-                        <h4>1. 代码优化</h4>
-                        <ul>
-                            <li class="item">
-                                <span>优化前
-                                    <img src="imgs/before-opt0.jpeg" alt="" height = "50"  style="vertical-align:middle">
-                                </span>
-                                <span>
-                                    优化后
-                                    <img src="imgs/after-opt0.jpeg" alt="" height="50"  style="vertical-align:middle">
-                                </span>
-                            </li>
-                            <li class="item" style="margin-top:20px;">
-                                5000个物体的场景每一帧的更新需要几十ms => 1w个物体只需要 2~3ms
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="item">
-                        <h4>2. 减少GC开销, 顶点数据和动画数据使用TypedArray保存</h4>
-                        <ul>
-                            <li class="item" style="list-style:none">
-                                <img src="imgs/before-opt1.jpeg" alt="">
-                            </li>
-                            <li class="item" style="margin-top:20px;">
-                                100w+ 顶点和 1k+ 物体的场景加载从10s+降到几百ms
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="item">
-                        3. 通过裁剪减少 draw call
-                    </li>
-                    <li class="item">
-                        4. 缓存和合并, 减少 gl call
-                    </li>
-                </ul>
+            <article style="text-align:center;font-family:Arial;">
+                <img data-src="imgs/cubes-0.jpg" alt="">
+                <div style="font-size:40px;color:#a32b2b;margin-top:-350px;text-shadow: 0px 0px 5px black;">
+                    <div class="item">
+                        5k Cubes
+                    </div>
+                    <div class="item" style="margin-top: 10px;">
+                        10fps
+                    </div>
+                </div>
+            </article>
+            <article style="text-align:center;">
+                <h2 class="item">1. 代码优化</h2>
+                <div class="item">
+                    <img data-src="imgs/before-opt0.jpeg" alt="">
+                </div>
+                <div class="item">
+                    <h4>
+                        V8 Deoptimize 导致开销都在属性查找上
+                    </h4>
+                </div>
+                <div class="item">
+                    <img data-src="imgs/after-opt0.jpeg" alt="">
+                </div>
+                <h2 class="item">2. 场景裁剪</h2>
+                <h2 class="item">3. 减少GL Call</h2>
+            </article>
+            <article style="text-align:center;font-family:Arial;">
+                <img data-src="imgs/cubes-0.jpg" alt="">
+                <div style="font-size:40px;color:#297123;margin-top:-350px;text-shadow: 0px 0px 5px black;">
+                    <div class="item">
+                        1w Cubes
+                    </div>
+                    <div class="item" style="margin-top: 10px;">
+                        45fps
+                    </div>
+                </div>
+            </article>
+            <article style="text-align:center;font-family:Arial;">
+                <img data-src="imgs/bootcamp-free.jpg" alt="">
+                <div style="font-size:26px;color:white;margin-top: -400px;">
+                    <div class="item">
+                        场景物体 1k+
+                    </div>
+                    <div class="item" style="margin-top: 10px;">
+                        面 63w
+                    </div>
+                    <div class="item" style="margin-top: 10px;">
+                        顶点 163w
+                    </div>
+                    <div class="item" style="margin-top: 10px;">
+                        场景文件 17M
+                    </div>
+                    <div class="item" style="margin-top: 10px;">
+                        纹理大小 100M
+                    </div>
+                    <div class="item" style="margin-top: 10px;color:#a32b2b;">
+                        加载时间 10s+
+                    </div>
+                </div>
+            </article>
+            <article style="text-align:center;">
+                <h2>GC</h2>
+                <div class="item">
+                    <img data-src="imgs/before-opt1.jpeg" alt="">
+                </div>
+                <div class="item">
+                    <img data-src="imgs/gc-log.jpeg" alt="">
+                </div>
+                <div class="item">
+                    <h3>顶点数据和动画数据使用TypedArray保存</h3>
+                </div>
+                <div class="item">
+                    <img data-src="imgs/heap-after.jpeg" alt="">
+                </div>
+            </article>
+            <article style="text-align:center;font-family:Arial;">
+                <img data-src="imgs/bootcamp-free.jpg" alt="">
+                <div style="font-size:40px;color:#297123;margin-top: -300px;">
+                    <div class="item">
+                        加载时间 500ms-
+                    </div>
+                </div>
             </article>
             <article style="text-align:center">
                 <h2>Sponza Demo</h2>
                 <p>10fps -> 60fps</p>
-                <img src="imgs/sponza.jpg" />
+                <img data-src="imgs/sponza.jpg" />
             </article>
             <article>
                 <h1>画面提升</h1>
             </article>
             <article style="text-align:center">
                 <h2>基于物理模型的材质</h2>
-                <img src="imgs/pbs.png" />
+                <img data-src="imgs/pbs.png" />
             </article>
             <article style="text-align:center">
                 <h2>完整的HDR Pipeline以及镜头特效</h2>
-                <img src="http://ww1.sinaimg.cn/large/6d3f08cbjw1eb7yuefgsjj21hc0tuwkw.jpg" alt="" style="width:90%;max-width:2000px;">
+                <img data-src="http://ww1.sinaimg.cn/large/6d3f08cbjw1eb7yuefgsjj21hc0tuwkw.jpg" alt="" style="width:90%;max-width:2000px;">
             </article>
             <article style="text-align:center">
                 <div style="position:relative; margin:0px auto; width: 100%; height: 100%;">
-                    <img src="imgs/pp-before.jpg" style="position:absolute;left:0px;top:0px;max-width:2000px;width:100%;" alt="" />
-                    <img src="imgs/pp-after.jpg" class="item" style="position:absolute;left:0px;top:0px;max-width:2000px;width:100%;" alt="" />
+                    <img data-src="imgs/pp-before.jpg" style="position:absolute;left:0px;top:0px;max-width:2000px;width:100%;" alt="" />
+                    <img data-src="imgs/pp-after.jpg" class="item" style="position:absolute;left:0px;top:0px;max-width:2000px;width:100%;" alt="" />
                 </div>
             </article>
             <article style="text-align:center">
                 <h2>阴影的改进(PSSM)</h2>
                 <div style="position:relative; margin:0px auto; width: 100%;">
-                    <img src="imgs/pssm-before.jpg" style="position:absolute;left:0px;top:0px;max-width:2000px;width:100%;" alt="" />
-                    <img src="imgs/pssm-after.jpg" class="item"  style="position:absolute;left:0px;top:0px;max-width:2000px;width:100%;" alt="" />
+                    <img data-src="imgs/pssm-before.jpg" style="position:absolute;left:0px;top:0px;max-width:2000px;width:100%;" alt="" />
+                    <img data-src="imgs/pssm-after.jpg" class="item"  style="position:absolute;left:0px;top:0px;max-width:2000px;width:100%;" alt="" />
                 </div>
             </article>
             <article>
@@ -220,20 +277,18 @@
             </article>
             <article>
                 <h1>物理引擎</h1>
-                <ul>
-                    <li class="item">
-                        基于Ammo.js
-                    </li>
-                    <li class="item">
-                        使用WebWorker，通信数据统一打包成ArrayBuffer
-                    </li>
-                </ul>
+            </article>
+            <article>
+                <div class="item" data-action="showPhysics" style="width:100%; height:100%;"></div>
             </article>
             <article style="text-align:center;">
                 <h1>通用模型数据交换格式</h1>
                 <a href="https://github.com/KhronosGroup/glTF" target="_blank">
-                    <img src="imgs/glTF_500.png" style="width: 400px;" alt="">
+                    <img data-src="imgs/glTF_500.png" style="width: 400px;" alt="">
                 </a>
+            </article>
+            <article style="text-align:center;">
+                <img data-src="imgs/web3d-flow.jpg" alt="">
             </article>
             <article>
                 <h1>易用性</h1>
@@ -242,24 +297,31 @@
                 <h3>
                     API
                 </h3>
-                <img src="imgs/qtek-api.png" alt="" >
+                <img data-src="imgs/qtek-api.png" alt="" >
             </article>
             <article style="text-align:center">
                 <h3>
                     Online playground
                 </h3>
-                <img src="imgs/qtek-playground.png" alt="">
-            </article>
-            <article>
-                <h1>应用</h1>
+                <img data-src="imgs/qtek-playground.png" alt="">
             </article>
             <article style="text-align:center">
                 <h2>第一人称射击 DEMO</h2>
-                <img src="imgs/bootcamp.jpg" alt="">
+                <img data-src="imgs/bootcamp.jpg" alt="">
+            </article>
+            <article>
+                <h1>就差别人来用了！</h1>
+            </article>
+            <article>
+                <h1>项目应用</h1>
             </article>
             <article style="text-align:center">
-                <h2>世界杯彩蛋</h2>
-                <img src="imgs/worldcup.jpg" alt="">
+                <h2>搜索结果页世界杯彩蛋</h2>
+                <img data-src="imgs/worldcup.jpg" alt="">
+            </article>
+            <article style="text-align:center">
+                <h2>彩蛋编辑器</h2>
+                <img data-src="imgs/worldcup-editor.jpg" alt="">
             </article>
             <article style="text-align:center">
                 <h1>WebGL加速2D渲染 - ZRender-X</h1>
@@ -297,21 +359,25 @@
                 <canvas class="item" data-action="drawSVG3D" style="width:100%;height:100%;"></canvas>
             </article>
             <article>
+                <h2>Benchmark.js - 1k shapes</h2>
+                <img data-src="imgs/benchmark.jpg" alt="" />
+            </article>
+            <article>
                 <h2>Benchmark.js - Chrome (1k shapes)</h2>
-                <div class="item" style="height:500px" data-action="zrChromeBench"></div>
+                <div class="item" style="height:400px" data-action="zrChromeBench"></div>
                 <div style="font-size: 14px; line-height: 25px;">
-                    静态 - 平移缩放浏览整个画布 <br />
-                    半静态 - 修改每个 shape 的变换，颜色，透明度 <br />
-                    动态 - 每次 path 都是重新计算 <br />
+                    静态(ZRender-X) - 平移缩放浏览整个画布 <br />
+                    半静态(ZRender-X) - 修改每个 shape 的变换，颜色，透明度 <br />
+                    动态(ZRender-X) - 每次 path 都是重新计算 <br />
                 </div>
             </article>
             <article>
                 <h2>Benchmark.js - Firefox (1k shapes)</h2>
-                <div class="item" style="height:500px" data-action="zrFirefoxBench"></div>
+                <div class="item" style="height:400px" data-action="zrFirefoxBench"></div>
                 <div style="font-size: 14px; line-height: 25px;">
-                    静态 - 平移缩放浏览整个画布 <br />
-                    半静态 - 修改每个 shape 的变换，颜色，透明度 <br />
-                    动态 - 每次 path 都是重新计算 <br />
+                    静态(ZRender-X) - 平移缩放浏览整个画布 <br />
+                    半静态(ZRender-X) - 修改每个 shape 的变换，颜色，透明度 <br />
+                    动态(ZRender-X) - 每次 path 都是重新计算 <br />
                 </div>
             </article>
             <article>
@@ -338,11 +404,12 @@
         <script type="text/javascript" src="../../js/lib/prettify.js"></script>
         <script type="text/javascript" src="../../js/slides.js"></script>
         <script type="text/javascript" src="../../js/lib/esl.js"></script>
-        <script type="text/javascript" src="../../js/lib/echarts-original.js"></script>
-        <script type="text/javascript" src="../../js/lib/zrender-original.js"></script>
+        <script type="text/javascript" src="../../js/lib/echarts.js"></script>
+        <script type="text/javascript" src="../../js/lib/zrender.js"></script>
         <script type="text/javascript" src="../../js/lib/dagre.js"></script>
         <script type="text/javascript" src="../../js/lib/qtek.amd.min.js"></script>
         <script type="text/javascript" src="../../js/lib/qtek-2d.amd.min.js"></script>
+        <script type="text/javascript" src="../../js/lib/qtek-physics.amd.min.js"></script>
 
         <script type="text/javascript">
             require(['js/main']);

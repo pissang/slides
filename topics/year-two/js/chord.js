@@ -1,7 +1,7 @@
 define(function(require) {
 
     var echarts = require('echarts');
-    require('echarts/chart/chord')
+    require('echarts/chart/chord');
 
     var ec;
 

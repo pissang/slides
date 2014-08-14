@@ -3,6 +3,8 @@ define(function(require) {
     var echarts = require('echarts');
     require('echarts/chart/force');
 
+    var infographic = require('../../../js/lib/theme/infographic');
+
     var webkitDepData = require('./webkit-dep');
     webkitDepData.minRadius = 5;
     webkitDepData.maxRadius = 8;
@@ -11,11 +13,11 @@ define(function(require) {
     webkitDepData.steps = 20;
     webkitDepData.large = true;
     webkitDepData.coolDown = 0.995;
+    webkitDepData.useWorker = true;
     webkitDepData.itemStyle = {
-        normal : {
-            linkStyle : {
-                opacity : 0.9,
-                strokeColor: 'white'
+        normal: {
+            nodeStyle : {
+                lineWidth: 0.2
             }
         }
     }
@@ -26,7 +28,7 @@ define(function(require) {
         if (ec) {
             return;
         }
-        ec = echarts.init(dom);
+        ec = echarts.init(dom, infographic);
 
         ec.setOption({
             title : {

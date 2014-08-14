@@ -797,13 +797,16 @@ define('echarts/config',[],function() {
             minRadius : 10,
             maxRadius : 20,
 
+            // 是否根据屏幕比例拉伸
+            ratioScaling: false,
+
             // 在 500+ 顶点的图上建议设置 large 为 true, 会使用 Barnes-Hut simulation
             // 同时开启 useWorker 并且把 steps 值调大
             // 关于Barnes-Hut simulation: http://en.wikipedia.org/wiki/Barnes–Hut_simulation
             large: false,
 
-            // 为 false 的时候强制关闭 web worker
-            useWorker: true,
+            // 是否在浏览器支持 worker 的时候使用 web worker
+            useWorker: false,
             // 每一帧 force 迭代的次数，仅在启用webworker的情况下有用
             steps: 1,
 
@@ -822,7 +825,12 @@ define('echarts/config',[],function() {
             draggable: true,
 
             // 分类里如果有样式会覆盖节点默认样式
-            categories : [],
+            categories : [{
+                // itemStyle
+                // symbol
+                // symbolSize
+                // name
+            }],
             itemStyle: {
                 normal: {
                     // color: 各异,
@@ -1066,6 +1074,7 @@ define('echarts/config',[],function() {
             large : false,
             effect : {
                 show: false,
+                loop: true,
                 period: 15,             // 运动周期，无单位，值越大越慢
                 scaleSize : 2         // 放大倍数，以markPoint点size为基准
                 // color : 'gold',
@@ -1109,6 +1118,7 @@ define('echarts/config',[],function() {
             large : false,
             effect : {
                 show: false,
+                loop: true,
                 period: 15,             // 运动周期，无单位，值越大越慢
                 scaleSize : 2           // 放大倍数，以markLine线lineWidth为基准
                 // color : 'gold',
@@ -3806,7 +3816,7 @@ define(
                 this._isDragging = 1;
 
                 _draggingTarget.invisible = true;
-                this.storage.mod(_draggingTarget.id, _draggingTarget);
+                this.storage.mod(_draggingTarget.id);
 
                 //分发config.EVENT.DRAGSTART事件
                 this._dispatchAgency(
@@ -3881,7 +3891,7 @@ define(
         Handler.prototype._processDrop = function (event) {
             if (this._draggingTarget) {
                 this._draggingTarget.invisible = false;
-                this.storage.mod(this._draggingTarget.id, this._draggingTarget);
+                this.storage.mod(this._draggingTarget.id);
                 this.painter.refresh();
 
                 //分发config.EVENT.DROP事件
@@ -4035,6 +4045,15 @@ define(
             if (shape.isCover(this._mouseX, this._mouseY)) {
                 if (shape.hoverable) {
                     this.storage.addHover(shape);
+                }
+                // 查找是否在 clipShape 中
+                var p = shape.parent;
+                while (p) {
+                    if (p.clipShape && !p.clipShape.isCover(this._mouseX, this._mouseY))  {
+                        // 已经被祖先 clip 掉了
+                        return false;
+                    }
+                    p = p.parent;
                 }
 
                 if (this._lastHover != shape) {
@@ -5682,9 +5701,7 @@ define(
                     ctx.fill();
             }
 
-            if (style.text) {
-                this.drawText(ctx, style, this.style);
-            }
+            this.drawText(ctx, style, this.style);
 
             ctx.restore();
         };
@@ -5796,22 +5813,26 @@ define(
          * 获取鼠标坐标变换 
          * TODO Performance
          */
-        Base.prototype.getTansform = function (x, y) {
-            var originPos = [x, y];
-            // 对鼠标的坐标也做相同的变换
-            if (this.needTransform && this.transform) {
-                var inverseMatrix = [];
-                matrix.invert(inverseMatrix, this.transform);
+        Base.prototype.getTansform = (function() {
+            
+            var invTransform = [];
 
-                matrix.mulVector(originPos, inverseMatrix, [x, y, 1]);
+            return function (x, y) {
+                var originPos = [x, y];
+                // 对鼠标的坐标也做相同的变换
+                if (this.needTransform && this.transform) {
+                    matrix.invert(invTransform, this.transform);
 
-                if (x == originPos[0] && y == originPos[1]) {
-                    // 避免外部修改导致的needTransform不准确
-                    this.updateNeedTransform();
+                    matrix.mulVector(originPos, invTransform, [x, y, 1]);
+
+                    if (x == originPos[0] && y == originPos[1]) {
+                        // 避免外部修改导致的needTransform不准确
+                        this.updateNeedTransform();
+                    }
                 }
-            }
-            return originPos;
-        };
+                return originPos;
+            };
+        })();
         
         /**
          * 默认区域包含判断
@@ -5850,6 +5871,9 @@ define(
          * @param {Object} normalStyle 默认样式，用于定位文字显示
          */
         Base.prototype.drawText = function (ctx, style, normalStyle) {
+            if (typeof(style.text) == 'undefined' || style.text === false ) {
+                return;
+            }
             // 字体颜色策略
             var textColor = style.textColor || style.color || style.strokeColor;
             ctx.fillStyle = textColor;
@@ -7182,7 +7206,7 @@ define(
                     );
                 }
                 
-                if (typeof style.text == 'undefined') {
+                if (typeof(style.text) == 'undefined' || style.text === false) {
                     return;
                 }
 
@@ -7824,9 +7848,7 @@ define(
                     this.style.height = height;
 
 
-                    if (style.text) {
-                        this.drawText(ctx, style, this.style);
-                    }
+                    this.drawText(ctx, style, this.style);
 
                     ctx.restore();
                 }
@@ -7870,13 +7892,14 @@ define(
 
 
 define(
-    'zrender/Painter',['require','./config','./tool/util','./tool/log','./loadingEffect/Base','./shape/Image'],function (require) {
+    'zrender/Painter',['require','./config','./tool/util','./tool/log','./tool/matrix','./loadingEffect/Base','./shape/Image'],function (require) {
 
         
 
         var config = require('./config');
         var util = require('./tool/util');
         var log = require('./tool/log');
+        var matrix = require('./tool/matrix');
         var BaseLoadingEffect = require('./loadingEffect/Base');
 
         // retina 屏幕优化
@@ -7997,6 +8020,8 @@ define(
                 }
             }
 
+            var invTransform = [];
+
             for (var i = 0, l = list.length; i < l; i++) {
                 var shape = list[i];
 
@@ -8011,6 +8036,36 @@ define(
 
                     if (currentLayerDirty) {
                         currentLayer.clear();
+                    }
+                }
+
+                // Start group clipping
+                if (shape.__startClip && !vmlCanvasManager) {
+                    var clipShape = shape.__startClip;
+                    ctx.save();
+                    // Set transform
+                    if (clipShape.needTransform) {
+                        var m = clipShape.transform;
+                        matrix.invert(invTransform, m);
+                        ctx.transform(
+                            m[0], m[1],
+                            m[2], m[3],
+                            m[4], m[5]
+                        );
+                    }
+
+                    ctx.beginPath();
+                    clipShape.buildPath(ctx, clipShape.style);
+                    ctx.clip();
+
+                    // Transform back
+                    if (clipShape.needTransform) {
+                        var m = invTransform;
+                        ctx.transform(
+                            m[0], m[1],
+                            m[2], m[3],
+                            m[4], m[5]
+                        );
                     }
                 }
 
@@ -8034,6 +8089,11 @@ define(
                             shape.brush(ctx, false, this.updatePainter);
                         }
                     }
+                }
+
+                // Stop group clipping
+                if (shape.__stopClip && !vmlCanvasManager) {
+                    ctx.restore();
                 }
 
                 shape.__dirty = false;
@@ -8105,7 +8165,7 @@ define(
         Painter.prototype.update = function (shapeList, callback) {
             for (var i = 0, l = shapeList.length; i < l; i++) {
                 var shape = shapeList[i];
-                this.storage.mod(shape.id, shape);
+                this.storage.mod(shape.id);
             }
 
             this.refresh(callback);
@@ -8621,6 +8681,9 @@ define('zrender/shape/Group',['require','../tool/guid','../tool/util','../tool/e
     var Dispatcher = require('../tool/event').Dispatcher;
     var Transformable = require('./mixin/Transformable');
 
+    /**
+     * @constructor zrender.shape.Group
+     */
     function Group(options) {
 
         options = options || {};
@@ -8632,6 +8695,8 @@ define('zrender/shape/Group',['require','../tool/guid','../tool/util','../tool/e
         }
 
         this.type = 'group';
+
+        this.clipShape = null;
 
         this._children = [];
 
@@ -8669,9 +8734,11 @@ define('zrender/shape/Group',['require','../tool/guid','../tool/util','../tool/e
 
         if (this._storage && this._storage !== child._storage) {
             
-            this._storage.add(child);
+            this._storage.addToMap(child);
 
-            child.addChildrenToStorage(this.storage);
+            if (child instanceof Group) {
+                child.addChildrenToStorage(this._storage);
+            }
         }
     };
 
@@ -8683,9 +8750,11 @@ define('zrender/shape/Group',['require','../tool/guid','../tool/util','../tool/e
 
         if (child._storage) {
             
-            this._storage.del(child.id);
+            this._storage.delFromMap(child.id);
 
-            child.delChildrenFromStorage(child._storage);
+            if (child instanceof Group) {
+                child.delChildrenFromStorage(child._storage);
+            }
         }
     };
 
@@ -8881,6 +8950,18 @@ define(
             el.updateTransform();
 
             if (el.type == 'group') {
+                
+                if (el.clipShape) {
+                    // clipShape 的变换是基于 group 的变换
+                    el.clipShape.parent = el;
+                    el.clipShape.updateTransform();
+
+                    var startClipShape = el._children[0];
+                    if (startClipShape) {
+                        startClipShape.__startClip = el.clipShape;
+                    }
+                }
+
                 for (var i = 0; i < el._children.length; i++) {
                     var child = el._children[i];
 
@@ -8888,6 +8969,13 @@ define(
                     child.__dirty = el.__dirty || el.__dirty;
 
                     this._updateAndAddShape(child);
+                }
+
+                if (el.clipShape) {
+                    var stopClipShape = this._shapeList[this._shapeListOffset - 1];
+                    if (stopClipShape) {
+                        stopClipShape.__stopClip = true;
+                    }
                 }
             } else {
                 this._shapeList[this._shapeListOffset++] = el;
@@ -8909,7 +8997,27 @@ define(
                 el.__dirty = true;
 
                 if (params) {
-                    util.merge(el, params, true);
+                    // 如果第二个参数直接使用 shape
+                    // parent, _storage, __startClip 三个属性会有循环引用
+                    // 主要为了向 1.x 版本兼容，2.x 版本不建议使用第二个参数
+                    if (params.parent || params._storage || params.__startClip) {
+                        var target = {};
+                        for (var name in params) {
+                            if (
+                                name == 'parent'
+                                || name == '_storage'
+                                || name == '__startClip'
+                            ) {
+                                continue;
+                            }
+                            if (params.hasOwnProperty(name)) {
+                                target[name] = params[name];
+                            }
+                        }
+                        util.merge(el, target, true);
+                    } else {
+                        util.merge(el, params, true);
+                    }
                 }
             }
 
@@ -8968,7 +9076,7 @@ define(
             if (el instanceof Group) {
                 el.addChildrenToStorage(this);
             }
-            
+
             this.addToMap(el);
             this._roots.push(el);
         };
@@ -9020,9 +9128,12 @@ define(
          * @param {Shape|Group} el 参数
          */
         Storage.prototype.addToMap = function (el) {
-            if (!el instanceof Group) {
+            if (el instanceof Group) {
+                el._storage = this;
+            } else {
                 el.style.__rect = null;
             }
+
             this._elements[el.id] = el;
 
             return this;
@@ -9043,7 +9154,14 @@ define(
          * @param {string} idx 唯一标识
          */
         Storage.prototype.delFromMap = function (elId) {
-            delete this._elements[elId];
+            var el = this._elements[elId];
+            if (el) {
+                delete this._elements[elId];
+
+                if (el instanceof Group) {
+                    el._storage = null;
+                }
+            }
 
             return this;
         };
@@ -10712,7 +10830,11 @@ define('echarts/component/base',['require','../config','../util/ecQuery','../uti
         
         resize : function () {
             this.refresh && this.refresh();
-            this.animationEffect && this.animationEffect();
+            this.clearEffectShape && this.clearEffectShape(true);
+            var self = this;
+            setTimeout(function(){
+                self.animationEffect && self.animationEffect();
+            },200);
         },
 
         /**
@@ -12340,7 +12462,7 @@ define(
                 this.setContext(ctx, style);
     
                 // 设置transform
-                this.updateTransform(ctx);
+                this.setTransform(ctx);
                 
                 // 先fill再stroke
                 var hasPath = false;
@@ -12382,9 +12504,7 @@ define(
                     ctx.stroke();
                 }
     
-                if (style.text) {
-                    this.drawText(ctx, style, this.style);
-                }
+                this.drawText(ctx, style, this.style);
     
                 ctx.restore();
     
@@ -12760,9 +12880,7 @@ define('echarts/util/shape/MarkLine',['require','zrender/shape/Base','./Icon','z
             this.brushSymbol(ctx, style, 0);
             this.brushSymbol(ctx, style, 1);
 
-            if (style.text) {
-                this.drawText(ctx, style, this.style);
-            }
+            this.drawText(ctx, style, this.style);
 
             ctx.restore();
         },
@@ -13216,6 +13334,8 @@ define('echarts/util/shape/Symbol',['require','zrender/shape/Base','zrender/shap
                     switch (style.brushType) {
                         case 'both':
                             ctx.fill();
+                            style.lineWidth > 0 && ctx.stroke();  // js hint -_-"
+                            break;
                         case 'stroke':
                             style.lineWidth > 0 && ctx.stroke();
                             break;
@@ -13886,49 +14006,45 @@ define('echarts/util/ecAnimation',['require','zrender/tool/util','zrender/shape/
      * @param {tring} easing
      */
     function markline(zr, oldShape, newShape, duration, easing) {
-        if (!oldShape) {    // add
-            if (!newShape.style.smooth) {
-                newShape.style.pointList = [
+        if (!newShape.style.smooth) {
+            newShape.style.pointList = !oldShape 
+                ? [
                     [newShape.style.xStart, newShape.style.yStart],
                     [newShape.style.xStart, newShape.style.yStart]
-                ];
-                zr.addShape(newShape);
-                zr.animate(newShape.id, 'style')
-                    .when(
-                        duration,
-                        {
-                            pointList : [
-                                [
-                                    newShape.style.xStart,
-                                    newShape.style.yStart
-                                ],
-                                [
-                                    newShape._x || 0, newShape._y || 0
-                                ]
+                ]
+                : oldShape.style.pointList;
+            zr.addShape(newShape);
+            zr.animate(newShape.id, 'style')
+                .when(
+                    duration,
+                    {
+                        pointList : [
+                            [
+                                newShape.style.xStart,
+                                newShape.style.yStart
+                            ],
+                            [
+                                newShape._x || 0, newShape._y || 0
                             ]
-                        }
-                    )
-                    .start(easing || 'QuinticOut');
-            }
-            else {
-                // 曲线动画
-                newShape.style.pointListLength = 1;
-                zr.addShape(newShape);
-                newShape.style.pointList = newShape.style.pointList 
-                                           || newShape.getPointList(newShape.style);
-                zr.animate(newShape.id, 'style')
-                    .when(
-                        duration,
-                        {
-                            pointListLength : newShape.style.pointList.length
-                        }
-                    )
-                    .start(easing || 'QuinticOut');
-            }
+                        ]
+                    }
+                )
+                .start(easing || 'QuinticOut');
         }
         else {
-            // mod
-            line(zr, oldShape, newShape, duration, easing);
+            // 曲线动画
+            newShape.style.pointListLength = 1;
+            zr.addShape(newShape);
+            newShape.style.pointList = newShape.style.pointList 
+                                       || newShape.getPointList(newShape.style);
+            zr.animate(newShape.id, 'style')
+                .when(
+                    duration,
+                    {
+                        pointListLength : newShape.style.pointList.length
+                    }
+                )
+                .start(easing || 'QuinticOut');
         }
     }
 
@@ -14161,13 +14277,17 @@ define('echarts/util/ecEffect',['require','../util/ecData','zrender/shape/Circle
             }
         );
         
-        zr.animate(effectShape.id, '', true)
+        zr.animate(effectShape.id, '', effect.loop)
             .when(
                 duration,
                 {
                     scale : [1, 1, centerX, centerY]
                 }
             )
+            .done(function() {
+                shape.effect.show = false;
+                zr.delShape(effectShape.id);
+            })
             .start();
     }
     
@@ -14288,7 +14408,7 @@ define('echarts/util/ecEffect',['require','../util/ecData','zrender/shape/Circle
                        )));
         if (!shape.style.smooth) {
             // 直线
-            zr.animate(effectShape.id, 'style', true)
+            zr.animate(effectShape.id, 'style', effect.loop)
                 .when(
                     duration,
                     {
@@ -14296,6 +14416,10 @@ define('echarts/util/ecEffect',['require','../util/ecData','zrender/shape/Circle
                         y : shape._y - offset
                     }
                 )
+                .done(function() {
+                    shape.effect.show = false;
+                    zr.delShape(effectShape.id);
+                })
                 .start();
         }
         else {
@@ -14303,7 +14427,7 @@ define('echarts/util/ecEffect',['require','../util/ecData','zrender/shape/Circle
             var pointList = shape.style.pointList || shape.getPointList(shape.style);
             var len = pointList.length;
             duration = Math.round(duration / len);
-            var deferred = zr.animate(effectShape.id, 'style', true);
+            var deferred = zr.animate(effectShape.id, 'style', effect.loop);
             var step = Math.ceil(len / 8);
             for (var j = 0; j < len - step; j+= step) {
                 deferred.when(
@@ -14321,6 +14445,10 @@ define('echarts/util/ecEffect',['require','../util/ecData','zrender/shape/Circle
                     y : pointList[len - 1][1] - offset
                 }
             );
+            deferred.done(function() {
+                shape.effect.show = false;
+                zr.delShape(effectShape.id);
+            });
             deferred.start('spline');
         }
     }
@@ -14706,7 +14834,8 @@ define('echarts/chart/base',['require','zrender/shape/Image','../util/shape/Icon
             
             if (formatter) {
                 if (typeof formatter == 'function') {
-                    return formatter(
+                    return formatter.call(
+                        this.myChart,
                         serie.name,
                         name,
                         value
@@ -18641,8 +18770,8 @@ define('echarts/component/tooltip',['require','./base','../util/shape/Cross','zr
                         ]);
                     }
                     this._curTicket = 'axis:' + dataIndex;
-                    this._tDom.innerHTML = formatter(
-                        params, this._curTicket, this._setContent
+                    this._tDom.innerHTML = formatter.call(
+                        this.myChart, params, this._curTicket, this._setContent
                     );
                 }
                 else if (typeof formatter == 'string') {
@@ -18785,8 +18914,8 @@ define('echarts/component/tooltip',['require','./base','../util/shape/Cross','zr
                 }
                 if (typeof formatter == 'function') {
                     this._curTicket = 'axis:' + dataIndex;
-                    this._tDom.innerHTML = formatter(
-                        params, this._curTicket, this._setContent
+                    this._tDom.innerHTML = formatter.call(
+                        this.myChart, params, this._curTicket, this._setContent
                     );
                 }
                 else if (typeof formatter == 'string') {
@@ -18900,13 +19029,15 @@ define('echarts/component/tooltip',['require','./base','../util/shape/Cross','zr
                 this._curTicket = (serie.name || '')
                                   + ':'
                                   + ecData.get(this._curTarget, 'dataIndex');
-                this._tDom.innerHTML = formatter(
+                this._tDom.innerHTML = formatter.call(
+                    this.myChart,
                     [
                         serie.name || '',
                         name,
                         value,
                         special,
-                        special2
+                        special2,
+                        data
                     ],
                     this._curTicket,
                     this._setContent
@@ -20186,6 +20317,7 @@ define('echarts/component/legend',['require','./base','zrender/shape/Text','zren
             var textStyle  = this.legendOption.textStyle;
             var dataTextStyle;
             var dataFont;
+            var formattedName;
 
             var zrWidth = this.zr.getWidth();
             var zrHeight = this.zr.getHeight();
@@ -20210,6 +20342,7 @@ define('echarts/component/legend',['require','./base','zrender/shape/Text','zren
                 dataFont = this.getFont(dataTextStyle);
                 
                 itemName = this._getName(data[i]);
+                formattedName = this._getFormatterName(itemName);
                 if (itemName === '') {
                     if (this.legendOption.orient == 'horizontal') {
                         lastX = this._itemGroupLocation.x;
@@ -20229,7 +20362,7 @@ define('echarts/component/legend',['require','./base','zrender/shape/Text','zren
 
                 if (this.legendOption.orient == 'horizontal') {
                     if (zrWidth - lastX < 200   // 最后200px做分行预判
-                        && (itemWidth + 5 + zrArea.getTextWidth(itemName, dataFont)
+                        && (itemWidth + 5 + zrArea.getTextWidth(formattedName, dataFont)
                             // 分行的最后一个不用算itemGap
                             + (i == dataLength - 1 || data[i+1] === '' ? 0 : itemGap)
                            ) >= zrWidth - lastX
@@ -20273,7 +20406,7 @@ define('echarts/component/legend',['require','./base','zrender/shape/Text','zren
                         color : this._selectedMap[itemName]
                                 ? (dataTextStyle.color === 'auto' ? color : dataTextStyle.color)
                                 : '#ccc',
-                        text: itemName,
+                        text: formattedName,
                         textFont: dataFont,
                         textBaseline: 'middle'
                     },
@@ -20306,7 +20439,7 @@ define('echarts/component/legend',['require','./base','zrender/shape/Text','zren
 
                 if (this.legendOption.orient == 'horizontal') {
                     lastX += itemWidth + 5
-                             + zrArea.getTextWidth(itemName, dataFont)
+                             + zrArea.getTextWidth(formattedName, dataFont)
                              + itemGap;
                 }
                 else {
@@ -20325,6 +20458,26 @@ define('echarts/component/legend',['require','./base','zrender/shape/Text','zren
         
         _getName : function(data) {
             return typeof data.name != 'undefined' ? data.name : data;
+        },
+
+        _getFormatterName: function(itemName) {
+            var formatter = this.legendOption.formatter;
+            var formattedName;
+            if (typeof formatter == 'function') {
+                formattedName = formatter.call(this.myChart, itemName);
+            }
+            else if (typeof formatter == 'string') {
+                formattedName = formatter.replace('{name}', itemName);
+            }
+            else {
+                formattedName = itemName;
+            }
+            return formattedName;
+        },
+
+        _getFormatterNameFromData: function(data) {
+            var itemName = this._getName(data);
+            return this._getFormatterName(itemName);
         },
         
         // 多行橫排居中优化
@@ -20437,7 +20590,7 @@ define('echarts/component/legend',['require','./base','zrender/shape/Text','zren
                     }
                     temp += itemWidth
                             + zrArea.getTextWidth(
-                                  this._getName(data[i]),
+                                  this._getFormatterNameFromData(data[i]),
                                   data[i].textStyle 
                                   ? this.getFont(zrUtil.merge(
                                         data[i].textStyle || {},
@@ -20462,7 +20615,7 @@ define('echarts/component/legend',['require','./base','zrender/shape/Text','zren
                     maxWidth = Math.max(
                         maxWidth,
                         zrArea.getTextWidth(
-                            this._getName(data[i]),
+                            this._getFormatterNameFromData(data[i]),
                             data[i].textStyle 
                             ? this.getFont(zrUtil.merge(
                                   data[i].textStyle || {},
@@ -21291,15 +21444,18 @@ define('echarts/component/timeline',['require','./base','zrender/shape/Rectangle
         this.options = this.option.options;
         this.currentIndex = this.timelineOption.currentIndex % this.timelineOption.data.length;
         
-        /*
-        if (!this.timelineOption.notMerge) {
+        if (!this.timelineOption.notMerge && this.currentIndex !== 0) {
+            /*
             for (var i = 1, l = this.timelineOption.data.length; i < l; i++) {
                 this.options[i] = zrUtil.merge(
                     this.options[i], this.options[i - 1]
                 );
             }
+            */
+           this.options[this.currentIndex] = zrUtil.merge(
+               this.options[this.currentIndex], this.options[0]
+           );
         }
-        */
         
         if (this.timelineOption.show) {
             this._buildShape();
@@ -21395,7 +21551,7 @@ define('echarts/component/timeline',['require','./base','zrender/shape/Rectangle
                             || timelineOption.label.formatter;
             if (formatter) {
                 if (typeof formatter == 'function') {
-                    data = formatter(data);
+                    data = formatter.call(this.myChart, data);
                 }
                 else if (typeof formatter == 'string') {
                     data = formatter.replace('{value}', data);
@@ -22231,6 +22387,8 @@ define(
             var lineWidth = effectOption.lineWidth;
 
             var shapeList = [];
+            var canvasWidth = this.canvasWidth;
+            var canvasHeight = this.canvasHeight;
             
             // 初始化动画元素
             for(var i = 0; i < n; i++) {
@@ -22240,8 +22398,8 @@ define(
 
                 shapeList[i] = new CircleShape({
                     highlightStyle : {
-                        x : Math.ceil(Math.random() * this.canvasWidth),
-                        y : Math.ceil(Math.random() * this.canvasHeight),
+                        x : Math.ceil(Math.random() * canvasWidth),
+                        y : Math.ceil(Math.random() * canvasHeight),
                         r : Math.ceil(Math.random() * 40),
                         brushType : brushType,
                         color : color,
@@ -22251,7 +22409,7 @@ define(
                     animationY : Math.ceil(Math.random() * 20)
                 });
             }
-
+            
             return setInterval(
                 function () {
                     addShapeHandle(background);
@@ -22260,9 +22418,9 @@ define(
                         var style = shapeList[i].highlightStyle;
 
                         if (style.y - shapeList[i].animationY + style.r <= 0){
-                            shapeList[i].highlightStyle.y = this.canvasHeight + style.r;
+                            shapeList[i].highlightStyle.y = canvasHeight + style.r;
                             shapeList[i].highlightStyle.x = Math.ceil(
-                                Math.random() * this.canvasWidth
+                                Math.random() * canvasWidth
                             );
                         }
                         shapeList[i].highlightStyle.y -=
@@ -22328,12 +22486,14 @@ define(
             var lineWidth = effectOption.lineWidth;
 
             var shapeList = [];
+            var canvasWidth = this.canvasWidth;
+            var canvasHeight = this.canvasHeight;
             
             // 初始化动画元素
             for(var i = 0; i < n; i++) {
                 var xStart = -Math.ceil(Math.random() * 1000);
                 var len = Math.ceil(Math.random() * 400);
-                var pos = Math.ceil(Math.random() * this.canvasHeight);
+                var pos = Math.ceil(Math.random() * canvasHeight);
 
                 var color = effectOption.color == 'random'
                     ? zrColor.random()
@@ -22352,7 +22512,7 @@ define(
                     len : len
                 });
             }
-
+            
             return setInterval(
                 function() {
                     addShapeHandle(background);
@@ -22360,11 +22520,12 @@ define(
                     for(var i = 0; i < n; i++) {
                         var style = shapeList[i].highlightStyle;
 
-                        if (style.xStart >= this.canvasWidth){
+                        if (style.xStart >= canvasWidth){
+                            
                             shapeList[i].len = Math.ceil(Math.random() * 400);
                             style.xStart = -400;
                             style.xEnd = -400 + shapeList[i].len;
-                            style.yStart = Math.ceil(Math.random() * this.canvasHeight);
+                            style.yStart = Math.ceil(Math.random() * canvasHeight);
                             style.yEnd = style.yStart;
                         }
 
@@ -22807,9 +22968,9 @@ define('echarts/echarts',['require','./config','zrender/tool/util','zrender/tool
     var _instances = {};    // ECharts实例map索引
     var DOM_ATTRIBUTE_KEY = '_echarts_instance_';
     
-    self.version = '2.0.0';
+    self.version = '2.0.1';
     self.dependencies = {
-        zrender : '2.0.0'
+        zrender : '2.0.1'
     };
     /**
      * 入口方法 
@@ -24349,7 +24510,7 @@ define('echarts/echarts',['require','./config','zrender/tool/util','zrender/tool
             return function(){
                 self._clearEffect();
                 self._zr.resize();
-                if (self._option.renderAsImage && _canvasSupported) {
+                if (self._option && self._option.renderAsImage && _canvasSupported) {
                     // 渲染为图片重走render模式
                     self._render(self._option);
                     return self;
@@ -25024,7 +25185,7 @@ define('echarts/chart/gauge',['require','../component/base','./base','../util/sh
         _getLabelText : function (formatter, value) {
             if (formatter) {
                 if (typeof formatter == 'function') {
-                    return formatter(value);
+                    return formatter.call(this.myChart, value);
                 }
                 else if (typeof formatter == 'string') {
                     return formatter.replace('{value}', value);
@@ -25567,7 +25728,8 @@ define('echarts/chart/funnel',['require','../component/base','./base','zrender/s
             
             if (formatter) {
                 if (typeof formatter == 'function') {
-                    return formatter(
+                    return formatter.call(
+                        this.myChart,
                         serie.name,
                         data.name,
                         data.value
@@ -25784,7 +25946,7 @@ define('echarts/component/categoryAxis',['require','./base','zrender/shape/Text'
                             || this.option.axisLabel.formatter;
             if (formatter) {
                 if (typeof formatter == 'function') {
-                    data = formatter(data);
+                    data = formatter.call(this.myChart, data);
                 }
                 else if (typeof formatter == 'string') {
                     data = formatter.replace('{value}', data);
@@ -27175,7 +27337,7 @@ define('echarts/component/valueAxis',['require','./base','zrender/shape/Text','z
             if (formatter) {
                 for (var i = 0, l = this._valueList.length; i < l; i++) {
                     if (typeof formatter == 'function') {
-                        this._valueLabel.push(formatter(this._valueList[i]));
+                        this._valueLabel.push(formatter.call(this.myChart, this._valueList[i]));
                     }
                     else if (typeof formatter == 'string') {
                         this._valueLabel.push(
@@ -28214,14 +28376,14 @@ define('echarts/component/dataZoom',['require','./base','zrender/shape/Rectangle
                 if (this.zoomOption.orient == 'horizontal') {
                     pointList.push([
                         this._location.x + x * i,
-                        this._location.y + height - 5 - Math.round(
+                        this._location.y + height - 1 - Math.round(
                             (value - minValue) / valueRange * (height - 10)
                         )
                     ]);
                 }
                 else {
                     pointList.push([
-                        this._location.x + 5 + Math.round(
+                        this._location.x + 1 + Math.round(
                             (value - minValue) / valueRange * (width - 10)
                         ),
                         this._location.y + y * i
@@ -30087,7 +30249,9 @@ define('echarts/component/dataRange',['require','./base','zrender/shape/Text','z
                                                          .replace('{value2}', valueEnd);
                 }
                 else if (typeof this.dataRangeOption.formatter == 'function') {
-                    return this.dataRangeOption.formatter(valueStart, valueEnd);
+                    return this.dataRangeOption.formatter.call(
+                        this.myChart, valueStart, valueEnd
+                    );
                 }
             }
             
@@ -31416,7 +31580,7 @@ define('echarts/component/polar',['require','./base','zrender/shape/Text','zrend
                 style.color = textStyle.color;
                 
                 if (typeof name.formatter == 'function') {
-                    style.text = name.formatter(indicator[i].text, i);
+                    style.text = name.formatter.call(this.myChart, indicator[i].text, i);
                 }
                 else if (typeof name.formatter == 'string'){
                     style.text = name.formatter.replace(
@@ -35869,10 +36033,10 @@ define('echarts/chart/chord',['require','../component/base','./base','zrender/sh
 
     return Chord;
 });
-(function __echartsForceLayoutWorker(self) {
+(function __echartsForceLayoutWorker(glob) {
 
 // In web worker
-if (typeof(window) === 'undefined' || window !== self) {
+if (typeof(window) === 'undefined' || window !== glob) {
     // Simple TMD implementation
     self.tmd = {};
     self.tmd.modules = {};
@@ -36359,11 +36523,7 @@ define('echarts/chart/ForceLayoutWorker',['require','zrender/tool/vector'],funct
 
             // Gravity
             if (this.gravity > 0) {
-                if (this.strongGravity) {
-                    this.applyNodeStrongGravity(na);
-                } else {
-                    this.applyNodeGravity(na);
-                }
+                this.applyNodeGravity(na);
             }
         }
 
@@ -36517,18 +36677,20 @@ define('echarts/chart/ForceLayoutWorker',['require','zrender/tool/vector'],funct
             // vec2.sub(v, this._rootRegion.centerOfMass, node.position);
             // vec2.negate(v, node.position);
             vec2.sub(v, this.center, node.position);
-            var d = vec2.len(v);
-            vec2.scaleAndAdd(node.force, node.force, v, this.gravity * node.mass / (d + 1));
-        };
-    })();
-
-    ForceLayout.prototype.applyNodeStrongGravity = (function() {
-        var v = vec2.create();
-        return function(node) {
-            // vec2.negate(v, node.position);
-            vec2.sub(v, this.center, node.position);
+            if (this.width > this.height) {
+                // Stronger gravity on y axis
+                v[1] *= this.width / this.height;
+            } else {
+                // Stronger gravity on x axis
+                v[0] *= this.height / this.width;
+            }
             var d = vec2.len(v) / 100;
-            vec2.scaleAndAdd(node.force, node.force, v, d * this.gravity * node.mass);
+            
+            if (this.strongGravity) {
+                vec2.scaleAndAdd(node.force, node.force, v, d * this.gravity * node.mass);
+            } else {
+                vec2.scaleAndAdd(node.force, node.force, v, this.gravity * node.mass / (d + 1));
+            }
         };
     })();
 
@@ -36861,8 +37023,9 @@ define('echarts/chart/force',['require','../component/base','./base','./ForceLay
             this._coolDown = serie.coolDown || 0.99;
 
             var center = this.parseCenter(this.zr, serie.center);
-            var size = this.parseRadius(this.zr, serie.size);
-            size = size[1] * 2;
+            var width = this.parsePercent(serie.size, this.zr.getWidth());
+            var height = this.parsePercent(serie.size, this.zr.getHeight());
+            var size = Math.min(width, height);
 
             // 将值映射到minRadius-maxRadius的范围上
             var radius = [];
@@ -36923,8 +37086,8 @@ define('echarts/chart/force',['require','../component/base','./base','./ForceLay
 
             var config = {
                 center: center,
-                width: size,
-                height: size,
+                width: serie.ratioScaling ? width : size,
+                height: serie.ratioScaling ? height : size,
                 scaling: serie.scaling || 1.0,
                 gravity: serie.gravity || 1.0,
                 barnesHutOptimize: serie.large
@@ -38462,7 +38625,7 @@ define('echarts/chart/line',['require','../component/base','./base','zrender/sha
                 seriesIndex = this.shapeList[i]._seriesIndex;
                 if (aniMap[seriesIndex] && !aniMap[seriesIndex][3]) {
                     // 有数据删除才有移动的动画
-                    if (this.shapeList[i]._main) {
+                    if (this.shapeList[i]._main && this.shapeList[i].style.pointList.length > 1) {
                         pointList = this.shapeList[i].style.pointList;
                         // 主线动画
                         dx = Math.abs(pointList[0][0] - pointList[1][0]);
@@ -40200,7 +40363,8 @@ define('echarts/chart/pie',['require','../component/base','./base','zrender/shap
             
             if (formatter) {
                 if (typeof formatter == 'function') {
-                    return formatter(
+                    return formatter.call(
+                        this.myChart,
                         serie.name,
                         data.name,
                         data.value,

@@ -3,13 +3,15 @@ define(function(require) {
     var echarts = require('echarts');
     require('echarts/chart/bar');
 
+    var infographic = require('../../../js/lib/theme/infographic');
+
     var ec;
 
     function init(dom) {
         if (ec) {
             return;
         }
-        ec = echarts.init(dom);
+        ec = echarts.init(dom, infographic);
 
         ec.setOption({
             legend: {

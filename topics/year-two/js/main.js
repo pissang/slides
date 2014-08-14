@@ -17,6 +17,7 @@ define(function(require) {
     var svg3d = require('./svg3d');
     var zrChromeBench = require('./zrChromeBench');
     var zrFirefoxBench = require('./zrFirefoxBench');
+    var physics = require('./physics');
 
     $(".lang-html").each(function() {
         // Encode html
@@ -212,6 +213,15 @@ define(function(require) {
             },
             leave: function() {
                 zrFirefoxBench.dispose();
+            }
+        },
+
+        showPhysics: {
+            enter: function(dom) {
+                physics.init(dom);
+            },
+            leave: function() {
+                physics.dispose();
             }
         }
     }

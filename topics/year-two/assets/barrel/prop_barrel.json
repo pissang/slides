@@ -1,0 +1,335 @@
+{
+    "accessors": {
+        "attribute_43": {
+            "bufferView": "bufferView_49",
+            "byteOffset": 0,
+            "byteStride": 12,
+            "count": 1983,
+            "max": [
+                0.492366,
+                1.21447,
+                0.492366
+            ],
+            "min": [
+                -0.492366,
+                0,
+                -0.492366
+            ],
+            "type": 35665
+        },
+        "attribute_45": {
+            "bufferView": "bufferView_49",
+            "byteOffset": 23796,
+            "byteStride": 12,
+            "count": 1983,
+            "max": [
+                1,
+                1,
+                1
+            ],
+            "min": [
+                -1,
+                -1,
+                -1
+            ],
+            "type": 35665
+        },
+        "attribute_47": {
+            "bufferView": "bufferView_49",
+            "byteOffset": 47592,
+            "byteStride": 8,
+            "count": 1983,
+            "max": [
+                0.993357,
+                0.994116
+            ],
+            "min": [
+                0.005699,
+                0.00484198
+            ],
+            "type": 35664
+        },
+        "indices_38": {
+            "bufferView": "bufferView_50",
+            "byteOffset": 0,
+            "count": 8880,
+            "type": 5123
+        },
+        "indices_41": {
+            "bufferView": "bufferView_50",
+            "byteOffset": 17760,
+            "count": 576,
+            "type": 5123
+        }
+    },
+    "animations": {},
+    "asset": {
+        "extras": {
+            "premultipliedAlpha": true
+        },
+        "generator": "collada2gltf@23e7a5e5ab5dfbbd0c0b5b4615c3611a3e5a57ef"
+    },
+    "bufferViews": {
+        "bufferView_49": {
+            "buffer": "prop_barrel",
+            "byteLength": 63456,
+            "byteOffset": 0,
+            "target": 34962
+        },
+        "bufferView_50": {
+            "buffer": "prop_barrel",
+            "byteLength": 18912,
+            "byteOffset": 63456,
+            "target": 34963
+        },
+        "bufferView_51": {
+            "buffer": "prop_barrel",
+            "byteLength": 0,
+            "byteOffset": 82368
+        }
+    },
+    "buffers": {
+        "prop_barrel": {
+            "byteLength": 82368,
+            "path": "prop_barrel.bin",
+            "type": "arraybuffer"
+        }
+    },
+    "images": {
+        "image_0": {
+            "path": "textures/prop_barrels_dff.png"
+        },
+        "image_1": {
+            "path": "textures/prop_barrels_nrm.png"
+        }
+    },
+    "materials": {
+        "_0e5d844237ac0f24b8993eec3a848007-fx": {
+            "instanceTechnique": {
+                "technique": "technique1",
+                "values": {
+                    "diffuse": "texture_image_0",
+                    "shininess": 100,
+                    "normalMap" : "texture_image_1",
+                    "specular": [
+                        0.910448,
+                        0.910448,
+                        0.910448,
+                        1
+                    ]
+                }
+            },
+            "name": "prop_barrel_trim_L01_mat"
+        },
+        "_4f64a0b1f81b4544cab583ba7159ea5c-fx": {
+            "instanceTechnique": {
+                "technique": "technique1",
+                "values": {
+                    "diffuse": "texture_image_0",
+                    "shininess": 100,
+                    "normalMap" : "texture_image_1",
+                    "specular": [
+                        0.910448,
+                        0.910448,
+                        0.910448,
+                        1
+                    ]
+                }
+            },
+            "name": "prop_barrel_body_L01_mat"
+        }
+    },
+    "meshes": {
+        "_150": {
+            "name": "prop_barrel",
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": "attribute_45",
+                        "POSITION": "attribute_43",
+                        "TEXCOORD_0": "attribute_47"
+                    },
+                    "indices": "indices_38",
+                    "material": "_0e5d844237ac0f24b8993eec3a848007-fx",
+                    "primitive": 4
+                },
+                {
+                    "attributes": {
+                        "NORMAL": "attribute_45",
+                        "POSITION": "attribute_43",
+                        "TEXCOORD_0": "attribute_47"
+                    },
+                    "indices": "indices_41",
+                    "material": "_4f64a0b1f81b4544cab583ba7159ea5c-fx",
+                    "primitive": 4
+                }
+            ]
+        }
+    },
+    "nodes": {
+        "_": {
+            "children": [],
+            "matrix": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                1
+            ],
+            "meshes": [
+                "_150"
+            ],
+            "name": "prop_barrel"
+        }
+    },
+    "profile": "WebGL 1.0.2",
+    "programs": {
+        "program_0": {
+            "attributes": [
+                "a_normal",
+                "a_position",
+                "a_texcoord0"
+            ],
+            "fragmentShader": "prop_barrel0FS",
+            "vertexShader": "prop_barrel0VS"
+        }
+    },
+    "samplers": {
+        "sampler_0": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+        }
+    },
+    "scene": "defaultScene",
+    "scenes": {
+        "defaultScene": {
+            "nodes": [
+                "_"
+            ]
+        }
+    },
+    "shaders": {
+        "prop_barrel0FS": {
+            "path": "prop_barrel0FS.glsl"
+        },
+        "prop_barrel0VS": {
+            "path": "prop_barrel0VS.glsl"
+        }
+    },
+    "skins": {},
+    "techniques": {
+        "technique1": {
+            "parameters": {
+                "diffuse": {
+                    "type": 35678
+                },
+                "modelViewMatrix": {
+                    "semantic": "MODELVIEW",
+                    "type": 35676
+                },
+                "normal": {
+                    "semantic": "NORMAL",
+                    "type": 35665
+                },
+                "normalMatrix": {
+                    "semantic": "MODELVIEWINVERSETRANSPOSE",
+                    "type": 35675
+                },
+                "position": {
+                    "semantic": "POSITION",
+                    "type": 35665
+                },
+                "projectionMatrix": {
+                    "semantic": "PROJECTION",
+                    "type": 35676
+                },
+                "shininess": {
+                    "type": 5126
+                },
+                "specular": {
+                    "type": 35666
+                },
+                "texcoord0": {
+                    "semantic": "TEXCOORD_0",
+                    "type": 35664
+                }
+            },
+            "pass": "defaultPass",
+            "passes": {
+                "defaultPass": {
+                    "details": {
+                        "commonProfile": {
+                            "extras": {
+                                "doubleSided": false
+                            },
+                            "lightingModel": "Phong",
+                            "parameters": [
+                                "diffuse",
+                                "modelViewMatrix",
+                                "normalMatrix",
+                                "projectionMatrix",
+                                "shininess",
+                                "specular"
+                            ],
+                            "texcoordBindings": {
+                                "diffuse": "TEXCOORD_0"
+                            }
+                        },
+                        "type": "COLLADA-1.4.1/commonProfile"
+                    },
+                    "instanceProgram": {
+                        "attributes": {
+                            "a_normal": "normal",
+                            "a_position": "position",
+                            "a_texcoord0": "texcoord0"
+                        },
+                        "program": "program_0",
+                        "uniforms": {
+                            "u_diffuse": "diffuse",
+                            "u_modelViewMatrix": "modelViewMatrix",
+                            "u_normalMatrix": "normalMatrix",
+                            "u_projectionMatrix": "projectionMatrix",
+                            "u_shininess": "shininess",
+                            "u_specular": "specular"
+                        }
+                    },
+                    "states": {
+                        "blendEnable": 0,
+                        "cullFaceEnable": 1,
+                        "depthMask": 1,
+                        "depthTestEnable": 1
+                    }
+                }
+            }
+        }
+    },
+    "textures": {
+        "texture_image_0": {
+            "format": 6408,
+            "internalFormat": 6408,
+            "sampler": "sampler_0",
+            "source": "image_0",
+            "target": 3553
+        },
+        "texture_image_1": {
+            "format": 6408,
+            "internalFormat": 6408,
+            "sampler": "sampler_0",
+            "source": "image_1",
+            "target": 3553
+        }
+    }
+}
