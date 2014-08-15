@@ -226,7 +226,7 @@ define(function(require) {
         }
     }
 
-    slides.init('Articles', {
+    slides.init('articles', {
         
         itemClass : 'item',
 

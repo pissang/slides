@@ -22,6 +22,13 @@ var slides = (function() {
         return document.getElementById(id);
     }
 
+    var $progressContainer = document.createElement('div');
+    $progressContainer.id = 'slides-progress';
+    var $progress = document.createElement('div');
+    $progress.id = 'slides-progress-inner';
+    $progressContainer.appendChild($progress);
+    document.body.appendChild($progressContainer);
+
     var init = function(container, opt) {
         if (typeof(container) == 'string') {
             container = g(container );
@@ -212,7 +219,8 @@ var slides = (function() {
             }
         }   
         
-        document.location.href = baseURL + '#'+page+'~'+appearIndex;
+        document.location.href = baseURL + '#' + page + '~' + appearIndex;
+        $progress.style.width = Math.round((page + 1) / articles.length * 100) + '%';
     }
     
     function leave(back) {

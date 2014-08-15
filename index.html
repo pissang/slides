@@ -7,15 +7,15 @@
 		<link rel=stylesheet type=text/css href="css/desert.css" />
 	</head>
 	<body>
-		<div id="Articles">
+		<div id="articles">
 		</div>
-		<div id="SlideInfo">
-			<h1 id="Title"></h1>
+		<div id="slide-info">
+			<h1 id="title"></h1>
 			<ul class="aboutme">
-				<li id="Author"></li>
-				<li id="Date"></li>
-				<li id="Github"></li>
-				<li id="Weibo"></li>
+				<li id="author"></li>
+				<li id="date"></li>
+				<li id="github"></li>
+				<li id="weibo"></li>
 			</ul>
 		</div>
 
@@ -29,20 +29,20 @@
 			$.get('md/web3d.md', function(markdown){
 			// $.get('md/template.md', function(markdown){
 				var res = mdslides.parse(markdown);
-				$("#Articles").append(res.html);
+				$("#articles").append(res.html);
 
-				$("#Title").html(res.meta.title);
-				$("#Author").html(res.meta.author);
-				$("#Date").html(res.meta.date);
-				$("#Github").html("github : " + res.meta.github);
-				$("#Weibo").html("@" + res.meta.weibo);
+				$("#title").html(res.meta.title);
+				$("#author").html(res.meta.author);
+				$("#date").html(res.meta.date);
+				$("#github").html("github : " + res.meta.github);
+				$("#weibo").html("@" + res.meta.weibo);
 
-				slides.init('Articles');
+				slides.init('articles');
 
-				$('#Articles pre').addClass('prettyprint');
+				$('#articles pre').addClass('prettyprint');
 				prettyPrint();
 
-				// $('#Articles article').height( $('#Articles article.current').height());
+				// $('#articles article').height( $('#articles article.current').height());
 			}, 'text');
 		</script>
 	</body>
