@@ -172,6 +172,7 @@ define(function(require) {
     function dispose() {
         if (renderer) {
             renderer.canvas.onclick = renderer.canvas.onkeydown = null;
+            renderer.canvas.parentNode.removeChild(renderer.canvas);
             renderer.dispose();
             animation.stop();
             engine.dispose();

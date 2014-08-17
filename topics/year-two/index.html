@@ -23,7 +23,7 @@
                 display: inline-block;
             }
 
-            #Articles article {
+            #articles article {
                 padding: 30px 100px;
             }
             
@@ -40,6 +40,12 @@
                 margin: 20px;
                 line-height: 50px;
                 text-align: center;
+
+                cursor: pointer;
+            }
+
+            .schedule-list li:hover {
+                background: purple;
             }
 
             .schedule-list.small li {
@@ -112,10 +118,10 @@
                 <h2>力导向图的重写</h2>
                 <div class="item" style="width:30%;height: 400px; float:left;border-right: 1px solid white; box-sizing:border-box">
                     <ul style="line-height: 40px;">
-                        <li class="item">布局计算放入 Web Worker</li>
-                        <li class="item">四叉树优化 <br /> O(n2) -> O(nlogn)</li>
-                        <li class="item">ZRender 重绘的优化</li>
-                        <li class="item">webkit内核依赖图的收敛速度降低到 1s 左右</li>
+                        <li class="item" style="margin: 10px 5px;">布局计算放入 Web Worker</li>
+                        <li class="item" style="margin: 10px 5px;">四叉树优化 <br /> O(n2) -> O(nlogn)</li>
+                        <li class="item" style="margin: 10px 5px;">ZRender 重绘的优化</li>
+                        <li class="item" style="margin: 10px 5px;">webkit内核依赖图的收敛速度降低到 1s 左右</li>
                     </ul>
                 </div>
                 <div class="item" data-action="drawForce" style="width: 70%; height: 400px; float:left;"></div>
@@ -270,6 +276,9 @@
             </article>
             <article>
                 <h1>动画系统</h1>
+            </article>
+            <article style="padding:0px">
+                <div class="item" data-action="showSkinning" style="width:100%; height:100%;"></div>
             </article>
             <article>
                 <h1>粒子特效</h1>

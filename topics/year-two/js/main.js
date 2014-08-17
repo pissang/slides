@@ -18,6 +18,7 @@ define(function(require) {
     var zrChromeBench = require('./zrChromeBench');
     var zrFirefoxBench = require('./zrFirefoxBench');
     var physics = require('./physics');
+    var skinning = require('./skinning');
 
     $(".lang-html").each(function() {
         // Encode html
@@ -222,6 +223,15 @@ define(function(require) {
             },
             leave: function() {
                 physics.dispose();
+            }
+        },
+
+        showSkinning: {
+            enter: function(dom) {
+                skinning.init(dom);
+            },
+            leave: function() {
+                skinning.dispose();
             }
         }
     }
