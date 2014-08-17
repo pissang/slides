@@ -20,10 +20,11 @@ define(function(require) {
     var Mesh = require('qtek/Mesh');
     var Material = require('qtek/Material');
     var Shader = require('qtek/Shader');
-    var textureUtil = require('qtek/util/texture');
     var shaderLibrary = require('qtek/shader/library');
     var OrbitControl = require('qtek/plugin/OrbitControl');
     var GLTFLoader = require('qtek/loader/GLTF');
+    var Texture2D = require('qtek/texture/Texture2D');
+    var Texture = require('qtek/Texture');
     var ShadowMapPass = require('qtek/prePass/ShadowMap');
     var qtekUtil = require('qtek/core/util');
 
@@ -70,18 +71,34 @@ define(function(require) {
         scene.add(new AmbientLight({intensity : 0.1}));
 
         var material = new Material({
-            shader : shaderLibrary.get('buildin.physical', 'diffuseMap')
+            shader : shaderLibrary.get('buildin.physical', 'diffuseMap', 'normalMap')
         });
-        material.set('glossiness', 0.2);
-        var texture = textureUtil.createChessboard(2048, 16, '#ddd', '#777');
-        texture.anisotropic = 32;
-        material.set('diffuseMap', texture);
+        material.set('glossiness', 0.8);
+        material.set('specularColor', [0.5, 0.5, 0.5]);
+        var diffuse = new Texture2D({
+            anisotropic: 32,
+            wrapS: Texture.REPEAT,
+            wrapT: Texture.REPEAT
+        });
+        diffuse.load('assets/chessboard.png');
+        var normal = new Texture2D({
+            anisotropic: 32,
+            wrapS: Texture.REPEAT,
+            wrapT: Texture.REPEAT
+        });
+        normal.load('assets/chessboard_NRM.png');
+        
+        material.set('diffuseMap', diffuse);
+        material.set('normalMap', normal);
+
+        material.set('uvRepeat', [30, 30]);
 
         var planeMesh = new Mesh({
             material : material,
             geometry : new Plane(),
             scale : new Vector3(100, 100, 1)
         });
+        planeMesh.geometry.generateTangents();
         planeMesh.geometry.boundingBox = null;
         planeMesh.rotation.rotateX(-Math.PI / 2);
 

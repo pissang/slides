@@ -130,7 +130,7 @@ define(function(require) {
 
         scene.add(heroRootNode);
         var light = new DirectionalLight({
-            intensity : 0.7,
+            intensity : 1,
             shadowResolution : 512,
             shadowBias : 0.02
         });
@@ -143,20 +143,35 @@ define(function(require) {
         }));
 
         var groundPlane = new Mesh({
-            geometry : new PlaneGeo({
-                widthSegments : 10,
-                heightSegments : 10
-            }),
+            geometry : new PlaneGeo(),
             material : new Material({
-                shader : shaderLibrary.get('buildin.lambert', 'diffuseMap')
+                shader : shaderLibrary.get('buildin.physical', 'diffuseMap', 'normalMap')
             }),
             culling : false
         });
-        groundPlane.material.set('color', [1, 1, 1]);
-        groundPlane.rotation.rotateX(-Math.PI / 2);
+        groundPlane.geometry.generateTangents();
+        groundPlane.material.set('glossiness', 0.8);
+        groundPlane.material.set('specularColor', [0.5, 0.5, 0.5]);
+        var diffuse = new Texture2D({
+            anisotropic: 32,
+            wrapS: Texture.REPEAT,
+            wrapT: Texture.REPEAT
+        });
+        diffuse.load('assets/chessboard.png');
+        var normal = new Texture2D({
+            anisotropic: 32,
+            wrapS: Texture.REPEAT,
+            wrapT: Texture.REPEAT
+        });
+        normal.load('assets/chessboard_NRM.png');
+        
+        groundPlane.material.set('diffuseMap', diffuse);
+        groundPlane.material.set('normalMap', normal);
+        groundPlane.material.set('uvRepeat', [30, 30]);
+
         groundPlane.scale.set(500, 500, 1);
-        var texture = textureUtil.createChessboard(2048, 16, '#ddd', '#777');
-        groundPlane.material.set('diffuseMap', texture);
+        groundPlane.rotation.rotateX(-Math.PI / 2);
+
         scene.add(groundPlane);
 
         var loader = new GLTFLoader();
