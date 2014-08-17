@@ -24,6 +24,7 @@ define(function(require) {
     var shaderLibrary = require('qtek/shader/library');
     var OrbitControl = require('qtek/plugin/OrbitControl');
     var GLTFLoader = require('qtek/loader/GLTF');
+    var ShadowMapPass = require('qtek/prePass/ShadowMap');
     var qtekUtil = require('qtek/core/util');
 
     var engine;
@@ -51,12 +52,17 @@ define(function(require) {
         var camera = new PerspectiveCamera({
             aspect : renderer.width / renderer.height
         });
+        var shadowMapPass = new ShadowMapPass({
+            shadowBlur: 0.2,
+            softShadow: ShadowMapPass.VSM
+        });
+
         camera.position.set(0, 6, 20);
         camera.lookAt(Vector3.ZERO);
 
         var light = new DirectionalLight({
-            shadowResolution : 2048,
-            shadowBias : 0.005
+            shadowResolution : 1024,
+            shadowBias : 0.01
         });
         light.position.set(1, 2, 1);
         light.lookAt(Vector3.ZERO);
@@ -67,15 +73,16 @@ define(function(require) {
             shader : shaderLibrary.get('buildin.physical', 'diffuseMap')
         });
         material.set('glossiness', 0.2);
-        var texture = textureUtil.createChessboard(2048, 8);
+        var texture = textureUtil.createChessboard(2048, 16, '#ddd', '#777');
         texture.anisotropic = 32;
         material.set('diffuseMap', texture);
 
         var planeMesh = new Mesh({
             material : material,
             geometry : new Plane(),
-            scale : new Vector3(200, 200, 1)
+            scale : new Vector3(100, 100, 1)
         });
+        planeMesh.geometry.boundingBox = null;
         planeMesh.rotation.rotateX(-Math.PI / 2);
 
         var floorBody = new RigidBody({
@@ -133,7 +140,7 @@ define(function(require) {
             }
 
             renderer.canvas.onclick = function(e) {
-                var ray = camera.castRay(new Vector2());
+                var ray = camera.castRay(renderer.screenToNdc(e.offsetX, e.offsetY));
                 var newBarrel = barrelNode.clone();
                 newBarrel.position.copy(ray.origin).add(ray.direction.clone().scale(1));
                 newBarrel.rotation.rotateX(Math.random() * 6);
@@ -164,7 +171,7 @@ define(function(require) {
         animation.on('frame', function(dTime) {
             engine.step(dTime / 1000);
             control.update(dTime);
-            // shadowMapPass.render(renderer, scene, camera);
+            shadowMapPass.render(renderer, scene, camera);
             renderer.render(scene, camera);
         });
     }

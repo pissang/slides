@@ -95,7 +95,7 @@
                     <li class="item">
                         <h4>性能优化</h4>
                         <ul>
-                            <li>1w个对象, 每个对象10个关键帧, 一帧~10ms</li>
+                            <li>1w个对象, 一帧~10ms</li>
                         </ul>
                     </li>
                     <li class="item">
@@ -118,9 +118,9 @@
                 <h2>力导向图的重写</h2>
                 <div class="item" style="width:30%;height: 400px; float:left;border-right: 1px solid white; box-sizing:border-box">
                     <ul style="line-height: 40px;">
-                        <li class="item" style="margin: 10px 5px;">布局计算放入 Web Worker</li>
-                        <li class="item" style="margin: 10px 5px;">四叉树优化 <br /> O(n2) -> O(nlogn)</li>
                         <li class="item" style="margin: 10px 5px;">ZRender 重绘的优化</li>
+                        <li class="item" style="margin: 10px 5px;">四叉树优化 <br /> O(n2) -> O(nlogn)</li>
+                        <li class="item" style="margin: 10px 5px;">布局计算放入 Web Worker</li>
                         <li class="item" style="margin: 10px 5px;">webkit内核依赖图的收敛速度降低到 1s 左右</li>
                     </ul>
                 </div>
@@ -277,18 +277,14 @@
             <article>
                 <h1>动画系统</h1>
             </article>
-            <article style="padding:0px">
-                <div class="item" data-action="showSkinning" style="width:100%; height:100%;"></div>
-            </article>
+            <article data-action="showSkinning" style="padding:0px;"></article>
             <article>
                 <h1>粒子特效</h1>
             </article>
             <article>
                 <h1>物理引擎</h1>
             </article>
-            <article>
-                <div class="item" data-action="showPhysics" style="width:100%; height:100%;"></div>
-            </article>
+            <article data-action="showPhysics" style="padding:0px;"></article>
             <article style="text-align:center;">
                 <h1>通用模型数据交换格式</h1>
                 <a href="https://github.com/KhronosGroup/glTF" target="_blank">

@@ -18,20 +18,37 @@ define(function(require) {
                 Math.random() * (zr.getWidth() - 20) + 20,
                 Math.random() * (zr.getHeight() - 20) + 20
             ];
+            var circle = new Circle({
+                style: {
+                    x: 0,
+                    y: 0,
+                    r: 5,
+                    brushType: 'fill',
+                    color: '#9b2e4a'
+                },
+                zlevel: 2,
+                hoverable: false,
+                position: point.slice()
+            });
+            zr.addShape(circle);
+
             points.push(point);
         }
+
 
         for (var i = 0; i < 200; i++) {
             var circle = new Circle({
                 style: {
                     x: 0,
                     y: 0,
-                    r: 7,
+                    r: 6,
                     brushType: 'both',
                     strokeColor: '#06B3DB',
                     color: '#fff',
-                    lineWidth: 5
+                    lineWidth: 3
                 },
+                zlevel: 1,
+                hoverable: false,
                 position: [-100, -100]
             });
             zr.addShape(circle);
@@ -54,9 +71,21 @@ define(function(require) {
                 brushType : 'stroke',
                 strokeColor : 'white',
                 lineWidth: 1
-            }
+            },
+            hoverable: false
+        }
+        var brokenLine2 = {
+            zlevel : 2,
+            style : {
+                pointList : points.slice(),
+                brushType : 'stroke',
+                strokeColor : '#9b2e4a',
+                lineWidth: 1
+            },
+            hoverable: false
         }
         zr.addShape(new BrokenLine(brokenLine));
+        zr.addShape(new BrokenLine(brokenLine2));
     }
 
     function dispose() {

@@ -93,7 +93,7 @@ define(function(require) {
             }
         });
 
-        scene.position.x = -20;
+        scene.position.x = -30;
         return scene;
     }
 
@@ -126,6 +126,7 @@ define(function(require) {
         var heroRootNode = new Node();
         heroRootNode.rotation.rotateX(-Math.PI/2);
         heroRootNode.scale.set(0.1, 0.1, 0.1);
+        heroRootNode.position.x = 10;
 
         scene.add(heroRootNode);
         var light = new DirectionalLight({
@@ -138,7 +139,7 @@ define(function(require) {
 
         scene.add(light);
         scene.add(new AmbientLight({
-            intensity : 0.2
+            intensity : 0.1
         }));
 
         var groundPlane = new Mesh({
