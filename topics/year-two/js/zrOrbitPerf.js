@@ -69,6 +69,10 @@ define(function(require) {
         fpsDom.style.color = 'red';
         fpsDom.style.right = '20px';
         fpsDom.style.top = '20px';
+        fpsDom.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+        fpsDom.style.fontFamily = 'Arial';
+        fpsDom.style.padding = '10px';
+        fpsDom.style.borderRadius = '5px';
         dom.appendChild(fpsDom);
         var fps;
         zr.animation.bind('frame', function(deltaTime) {

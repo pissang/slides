@@ -111,7 +111,7 @@ define(function(require) {
         var camera = new PerspectiveCamera({
             aspect: renderer.width / renderer.height
         });
-        camera.position.set(40, 10, 40);
+        camera.position.set(10, 15, 50);
         camera.lookAt(new Vector3(0, 8, 0));
 
         var control = new OrbitControl({
@@ -131,7 +131,7 @@ define(function(require) {
 
         scene.add(heroRootNode);
         var light = new DirectionalLight({
-            intensity : 1,
+            intensity : 0.9,
             shadowResolution : 512,
             shadowBias : 0.02
         });
