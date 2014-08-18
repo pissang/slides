@@ -19,6 +19,8 @@ define(function(require) {
     var zrFirefoxBench = require('./zrFirefoxBench');
     var physics = require('./physics');
     var skinning = require('./skinning');
+    var zrOrbitPerf = require('./zrOrbitPerf');
+    var zrxOrbitPerf = require('./zrxOrbitPerf');
 
     $(".lang-html").each(function() {
         // Encode html
@@ -232,6 +234,39 @@ define(function(require) {
             },
             leave: function() {
                 skinning.dispose();
+            }
+        },
+
+        xiaoshidai: {
+            enter: function(dom) {
+                $("<iframe id='xiaoshidai'>")
+                    .attr("src", "http://tupu.baidu.com/xiaoshidai")
+                    .css({
+                        width:'100%',
+                        height:'100%',
+                    })
+                    .appendTo(dom)
+            },
+            leave: function() {
+                $("#xiaoshidai").remove();
+            }
+        },
+
+        showZROrbit: {
+            enter: function(dom) {
+                zrOrbitPerf.init(dom);
+            },
+            leave: function() {
+                zrOrbitPerf.dispose();
+            }
+        },
+
+        showZRXOrbit: {
+            enter: function(dom) {
+                zrxOrbitPerf.init(dom);
+            },
+            leave: function() {
+                zrxOrbitPerf.dispose();
             }
         }
     }
