@@ -24,7 +24,8 @@ define(function(require) {
                     y: 0,
                     r: 5,
                     brushType: 'fill',
-                    color: '#9b2e4a'
+                    color: '#9b2e4a',
+                    opacity: 0.7
                 },
                 zlevel: 2,
                 hoverable: false,
@@ -80,7 +81,8 @@ define(function(require) {
                 pointList : points.slice(),
                 brushType : 'stroke',
                 strokeColor : '#9b2e4a',
-                lineWidth: 1
+                lineWidth: 1,
+                opacity: 0.7
             },
             hoverable: false
         }

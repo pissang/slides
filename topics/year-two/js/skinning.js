@@ -25,6 +25,7 @@ define(function(require) {
     var textureUtil = require('qtek/util/texture');
     var shaderLibrary = require('qtek/shader/library');
     var Texture2D = require('qtek/texture/Texture2D');
+    var TextureCube = require('qtek/texture/TextureCube');
     var Texture = require('qtek/Texture');
 
     var SMDParser = require('./SMDParser');
@@ -145,7 +146,7 @@ define(function(require) {
         var groundPlane = new Mesh({
             geometry : new PlaneGeo(),
             material : new Material({
-                shader : shaderLibrary.get('buildin.physical', 'diffuseMap', 'normalMap')
+                shader : shaderLibrary.get('buildin.physical', 'diffuseMap', 'normalMap', 'environmentMap')
             }),
             culling : false
         });
@@ -164,9 +165,21 @@ define(function(require) {
             wrapT: Texture.REPEAT
         });
         normal.load('assets/chessboard_NRM.png');
+
+        var cubeMap = new TextureCube({
+            width : 128,
+            height : 128,
+            type : Texture.FLOAT
+        });
+        textureUtil.loadPanorama(
+            'assets/pisa.hdr',
+            cubeMap,
+            renderer
+        );
         
         groundPlane.material.set('diffuseMap', diffuse);
         groundPlane.material.set('normalMap', normal);
+        groundPlane.material.set('environmentMap', cubeMap);
         groundPlane.material.set('uvRepeat', [30, 30]);
 
         groundPlane.scale.set(500, 500, 1);

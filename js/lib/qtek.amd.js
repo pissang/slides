@@ -27379,8 +27379,6 @@ define('qtek/util/texture',['require','../Texture','../texture/Texture2D','../te
     var dds = require('./dds');
     var hdr = require('./hdr');
 
-    var environmentMapPass = new EnvironmentMapPass();
-
     /**
      * @namespace qtek.util.texture
      */
@@ -27470,6 +27468,7 @@ define('qtek/util/texture',['require','../Texture','../texture/Texture2D','../te
          * @memberOf qtek.util.texture
          */
         panoramaToCubeMap : function(panoramaMap, cubeMap, renderer) {
+            var environmentMapPass = new EnvironmentMapPass();
             var skydome = new Skydome({
                 scene : new Scene()
             });
@@ -27477,6 +27476,7 @@ define('qtek/util/texture',['require','../Texture','../texture/Texture2D','../te
             environmentMapPass.texture = cubeMap;
             environmentMapPass.render(renderer, skydome.scene);
             environmentMapPass.texture = null;
+            environmentMapPass.dispose(renderer.gl);
             return cubeMap;
         },
 

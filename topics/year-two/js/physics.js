@@ -24,9 +24,11 @@ define(function(require) {
     var OrbitControl = require('qtek/plugin/OrbitControl');
     var GLTFLoader = require('qtek/loader/GLTF');
     var Texture2D = require('qtek/texture/Texture2D');
+    var TextureCube = require('qtek/texture/TextureCube');
     var Texture = require('qtek/Texture');
     var ShadowMapPass = require('qtek/prePass/ShadowMap');
     var qtekUtil = require('qtek/core/util');
+    var textureUtil = require('qtek/util/texture');
 
     var engine;
     var renderer;
@@ -63,15 +65,16 @@ define(function(require) {
 
         var light = new DirectionalLight({
             shadowResolution : 1024,
-            shadowBias : 0.01
+            shadowBias : 0.01,
+            intensity: 0.7
         });
         light.position.set(1, 2, 1);
         light.lookAt(Vector3.ZERO);
         scene.add(light);
-        scene.add(new AmbientLight({intensity : 0.1}));
+        scene.add(new AmbientLight({intensity : 0.2}));
 
         var material = new Material({
-            shader : shaderLibrary.get('buildin.physical', 'diffuseMap', 'normalMap')
+            shader : shaderLibrary.get('buildin.physical', 'diffuseMap', 'normalMap', 'environmentMap')
         });
         material.set('glossiness', 0.8);
         material.set('specularColor', [0.5, 0.5, 0.5]);
@@ -88,9 +91,20 @@ define(function(require) {
         });
         normal.load('assets/chessboard_NRM.png');
         
+        var cubeMap = new TextureCube({
+            width : 128,
+            height : 128,
+            type : Texture.FLOAT
+        });
+        textureUtil.loadPanorama(
+            'assets/pisa.hdr',
+            cubeMap,
+            renderer
+        );
+        
         material.set('diffuseMap', diffuse);
         material.set('normalMap', normal);
-
+        material.set('environmentMap', cubeMap);
         material.set('uvRepeat', [30, 30]);
 
         var planeMesh = new Mesh({
