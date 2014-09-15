@@ -66,13 +66,17 @@ var slides = (function() {
 
             for (var i = 0; i < page; i++) {
                 appearQueue[i].forEach(function(item) {
-                    item.classList.remove('hidden');
-                    item.classList.add('show');
+                    item.classList.remove('next');
+                    item.classList.add('prev');
                 });
             }
             for (var i = 0; i <= appearIndex; i++) {
-                appearQueue[page][i].classList.remove('hidden');
-                appearQueue[page][i].classList.add('show');
+                appearQueue[page][i].classList.remove('next');
+                if (i === appearIndex) {
+                    appearQueue[page][i].classList.add('current');
+                } else {
+                    appearQueue[page][i].classList.add('prev');
+                }
             }
             jumpTo(page, appearIndex);
 
@@ -99,7 +103,7 @@ var slides = (function() {
             var lis = articles[k].querySelectorAll(selector);
 
             for (var j = 0; j < lis.length; j++) {
-                lis[j].classList.add('hidden');
+                lis[j].classList.add('next');
                 appearQueue[k].push(lis[j]);
             }
         }
@@ -143,7 +147,7 @@ var slides = (function() {
     var next = function() {
         leave();
         
-        jumpTo(currentSlide, currentAppearIndex+1);
+        jumpTo(currentSlide, currentAppearIndex + 1);
 
         enter();
     }
@@ -151,29 +155,33 @@ var slides = (function() {
     var prev = function() {
         leave(true);
 
-        jumpTo(currentSlide, currentAppearIndex-1);
+        jumpTo(currentSlide, currentAppearIndex - 1);
 
-        enter();
+        enter(true);
     }
     
     var jumpTo = function(page, appearIndex) {
 
+        if (page < 0 || page > articles.length - 1) {
+            return;
+        }
+
         if (appearIndex < -1) {
             page --;
-            appearIndex = appearQueue[page].length-1;
+            if (page < 0 || page > articles.length - 1) {
+                return;
+            }
+            appearIndex = appearQueue[page].length - 1;
         }
         if (appearIndex > appearQueue[page].length -1) {
             page++;
+            if (page < 0 || page > articles.length - 1) {
+                return;
+            }
             appearIndex = -1;
         }
         currentAppearIndex = appearIndex;
 
-        if (page > articles.length-1) {
-            return;
-        }       
-        if (page < 0) {
-            return;
-        }
         for (var i =0; i < page; i++) {
             articles[i].classList.add('prev');
             articles[i].classList.remove('next');
@@ -229,9 +237,11 @@ var slides = (function() {
         if (!item) {
             return ;
         }
+        item.classList.remove('current');
         if (back) {
-            item.classList.remove('show');
-            item.classList.add('hidden');
+            item.classList.add('next');
+        } else {
+            item.classList.add('prev');
         }
 
         var functionName = item.getAttribute('data-action');
@@ -240,17 +250,17 @@ var slides = (function() {
                 leaveActions[functionName](item);
             }
         }
-
     }
 
-    function enter() {
+    function enter(back) {
         
         var item  = appearQueue[currentSlide][currentAppearIndex];
         if (!item) {
             return ;
         }
-        item.classList.remove('hidden');
-        item.classList.add('show');
+        item.classList.remove('prev');
+        item.classList.remove('next');
+        item.classList.add('current');
 
         var functionName = item.getAttribute('data-action');
         if (functionName) {

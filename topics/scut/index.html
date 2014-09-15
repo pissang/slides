@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Rendering the World in Browser</title>
+        <meta charset="utf-8" />
+        <link rel=stylesheet type=text/css href="../../css/slide.css" />
+        <link rel=stylesheet type=text/css href="../../css/desert.css" />
+        <link rel=stylesheet type=text/css href="css/scut.css" />
+    </head>
+    <body>
+        <canvas id="bg-particles"></canvas>
+        <div id="articles">
+            <article>
+                <h1 class="title">Rendering the World in Browser</h1>
+            </article>
+            <article id="about-me" style="text-align:center;">
+                <h2>About me</h2>
+                <h4>沈 毅</h4>
+                <img src="img/avatar.jpg" class="item avatar" alt="">
+                <img src="img/avatar2.png" class="item avatar" alt="">
+                <h4 class="item" style="margin-top:-50px;">
+                    08年开始接触前端
+                </h4>
+                <h4 class="item">12年浙大毕业加入百度</h4>
+                <h4 class="item">图形及可视化方向</h4>
+            </article>
+            <article>
+                <h1>圆角矩形</h1>
+            </article>
+            <article style="text-align:center;">
+                <h1>老一辈们画圆角</h1>
+                <img src="img/qietu.png" alt="">
+            </article>
+            <article style="text-align:center;">
+                <h1>现代化画圆角</h1>
+                <pre class="prettyprint item border-radius-code">
+border-radius: 20px;</pre>
+                <div class="item"></div>
+            </article>
+            <article style="text-align:center;">
+                <img src="img/avatar2.png" class="item border-radius-image" alt="">
+                <div class="item"></div>
+            </article>
+            <article style="text-align:center;">
+                <h2>更丰富的图形绘制手段</h2>
+                <ul class="schedule-list">
+                    <li class="item">CSS3</li>
+                    <li class="item">SVG</li>
+                    <li class="item">Canvas</li>
+                    <li class="item">WebGL</li>
+                </ul>
+            </article>
+            <article>
+                <h1>CSS3</h1>
+            </article>
+            <article>
+                <pre class="prettyprint item box-shadow-code">
+box-shadow: 5px 5px 5px black;</pre>
+                <div class="item"></div>
+                <pre class="prettyprint item transform-code">
+transform: perspective(2000px) rotateY(-30deg);</pre>
+                <div class="item"></div>
+                <pre class="prettyprint item blur-code">
+-webkit-filter: blur(5px);</pre>
+                <div class="item"></div>
+                <pre class="prettyprint item gradient-code">
+background: linear-gradient(top, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%);</pre>
+                <div class="item"></div>
+            </article>
+            <article>
+                <!--脑洞之大-->
+                <div class="css3-iphone"><b></b></div>
+            </article>
+            <article>
+                <h1>SVG</h1>
+            </article>
+            <article>
+                <h1>Canvas</h1>
+            </article>
+            <article>
+                可视化
+            </article>
+            <article style="text-align:center">
+                <h2>百度人气</h2>
+                <a href="//renqi.baidu.com" target="_blank">
+                    <img src="img/renqi.png" alt="" />
+                </a>
+            </article>
+            <article style="text-align:center">
+                <h2>世界杯专题</h2>
+                <a href="http://echarts.baidu.com/2014/" target='_blank'>
+                    <img src="img/worldcup.png" alt="" />
+                </a>
+            </article>
+            <article style="text-align:center">
+                <h2>世界杯专题</h2>
+                <a href="//localhost/doubi2/index.html" target="_blank">
+                    <img src="img/worldcup2.png" alt="" />
+                </a>
+            </article>
+            <article style="text-align:center">
+                <h2>世界杯专题</h2>
+                <a href="//localhost/doubi2/index.html" target="_blank">
+                    <img src="img/worldcup3.png" alt="" />
+                </a>
+            </article>
+            <article>
+                <h1>WebGL</h1>
+            </article>
+            <article style="text-align:center;">
+                <h2>概念图</h2>
+                <img src="img/cubes.gif" alt="">
+            </article>
+            <article style="padding:0px;" data-action="showCubeAnim"></article>
+            <article style="text-align:center;">
+                <h2>马赛克方块</h2>
+                <a href="//localhost/cubeanim/milan.html" target="_blank">
+                    <img src="img/cubes-mosaic.png" alt="">
+                </a>
+            </article>
+            <article>
+                <h1>最终版</h1>
+                <div class='item' data-action='showWorldCup'></div>
+                <!-- TODO
+                暂停
+                -->
+            </article>
+            <article style="text-align:center;">
+                <h2>DOTA2 英雄预览</h2>
+                <a href="//localhost/dota2hero/" target='_blank'>
+                    <img src="img/dota2hero.png" alt="">
+                </a>
+            </article>
+            <article style="text-align:center;">
+                <h2>FPS游戏</h2>
+                <a href="//localhost/bootcamp/" target='_blank'>
+                    <img src="img/bootcamp" alt="">
+                </a>
+            </article>
+            <article>
+                shaderToy
+            </article>
+        </div>
+        <div id="slide-info">
+            <h1 id="title">Rendering the World in Browser</h1>
+            <ul class="aboutme">
+                <li id="author">沈毅</li>
+                <li id="date">2014-09-17</li>
+                <li id="github">
+                    github : 
+                    <a href="https://github.com/pissang" target="_blank">pissang</a>
+                </li>
+                <li id="weibo">
+                    @
+                    <a href="http://weibo.com/pissang" target="_blank">pissang</a>
+                </li>
+            </ul>
+        </div>
+
+        <script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
+        <script type="text/javascript" src="../../js/lib/prettify.js"></script>
+        <script type="text/javascript" src="../../js/lib/esl.js"></script>
+        <script type="text/javascript" src="../../js/mdslides.js"></script>
+        <script type="text/javascript" src="../../js/slides.js"></script>
+
+        <script type="text/javascript">
+            require.config({
+                paths: {
+                    qtek: '../../js/lib/qtek',
+                    'worldcup-high': 'js/worldcup-high'
+                }
+            });
+            require(['js/main']);
+        </script>
+    </body>
+</html>
