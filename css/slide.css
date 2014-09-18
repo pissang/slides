@@ -24,7 +24,7 @@ body {
     overflow:hidden;
 }
 
-a{
+a {
     color:white;
 }
 
@@ -48,7 +48,7 @@ a{
     transition:width 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
 }
 
-#slide-info{
+#slide-info {
     background-color: black;
     position: fixed;
     bottom:0px;
@@ -59,7 +59,7 @@ a{
     color: white;
 }
 
-#slide-info #title{
+#slide-info #title {
     font-size: 20px;
     margin: 0px;
     float: left;
@@ -67,25 +67,25 @@ a{
     margin-left: 100px
 }
 
-#slide-info .aboutme{
+#slide-info .aboutme {
     float:right;
     margin:0px;
 
     margin-right: 100px;
 }
-#slide-info .aboutme li{
+#slide-info .aboutme li {
     float:left;
     list-style: none;
     margin: 0px 10px;
 }
-#articles {
+#articles  {
     position: relative;
     height:100%;
 
     display: none;
 }
 
-#articles article {
+#articles article  {
     
     background-color:#06b3db;
     padding:20px;
@@ -102,20 +102,20 @@ a{
     box-sizing:border-box;
 }
 
-#articles article.current{
+#articles article.current {
     -webkit-transition-delay:0.4s;
     -moz-transition-delay:0.4s;
     transition-delay:0.4s;
 }
 
-#articles article.next{
+#articles article.next {
     -webkit-transform:translate(1000px, 0px);
     -moz-transform:translate(1000px, 0px);
     transform:translate(1000px, 0px);
     opacity: 0;
 }
 
-#articles article.prev{
+#articles article.prev {
     -webkit-transform:scale(0.5);
     -moz-transform:scale(0.5);
     transform:scale(0.5);
@@ -123,21 +123,21 @@ a{
 }
 
 
-article h1{
+article h1 {
     font-size: 50px;
     text-align: center;
 }
 
-article h1.title{
+article h1.title {
     font-size: 80px;
 }
 
-article h3{
+article h3 {
     font-size: 30px;
 }
 
 li,
-.item{
+.item {
     -webkit-transition:all 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
     -moz-transition:all 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
     transition:all 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
@@ -155,19 +155,19 @@ article.prev .item.prev,
     transform:translate(30px, 0px);
 }
 
-article li.action{
+article li.action {
     display: none;
 }
 
-article li{
+article li {
     min-height: 40px;
 }
 
-img{
+img {
     max-width: 700px;
 }
 
-pre{
+pre {
     padding: 20px;
     border-radius: 5px;
     font-size: 14px;

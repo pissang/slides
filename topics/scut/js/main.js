@@ -26,6 +26,14 @@ define(function (require) {
             leave: function (dom) {
                 require('./worldcup').dispose();
             }
+        },
+        showSVG: {
+            enter: function (dom) {
+                require('./showSVG').init(dom);
+            },
+            leave: function (dom) {
+                require('./showSVG').dispose();
+            }
         }
     };
 

@@ -19,6 +19,7 @@
                 <img src="img/avatar.jpg" class="item avatar" alt="">
                 <img src="img/avatar2.png" class="item avatar" alt="">
                 <h4 class="item" style="margin-top:-50px;">
+                    <!--从08年刚进入大学开始接触前端-->
                     08年开始接触前端
                 </h4>
                 <h4 class="item">12年浙大毕业加入百度</h4>
@@ -28,11 +29,20 @@
                 <h1>圆角矩形</h1>
             </article>
             <article style="text-align:center;">
-                <h1>老一辈们画圆角</h1>
+                <h2 style="margin-top:150px;margin-bottom:100px;">老一辈们画圆角</h2>
                 <img src="img/qietu.png" alt="">
+                <!--
+                会把一张带有圆角的图片切成几份
+                如果是宽度自适应，横着切，高度自适应，竖着切，
+                宽度高度自适应哦，说不定会是面试题哦，我面试就被问到了这个问题
+                -->
             </article>
             <article style="text-align:center;">
-                <h1>现代化画圆角</h1>
+                <h2 style="margin-top:150px;margin-bottom:100px;">现代化的圆角</h2>
+                <!--
+                现在可以使用css3的border-radius属性对任意元素加上圆角
+                方便快捷无痛
+                -->
                 <pre class="prettyprint item border-radius-code">
 border-radius: 20px;</pre>
                 <div class="item"></div>
@@ -41,8 +51,10 @@ border-radius: 20px;</pre>
                 <img src="img/avatar2.png" class="item border-radius-image" alt="">
                 <div class="item"></div>
             </article>
+            <article>
+                <h1>更丰富的图形绘制手段</h1>
+            </article>
             <article style="text-align:center;">
-                <h2>更丰富的图形绘制手段</h2>
                 <ul class="schedule-list">
                     <li class="item">CSS3</li>
                     <li class="item">SVG</li>
@@ -68,17 +80,36 @@ background: linear-gradient(top, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%
                 <div class="item"></div>
             </article>
             <article>
-                <!--脑洞之大-->
+                <!--脑洞很大-->
                 <div class="css3-iphone"><b></b></div>
             </article>
-            <article>
-                <h1>SVG</h1>
+            <article style="text-align:center">
+                <h2>A single div</h2>
+                <!--
+                有个 A single div 的网站就展示了一系列只通过一个div来画
+                丰富的图形的案例。
+                主要也是配合渐变，阴影等手段。
+                尽管这个行为略微有点蛋疼。
+                -->
+                <a href="http://a.singlediv.com/">
+                    <img src="img/asinglediv.png" alt="" />
+                </a>
             </article>
             <article>
-                <h1>Canvas</h1>
+                <h1 class="item svg">SVG</h1>
+                <!-- 
+                canvas是比svg跟底层的绘图api，但是api越底层责任越大
+                没有svg使用简单方便，但是能做的事更多
+
+                在canvas上封装了一个绘图库，封装了我们觉得svg比较核心的几个优势功能。
+                -->
+                <h1 class="item canvas">Canvas</h1>
             </article>
-            <article>
-                可视化
+            <article style="text-align:center;">
+                <div data-action="showSVG" class="item" style="width:400px; height:100%; margin:0px auto;"></div>
+            </article>
+            <article text-align="center;" class="dv">
+                <h1 class="dv">可视化</h1>
             </article>
             <article style="text-align:center">
                 <h2>百度人气</h2>
@@ -92,6 +123,7 @@ background: linear-gradient(top, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%
                     <img src="img/worldcup.png" alt="" />
                 </a>
             </article>
+            <!-- 放一块 -->
             <article style="text-align:center">
                 <h2>世界杯专题</h2>
                 <a href="//localhost/doubi2/index.html" target="_blank">
@@ -102,6 +134,12 @@ background: linear-gradient(top, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%
                 <h2>世界杯专题</h2>
                 <a href="//localhost/doubi2/index.html" target="_blank">
                     <img src="img/worldcup3.png" alt="" />
+                </a>
+            </article>
+            <article style="text-align:center;">
+                <h2>冰桶挑战</h2>
+                <a href="//tupu.baidu.com/zhuanti/ice_bucket/index.html">
+                    <img src="img/icebucket.png" alt="">
                 </a>
             </article>
             <article>
@@ -160,14 +198,16 @@ background: linear-gradient(top, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%
         <script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
         <script type="text/javascript" src="../../js/lib/prettify.js"></script>
         <script type="text/javascript" src="../../js/lib/esl.js"></script>
+        <script type="text/javascript" src="../../js/lib/zrender.js"></script>
         <script type="text/javascript" src="../../js/mdslides.js"></script>
         <script type="text/javascript" src="../../js/slides.js"></script>
 
         <script type="text/javascript">
             require.config({
                 paths: {
-                    qtek: '../../js/lib/qtek',
-                    'worldcup-high': 'js/worldcup-high'
+                    'qtek': '../../js/lib/qtek',
+                    'worldcup-high': 'js/worldcup-high',
+                    'svg': '../../js/lib/svg'
                 }
             });
             require(['js/main']);
