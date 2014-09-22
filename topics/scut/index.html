@@ -10,9 +10,11 @@
     <body>
         <canvas id="bg-particles"></canvas>
         <div id="articles">
-            <article>
-                <h1 class="title">Rendering the World in Browser</h1>
-            </article>
+            <article></article>
+            <!--
+                现在前端的能力以及我们已有的工作
+                包括 canvas, webgl, 可视化
+            -->
             <article id="about-me" style="text-align:center;">
                 <h2>About me</h2>
                 <h4>沈 毅</h4>
@@ -52,20 +54,10 @@ border-radius: 20px;</pre>
                 <div class="item"></div>
             </article>
             <article>
-                <h1>更丰富的图形绘制手段</h1>
-            </article>
-            <article style="text-align:center;">
-                <ul class="schedule-list">
-                    <li class="item">CSS3</li>
-                    <li class="item">SVG</li>
-                    <li class="item">Canvas</li>
-                    <li class="item">WebGL</li>
-                </ul>
+                <h1>除了圆角</h1>
             </article>
             <article>
-                <h1>CSS3</h1>
-            </article>
-            <article>
+                <!--现在css3里能加的特效不止圆角, 还有...-->
                 <pre class="prettyprint item box-shadow-code">
 box-shadow: 5px 5px 5px black;</pre>
                 <div class="item"></div>
@@ -79,9 +71,220 @@ transform: perspective(2000px) rotateY(-30deg);</pre>
 background: linear-gradient(top, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%);</pre>
                 <div class="item"></div>
             </article>
+            <!--
+            一个引入例子
+            -->
             <article>
-                <!--脑洞很大-->
-                <div class="css3-iphone"><b></b></div>
+                <h1 class="title">Rendering the World in Browser</h1>
+            </article>
+            <article>
+                <!--猜猜看怎么用一个标签来绘制这个iphone-->
+                <div class="css3-iphone item"><b></b></div>
+                <pre class="prettyprint css3-iphone-code item" data-action="evaluateCss3" style="width: 600px; height:400px; overflow-y: scroll; position:absolute;right: 20px;">
+.css3-iphone b {
+    display:block;
+    position: relative;
+    margin: 20px auto;
+    padding: 0px;
+    width: 335px;
+    height: 700px;
+    border-radius: 60px;
+    border-top: #333 5px solid;
+    border-right: #474747 5px solid;
+    border-left: #333 5px solid;
+    border-bottom: #333 5px solid;
+    background-color: #000;
+    background-image:
+        linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,0.8) 100%),
+        linear-gradient(200deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.4) 35%, rgba(0,0,0,0) 35%, rgba(0,0,0,0) 100%),
+        linear-gradient(left, rgba(0,0,0,1) 5%, rgba(0,0,0,0) 5%, rgba(0,0,0,0) 95%, rgba(0,0,0,1) 95%),
+        linear-gradient(top, rgba(0,0,0,1) 13%, #264863 5%, #6b8ba7 50%, #082a43 85%, rgba(0,0,0,1) 85%);   
+        
+    box-shadow:#666 0px 20px 50px;
+}
+
+.css3-iphone b:before{
+    content:"";
+    display: block;
+    position: absolute;
+    top:50px;
+    left:50%;
+    margin-left:-32.5px;
+    width:65px;
+    height:8px;
+    background:#333;
+    border-radius:10px;
+    border-top: #000 4px solid;
+    border-bottom:#212121 4px solid;
+    border-left:#000 4px solid;
+    border-right:#333 4px solid;
+    box-shadow: inset #000 0px 0px 7px;
+}
+
+.css3-iphone b:after {
+    content: "";
+    color:red;
+    font-size: 80px;
+    text-align: center;
+    display: block;
+    position: absolute;
+    bottom:15px;
+    margin:0 0 0 130px;
+    width:75px;
+    height:75px;
+    border-radius:100%;
+    background-image:
+        linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 52%, rgba(255,255,255,0.12) 52%, rgba(255,255,255,0.3) 100%),
+        radial-gradient(26px 27px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(27px 26px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),       
+        radial-gradient(28px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(29px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(30px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),       
+        radial-gradient(31px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(32px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(33px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),       
+        radial-gradient(34px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(35px 25px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),       
+        radial-gradient(36px 25px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(37px 25px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),       
+        radial-gradient(38px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(39px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),     
+        radial-gradient(40px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(41px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),       
+        radial-gradient(42px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(43px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),       
+        radial-gradient(44px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(45px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),       
+        radial-gradient(46px 25px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(47px 26px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(48px 27px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(48px 28px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(48px 29px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),               
+        radial-gradient(48px 30px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(48px 31px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),       
+        radial-gradient(48px 32px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(48px 33px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(48px 34px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),               
+        radial-gradient(48px 35px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(48px 36px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(48px 37px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),     
+        radial-gradient(48px 38px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(48px 39px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),     
+        radial-gradient(48px 40px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(48px 41px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(48px 42px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),             
+        radial-gradient(48px 43px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 1px),
+        radial-gradient(48px 44px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 1px),
+        radial-gradient(48px 45px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),               
+        radial-gradient(48px 46px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(47px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(46px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(45px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),       
+        radial-gradient(44px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(43px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(42px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),     
+        radial-gradient(41px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(40px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),     
+        radial-gradient(39px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(38px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),     
+        radial-gradient(37px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(36px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),     
+        radial-gradient(35px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(34px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),     
+        radial-gradient(33px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(32px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(31px 47px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),       
+        radial-gradient(30px 47px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(29px 47px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(28px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),       
+        radial-gradient(27px 47px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(26px 46px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(26px 45px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),       
+        radial-gradient(26px 44px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(26px 43px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),   
+        radial-gradient(26px 42px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),           
+        radial-gradient(26px 41px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2%),
+        radial-gradient(26px 40px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(26px 39px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),             
+        radial-gradient(26px 38px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(26px 37px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(26px 36px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),               
+        radial-gradient(26px 35px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(26px 34px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(26px 33px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),               
+        radial-gradient(26px 32px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(26px 31px, circle, #5b6064 0%, #5b6064 2.5%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(26px 30px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),             
+        radial-gradient(26px 29px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%),
+        radial-gradient(26px 28px, circle, #5b6064 0%, #5b6064 2%, rgba(0,0,0,0) 2.5%)              
+        ;
+    border:#202020 1px solid;
+    box-shadow:#333 0px -620px 0px -34px,
+    
+    /* Lock button */
+    #000 0px -620px 0px -31px,
+    #000 55px -652px 0px -36px,
+    #000 58px -652px 0px -36px,
+    #000 60px -652px 0px -36px,
+    #000 61px -652px 0px -36px,
+    #000 64px -652px 0px -36px,
+    #000 67px -652px 0px -36px,
+    #000 70px -652px 0px -36px,
+    #000 73px -652px 0px -36px,
+    #000 76px -652px 0px -36px,
+    #000 79px -652px 0px -36px,
+    #000 82px -652px 0px -36px,
+    #000 85px -652px 0px -36px,
+    #000 88px -652px 0px -36px,
+    #000 91px -652px 0px -36px,
+    #000 94px -652px 0px -36px,
+    #000 97px -652px 0px -36px,
+    #000 100px -652px 0px -36px,
+    #000 103px -652px 0px -36px,
+    #000 105px -652px 0px -36px,
+    #000 108px -652px 0px -36px,
+    /* side dots */
+    #000 -170px -580px 0px -36px,
+    #000 -170px -25px 0px -36px,
+    #333 169px -580px 0px -36px,
+    #333 169px -25px 0px -36px,
+    /* Side buttons */
+    /* Top button */
+    #333 -174px -550px 0px -36px,
+    #333 -174px -548px 0px -36px,
+    #333 -174px -545px 0px -36px,
+    #333 -174px -542px 0px -36px,
+    #333 -174px -539px 0px -36px,
+    #333 -174px -536px 0px -36px,
+    #333 -174px -534px 0px -36px,
+    #333 -174px -531px 0px -36px,
+    #333 -174px -528px 0px -36px,
+    #333 -174px -526px 0px -36px,
+    /* 2nd button */
+    #333 -174px -470px 0px -36px,
+    #333 -174px -468px 0px -36px,
+    #333 -174px -465px 0px -36px,
+    #333 -174px -462px 0px -36px,
+    #333 -174px -459px 0px -36px,
+    #333 -174px -456px 0px -36px,
+    #333 -174px -454px 0px -36px,
+    #333 -174px -451px 0px -36px,
+    #333 -174px -458px 0px -36px,
+    #333 -174px -456px 0px -36px,
+    /* 3rd */
+    #333 -174px -410px 0px -36px,
+    #333 -174px -418px 0px -36px,
+    #333 -174px -415px 0px -36px,
+    #333 -174px -412px 0px -36px,
+    #333 -174px -409px 0px -36px,
+    #333 -174px -406px 0px -36px,
+    #333 -174px -404px 0px -36px,
+    #333 -174px -401px 0px -36px,
+    #333 -174px -408px 0px -36px,
+    #333 -174px -406px 0px -36px
+    ;
+}
+                </pre>
             </article>
             <article style="text-align:center">
                 <h2>A single div</h2>
@@ -95,45 +298,139 @@ background: linear-gradient(top, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%
                     <img src="img/asinglediv.png" alt="" />
                 </a>
             </article>
-            <article>
-                <h1 class="item svg">SVG</h1>
-                <!-- 
-                canvas是比svg跟底层的绘图api，但是api越底层责任越大
-                没有svg使用简单方便，但是能做的事更多
-
-                在canvas上封装了一个绘图库，封装了我们觉得svg比较核心的几个优势功能。
+            <article style="text-align:center;">
+                <h2>A single div</h2>
+                <a href="http://a.singlediv.com/">
+                    <img src="img/asinglediv2.png" alt="" />
+                </a>
+            </article>
+            <article style="text-align:center;">
+                <!-- 那如果是画更加复杂的比如这个骷髅头呢 -->
+                <embed style="height:600px;" src="asset/test2.svg" type="image/svg+xml">
+            </article>
+            <!--
+                亦或是世界地图，热力图
+            -->
+            <article style="text-align:center;" class="svg">
+                <!--
+                现代浏览器都提供了两套更专业的图形绘制接口
                 -->
-                <h1 class="item canvas">Canvas</h1>
+                <h1 class="item">SVG</h1>
+                <ul>
+                    <li class='item'>xml描述</li>
+                    <li class="item">dom结构</li>
+                    <li class="item">能够用css描述样式</li>
+                    <li class="item">便捷的图形管理以及鼠标事件</li>
+                    <li class="item">慢，不能操作像素</li>
+                    <li class="item"></li>
+                </ul>
+            </article>
+            <article style="text-align:center;" class="svg">
+                <h1 class="item">Canvas</h1>
+                <ul>
+                    <!-- 
+                    canvas是比svg跟底层的绘图api，但是api越底层责任越大
+                    没有svg使用简单方便，但是能做的事更多
+
+                    在canvas上封装了一个绘图库，封装了我们觉得svg比较核心的几个优势功能。
+                    -->
+                    <!--
+                    GDI
+                    -->
+                    <li class='item'>指令式API</li>
+                    <li class='item'>高效灵活，能够操作像素</li>
+                    <!--
+                    痛点
+                    -->
+                    <li class="item">自己管理图形以及鼠标事件</li>
+                    <li class="item"></li>
+                </ul>
+            </article>
+            <article style="text-align:center;" class="svg">
+                <h1 class="item">ZRender</h1>
+                <ul>
+                    <li class='item'>底层Canvas图形库</li>
+                    <li class='item'>支持类似svg的图形管理和鼠标事件</li>
+                    <li class='item'>svg加载</li>
+                    <li class="item"></li>
+                </ul>
             </article>
             <article style="text-align:center;">
                 <div data-action="showSVG" class="item" style="width:400px; height:100%; margin:0px auto;"></div>
             </article>
-            <article text-align="center;" class="dv">
-                <h1 class="dv">可视化</h1>
+            <article class="dv" style="text-align:center;">
+                <!--TODO 解释可视化-->
+                <h1 class="item">可视化</h1>
+            </article>
+            <article style="text-align:center;">
+                <h2>找你妹</h2>
+                <div class="dv-example item">袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜<span>妹</span>袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜袜</div>
+                <div class="item"></div>
+            </article>
+            <article style="text-align:center;">
+                <p style="font-size:30px;margin-top:200px;" class="item">
+                    通过图形表达数据 <br /><br />
+                    借助视觉传递信息 <br />
+                </p>
+            </article>
+            <!--
+            在这之前可视化的方法可能就是通过flash
+            关于flash和html5之争不方便评论，只是现在多了很多手段
+            -->
+            <article style="text-align:center;" class="echarts">
+                <!--TODO 介绍Echarts-->
+                <h1 class="item">前端可视化解决方案 - ECharts</h1>
+                <img class="item" width="300" src="img/echarts.png" alt="" />
+            </article>
+            <article class="echarts-achieve" style="text-align:center;">
+                <h1 class="item">现状</h1>
+                <ul>
+                    <li class='item'>开源中国热门标签国内排名第一</li>
+                    <li class='item'>Github 2697 star</li>
+                    <li class="item"></li>
+                </ul>
+                <!--
+                开源中国热门标签里国内排第一
+                -->
+            </article>
+            <article style="text-align:center;">
+                <a href="//localhost/echarts/doc/example/line6.html">
+                    <img src="img/line.png" style="max-width:900px" alt="">
+                </a>
+            </article>
+            <article style="text-align:center;">
+                <img src="img/qianxi.png" style="max-width:900px" alt="">
+            </article>
+            <article>
+                <h1>可视化案例</h1>
             </article>
             <article style="text-align:center">
                 <h2>百度人气</h2>
+                <!--
+                通过点的亮度来表示这个点的热度
+                跟热力图表达类似的数据，但是容易表达时间的维度，
+                而且看起来逼格更上一个档次
+                -->
                 <a href="//renqi.baidu.com" target="_blank">
                     <img src="img/renqi.png" alt="" />
                 </a>
             </article>
+            <article>
+                <h1>世界杯专题</h1>
+            </article>
             <article style="text-align:center">
-                <h2>世界杯专题</h2>
                 <a href="http://echarts.baidu.com/2014/" target='_blank'>
-                    <img src="img/worldcup.png" alt="" />
-                </a>
-            </article>
-            <!-- 放一块 -->
-            <article style="text-align:center">
-                <h2>世界杯专题</h2>
-                <a href="//localhost/doubi2/index.html" target="_blank">
-                    <img src="img/worldcup2.png" alt="" />
+                    <img src="img/worldcup.png" style="max-width:850px;" alt="" />
                 </a>
             </article>
             <article style="text-align:center">
-                <h2>世界杯专题</h2>
                 <a href="//localhost/doubi2/index.html" target="_blank">
-                    <img src="img/worldcup3.png" alt="" />
+                    <img src="img/worldcup2.png" style="max-width:850px;" alt="" />
+                </a>
+            </article>
+            <article style="text-align:center">
+                <a href="//localhost/doubi2/index.html" target="_blank">
+                    <img src="img/worldcup3.png" style="max-width:850px;" alt="" />
                 </a>
             </article>
             <article style="text-align:center;">
@@ -143,11 +440,16 @@ background: linear-gradient(top, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%
                 </a>
             </article>
             <article>
+                <h1>3D ?</h1>
+            </article>
+            <article style='text-align:center;'>
+                <img src="img/car.png" style="max-width:900px;" alt="">
+            </article>
+            <article>
                 <h1>WebGL</h1>
             </article>
             <article style="text-align:center;">
-                <h2>概念图</h2>
-                <img src="img/cubes.gif" alt="">
+                <img src="img/cubes.gif" style="margin-top:100px;" alt="">
             </article>
             <article style="padding:0px;" data-action="showCubeAnim"></article>
             <article style="text-align:center;">
@@ -175,8 +477,14 @@ background: linear-gradient(top, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%
                     <img src="img/bootcamp" alt="">
                 </a>
             </article>
+            <article style="text-align:center;">
+                <h2>Shader Toy</h2>
+                <a href="//localhost/">
+                    <img src="img/shadertoy.png" alt="">
+                </a>
+            </article>
             <article>
-                shaderToy
+                <h1 style="font-size:40px;">ThankS Q&A</h1>
             </article>
         </div>
         <div id="slide-info">

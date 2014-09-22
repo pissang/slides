@@ -131,6 +131,9 @@ define(function (require) {
         var gltfLoader = new qtek.loader.GLTF();
         gltfLoader.load('asset/cube/cube.json');
         gltfLoader.success(function(res) {
+            if (!renderer) {
+                return;
+            }
             var cubeGeo = res.scene.getNode('Cube').geometry;
             for (var i = 0; i < positionArr.length; i++) {
                 var position = positionArr[i];
@@ -205,7 +208,9 @@ define(function (require) {
             renderer.disposeScene(scene);
             renderer.dispose();
             shadowMapPass.dispose(renderer.gl);
-            animation.stop();
+            if (animation) {
+                animation.stop();
+            }
 
             shadowMapPass = null;
             renderer = null;

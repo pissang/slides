@@ -34,6 +34,23 @@ define(function (require) {
             leave: function (dom) {
                 require('./showSVG').dispose();
             }
+        },
+        evaluateCss3: {
+            interval: 0,
+            enter: function (dom) {
+                if (actions.evaluateCss3.interval) {
+                    clearInterval(actions.evaluateCss3.interval);
+                }
+                // setInterval(function () {
+
+                // }, 1000);
+            },
+            leave: function (dom) {
+                if (actions.evaluateCss3.interval) {
+                    clearInterval(actions.evaluateCss3.interval);
+                    actions.evaluateCss3.interval = 0;
+                }
+            }
         }
     };
 

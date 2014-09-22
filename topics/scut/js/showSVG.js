@@ -2,6 +2,7 @@ define(function (require) {
 
     var svg = require('svg');
     var zrender = require('zrender');
+    var zrColor = require('zrender/tool/color');
 
     var zr;
 
@@ -17,6 +18,12 @@ define(function (require) {
             if (zr) {
                 zr.addGroup(g);
                 zr.render();
+                g.onclick = function (e) {
+                    e.target.style.color = zrColor.random();
+                    zr.modShape(e.target.id);
+                    zr.refresh();
+                    e.cancelBubble = true;
+                }
             }
         }, {
             clickable: true,
