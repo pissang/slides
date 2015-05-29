@@ -9,10 +9,10 @@ define(function(require) {
     var PerspectiveCamera = qtek.camera.Perspective;
     var Scene = qtek.Scene;
     var Vector3 = qtek.math.Vector3;
-    var Texture2D = qtek.texture.Texture2D;
+    var Texture2D = qtek.Texture2D;
     var easing = qtek.animation.easing;
 
-    var vec4 = qtek.glMatrix.vec4;
+    var vec4 = qtek.dep.glmatrix.vec4;
 
     var renderer;
     var camera;

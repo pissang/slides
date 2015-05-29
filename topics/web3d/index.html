@@ -3,8 +3,8 @@
 	<head>
 		<title></title>
 		<meta charset="utf-8" />
-		<link rel=stylesheet type=text/css href="css/slide.css" />
-		<link rel=stylesheet type=text/css href="css/desert.css" />
+		<link rel=stylesheet type=text/css href="../../css/slide.css" />
+		<link rel=stylesheet type=text/css href="../../css/desert.css" />
 	</head>
 	<body>
 		<div id="articles">
@@ -19,14 +19,14 @@
 			</ul>
 		</div>
 
-		<script type="text/javascript" src="js/lib/showdown.js"></script>
-		<script type="text/javascript" src="js/lib/jquery.min.js"></script>
-		<script type="text/javascript" src="js/lib/prettify.js"></script>
-		<script type="text/javascript" src="js/mdslides.js"></script>
-		<script type="text/javascript" src="js/slides.js"></script>
+		<script type="text/javascript" src="../../js/lib/showdown.js"></script>
+		<script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
+		<script type="text/javascript" src="../../js/lib/prettify.js"></script>
+		<script type="text/javascript" src="../../js/mdslides.js"></script>
+		<script type="text/javascript" src="../../js/slides.js"></script>
 
 		<script type="text/javascript">
-			$.get('md/web3d.md', function(markdown){
+			$.get('../../md/web3d.md', function(markdown){
 			// $.get('md/template.md', function(markdown){
 				var res = mdslides.parse(markdown);
 				$("#articles").append(res.html);
