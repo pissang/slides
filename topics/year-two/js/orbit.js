@@ -2,7 +2,7 @@ define(function(require) {
     
     var zrender = require('zrender');
     var Circle = require('zrender/shape/Circle');
-    var BrokenLine = require('zrender/shape/BrokenLine');
+    var Polyline = require('zrender/shape/Polyline');
 
     var zr;
 
@@ -86,8 +86,8 @@ define(function(require) {
             },
             hoverable: false
         }
-        zr.addShape(new BrokenLine(brokenLine));
-        zr.addShape(new BrokenLine(brokenLine2));
+        zr.addShape(new Polyline(brokenLine));
+        zr.addShape(new Polyline(brokenLine2));
     }
 
     function dispose() {

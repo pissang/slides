@@ -1,0 +1,66 @@
+body {
+    /*background-image: url(https://s-media-cache-ak0.pinimg.com/originals/b3/b5/01/b3b5017c06a693ceb7a6c5c279a5795d.jpg);*/
+    /*background-size: 120% 120%;*/
+}
+
+#articles article {
+    background-color: rgba(30, 54, 78, 0.9);
+}
+
+article h1.title {
+    font-size: 60px;
+}
+article h1.title span {
+    transition: color 0.5s linear;
+}
+
+article h1.title.prev span {
+    color: #FD6868;
+}
+
+article h1 {
+    margin-top: 200px;
+    background-color: rgba(52, 52, 79, 1);
+    margin-left: -20px;
+    margin-right: -20px;
+    font-size: 30px;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-shadow: rgb(29, 29, 43) 1px 1px,
+                rgb(30, 30, 44) 2px 2px,
+                rgb(31, 31, 46) 3px 3px,
+                rgb(32, 32, 48) 4px 4px,
+                rgb(33, 33, 49) 5px 5px,
+                rgb(34, 34, 51) 6px 6px,
+                rgb(35, 35, 53) 7px 7px,
+                rgb(36, 36, 55) 8px 8px,
+                rgb(37, 37, 56) 9px 9px,
+                rgb(38, 38, 58) 10px 10px,
+                rgb(39, 39, 60) 11px 11px,
+                rgb(41, 41, 61) 12px 12px,
+                rgb(42, 42, 63) 13px 13px,
+                rgb(43, 43, 65) 14px 14px,
+                rgb(44, 44, 67) 15px 15px,
+                rgb(45, 45, 68) 16px 16px,
+                rgb(46, 46, 70) 17px 17px,
+                rgb(47, 47, 72) 18px 18px,
+                rgb(48, 48, 73) 19px 19px,
+                rgb(49, 49, 75) 20px 20px,
+                rgb(50, 50, 77) 21px 21px,
+                rgb(52, 52, 79) 22px 22px;
+}
+
+article h2 {
+    text-align: center;
+    text-shadow: 0px 2px 2px black;
+}
+
+#intro-3d h1.item.prev {
+    transform:translate(0px, -100px);
+}
+
+#intro-3d img.item {
+    transform:translate(0px, -100px);   
+}

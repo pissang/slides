@@ -3,7 +3,7 @@ define(function(require) {
     var echarts = require('echarts');
     require('echarts/chart/bar');
 
-    var infographic = require('../../../js/lib/theme/infographic');
+    var infographic = require('echarts/theme/infographic');
 
     var ec;
 

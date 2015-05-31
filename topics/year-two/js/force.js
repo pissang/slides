@@ -3,7 +3,7 @@ define(function(require) {
     var echarts = require('echarts');
     require('echarts/chart/force');
 
-    var infographic = require('../../../js/lib/theme/infographic');
+    var infographic = require('echarts/theme/infographic');
 
     var webkitDepData = require('./webkit-dep');
     webkitDepData.minRadius = 5;

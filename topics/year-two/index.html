@@ -445,15 +445,21 @@
         <script type="text/javascript" src="../../js/lib/prettify.js"></script>
         <script type="text/javascript" src="../../js/slides.js"></script>
         <script type="text/javascript" src="../../js/lib/esl.js"></script>
-        <script type="text/javascript" src="../../js/lib/echarts.js"></script>
+        <script type="text/javascript" src="../../js/lib/echarts/echarts.js"></script>
         <script type="text/javascript" src="../../js/lib/zrender.js"></script>
         <script type="text/javascript" src="../../js/lib/zrender-x.js"></script>
         <script type="text/javascript" src="../../js/lib/dagre.js"></script>
         <script type="text/javascript" src="../../js/lib/qtek.amd.min.js"></script>
-        <script type="text/javascript" src="../../js/lib/qtek-2d.amd.min.js"></script>
-        <script type="text/javascript" src="../../js/lib/qtek-physics.amd.min.js"></script>
+        <script type="text/javascript" src="js/lib/qtek-2d.amd.min.js"></script>
+        <script type="text/javascript" src="js/lib/qtek-physics.amd.min.js"></script>
 
         <script type="text/javascript">
+            require.config({
+                paths: {
+                    'echarts': '../../js/lib/echarts'
+                }
+            });
+
             require(['js/main']);
         </script>
     </body>

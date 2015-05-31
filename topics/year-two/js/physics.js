@@ -39,7 +39,7 @@ define(function(require) {
             return;
         }
         engine = new Engine({
-            ammoUrl : '../../js/lib/ammo.fast.js'
+            ammoUrl : 'js/lib/ammo.fast.js'
         });
         engine.init();
         renderer = new Renderer({

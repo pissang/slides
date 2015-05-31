@@ -30,7 +30,7 @@ a {
 
 #slides-progress {
     position: absolute;
-    bottom: 60px;
+    bottom: 50px;
     left: 0px;
     right: 0px;
     height: 2px;
@@ -54,8 +54,8 @@ a {
     bottom:0px;
     left:0px;
     right:0px;
-    height: 60px;
-    line-height: 60px;
+    height: 50px;
+    line-height: 50px;
     color: white;
 }
 
@@ -64,14 +64,14 @@ a {
     margin: 0px;
     float: left;
 
-    margin-left: 100px
+    margin-left: 50px
 }
 
 #slide-info .aboutme {
     float:right;
     margin:0px;
 
-    margin-right: 100px;
+    margin-right: 20px;
 }
 #slide-info .aboutme li {
     float:left;
@@ -109,9 +109,9 @@ a {
 }
 
 #articles article.next {
-    -webkit-transform:translate(1000px, 0px);
-    -moz-transform:translate(1000px, 0px);
-    transform:translate(1000px, 0px);
+    -webkit-transform:translate(1500px, 0px);
+    -moz-transform:translate(1500px, 0px);
+    transform:translate(1500px, 0px);
     opacity: 0;
 }
 

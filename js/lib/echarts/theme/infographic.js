@@ -16,7 +16,7 @@ var theme = {
             color: '#27727B'          // 主标题文字颜色
         }
     },
-    
+
     // 图例
     legend: {
         itemGap: 8
