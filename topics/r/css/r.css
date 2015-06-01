@@ -64,3 +64,11 @@ article h2 {
 #intro-3d img.item {
     transform:translate(0px, -100px);   
 }
+
+#timer {
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    width: 100px;
+    height: 50px;
+}

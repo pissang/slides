@@ -26,7 +26,7 @@ define(function (require) {
                 baseLayer: {
                     backgroundColor: '',
                     backgroundImage: 'asset/earth.jpg',
-                    quality: 'medium',
+                    quality: 'high',
 
                     heightImage: 'asset/elev_bump.jpg'
                 },

@@ -173,3 +173,23 @@ pre {
     font-size: 14px;
     margin:50px;
 }
+
+article .slide-tip-container {
+    position: absolute;
+    left: 10px;
+    width: 300px;
+    top:0;
+}
+
+article .slide-tip {
+    background-color: #1BB6CA;
+    margin-top: 20px;
+    padding: 10px;
+
+    font-size: 12px;
+    line-height: 18px;
+    color: black;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+    text-align: left;
+}

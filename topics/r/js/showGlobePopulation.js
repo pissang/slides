@@ -57,7 +57,6 @@ define(function (require) {
                             backgroundColor: 'rgba(0, 150, 200, 0.5)'
                         },
                         data: [{}],
-                        hoverable: false,
                         itemStyle: {
                             normal: {
                                 areaStyle: {
@@ -69,6 +68,10 @@ define(function (require) {
                         markBar: {
                             barSize: 0.6,
                             data: data
+                        },
+                        roam: {
+                            autoRotate: false,
+                            focus: 'China'
                         }
                     }]
                 });

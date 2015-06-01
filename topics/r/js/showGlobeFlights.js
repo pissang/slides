@@ -84,7 +84,7 @@ define(function (require) {
                                 shadowBlur: 0.2
                             },
                             large: true,
-                            symbolSize: 3,
+                            symbolSize: 2,
                             data: airports
                         }
                     }]

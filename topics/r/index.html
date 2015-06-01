@@ -11,42 +11,42 @@
         <div id="articles">
             <article id="about-me" style="text-align:center;">
                 <h2>About Me</h2>
-
+                
+                <!-- tip:
+                右上角这个时间的进度，是用echarts的仪表盘做的、可以看到几个可视化的元素，比如用表盘和指针直观的表示当前过去的时间和剩下的时间，不同阶段的颜色表示这阶段的重要或者紧张等程度，这里先红后绿并不是因为我是红绿色盲，之前每次做分享都会一紧张语速太快，所以需要在前半段时刻提醒自己放慢语速
+                -->
             </article>
 
-            <!-- 
-            右上角这个时间的进度，是用echarts的仪表盘做的、可以看到几个可视化的元素，比如用表盘和指针直观的表示当前过去的时间和剩下的时间，不同阶段的颜色表示这阶段的重要或者紧张等程度，这里先红后绿并不是因为我是红绿色盲，之前每次做分享都会一紧张语速太快，所以需要在前半段时刻提醒自己放慢语速
-            -->
             <article style="text-align:center;">
-                <!-- 扯了这么多，接下来进入这次分享的主题，“图说 ECharts”，顾名思义，接下来主要通过各种图来介绍 ECharts，同时很多人应该了解图说是前段时间发布的基于 ECharts 的一个产品，定位能够让不会写程序的工作者能够方便快捷的制作出美观的图表。后面会介绍这个产品。 -->
+                <!-- tip: 扯了这么多，接下来进入这次分享的主题，“图说 ECharts”，顾名思义，接下来主要通过各种图来介绍 ECharts，同时很多人应该了解图说是前段时间发布的基于 ECharts 的一个产品，定位能够让不会写程序的工作者能够方便快捷的制作出美观的图表。后面会介绍这个产品。 -->
 
-                <!-- 大概介绍一下 ECharts 是一款怎么样的产品 ？ -->
+                <!-- tip: 大概介绍一下 ECharts 是一款怎么样的产品 ？ -->
                 <h1 class="title item"> <span>图</span>说ECharts</h1>
                 <div class="item"></div>
             </article>
             <article>
                 <h2>Schedule</h2>
-                <!-- 前15分钟介绍 ECharts  -->
+                <!--tip: 前15分钟介绍 ECharts  -->
                 <ul>
                     <li>ECharts 的发展</li>
                 </ul>
                 <ul>
                     <li>ECharts 特性介绍</li>
                 </ul>
-                <!-- 后 15 分钟介绍 ECharts 的衍生项目 -->
+                <!--tip: 后 15 分钟介绍 ECharts 的衍生项目 -->
                 <ul>
                     <li>ECharts 的衍生项目</li>
                 </ul>
-            </article>
-            <!-- 
-                ECharts 从发布 1.0 到现在已经两年多了。
-                相对于大部分开源产品还是很年轻。但是发展的速度很快，甚至出乎了我们自己的意料。
+                <!-- tip:
+                    ECharts 从发布 1.0 到现在已经两年多了。
+                    相对于大部分开源产品还是很年轻。但是发展的速度很快，甚至出乎了我们自己的意料。
 
-                首先通过两个简单的图表来看看 ECharts 这两年的关注度上升。
-            -->
+                    首先通过两个简单的图表来看看 ECharts 这两年的关注度上升。
+                -->
+            </article>
             <article>
                 <h2>Github 关注度</h2>
-                <!-- 
+                <!-- tip:
                 这是 ECharts 1.0 发布以来的 github 关注度趋势。
                 基本上保持每个月 500 左右的平稳增长，中间14年底这段涨势喜人的一个月是14年底有外国友人帮忙做了宣传
                  -->
@@ -54,11 +54,11 @@
             </article>
             <article>
                 <h2>百度指数</h2>
-                <!-- 这是百度的搜索指数曲线， -->
+                <!-- tip: 这是百度的搜索指数曲线， -->
                 <p>TODO</p>
             </article>
             <article>
-                <!-- 
+                <!-- tip:
                 接下来这个是百度上 ECharts 搜索的关键词，这个是用最近这个版本新添加的词云做的。
                 中间最大的两个关键词可以看出大家对于教程的强烈渴望，其实视频教程前段时间林峰有录制放在云课堂上，教程是我们被频繁问到的，也是我们接下去会完善的一个点。这里其它几个关键词其实都是我们被问到比较多的问题。
                 -->
@@ -68,62 +68,51 @@
             <article>
 
                 <h2>ECharts 大事件</h2>
-                <ul>
-                    <li>2013.6.30 v1.0</li>
-                    <li>RECharts</li>
-                    <li>2014.6.30 v2.0</li>
-                    <li>2014.8.26 图说 Beta</li>
-                    <li>2014.12.1 图说开放注册</li>
-
-                    <li>2014.12.1 国外的图说</li>
-
-                    <li>2015.1.30 ECharts-m</li>
-                    <li>2015.2.4 ECharts-X</li>
-                </ul>
+                <div class="item" style="height:500px;" data-action="showEvolution"></div>
             </article>
             <article>
                 <h1>ECharts 特性</h1>
                 <ul id="features">
                     <!-- TODO Icon -->
-                    <!-- 内置对数据的交互，比如最开始主打的拖拽重计算 -->
+                    <!--tip: 内置对数据的交互，比如最开始主打的拖拽重计算 -->
                     <li>交互</li>
-                    <!-- 处理的数据量比其它前端的图表库大 -->
+                    <!--tip: 处理的数据量比其它前端的图表库大 -->
                     <li>速度</li>
-                    <!-- 只提供一个 setOption 接口，数据驱动 -->
-                    <!-- 输入数据，然后 ECharts 会帮你做好一切其它的事情 -->
+                    <!--tip: 只提供一个 setOption 接口，数据驱动 -->
+                    <!--tip: 输入数据，然后 ECharts 会帮你做好一切其它的事情 -->
                     <li>易用</li>
                 </ul>
-                <!-- 接下去用几个示例演示一下这些特性 -->
+                <!--tip: 接下去用几个示例演示一下这些特性 -->
             </article>
             <article>
                 <h2>拖拽重计算</h2>
-                <!-- 
+                <!-- tip:
                 拖拽重计算是 ECharts 刚发布的时候主打的一个特性，你可以使用这个特性与图表进行交互，对数据整合和剔除，比如这个饼图中是目前各个浏览器所占的半分比，对于前端开发人员来说，EI6,7,8，如果我们需要知道这三个浏览器共同所占百分比，就可以把这三者拖到一块得到这个百分比。如果接下去又想知道除了IE6，7，8的现代浏览器分别占多少比重，我们再把 IE6,7,8拖出来。剩余几个浏览器的占比可以清晰的表现出来了。
                 -->
                 <div class="item" style="height:500px;" data-action="showCalculable"></div>
             </article>
             <article>
                 <h2>动态类型切换</h2>
-                <!-- ECharts 中的图表之间切换很多只是改变 type 类型，比如折线图和柱状图，和弦图和力导向图 -->
+                <!-- tip: ECharts 中的图表之间切换很多只是改变 type 类型，比如折线图和柱状图，和弦图和力导向图 -->
                 <!-- TODO -->
                 <div class="item" style="height:500px;" data-action="showMagicType"></div>
             </article>
             <article>
                 <h2>值域漫游(dataRange)</h2>
-                <!-- 
+                <!-- tip:
                 筛选出 GDP top 10% 的省份
                 -->
                 <div class="item" style="height:500px;" data-action="showDataRange"></div>
             </article>
             <article data-action="disposeMigration">
-                <!-- “浮夸”的特效？吸引眼球 -->
+                <!-- tip: “浮夸”的特效？吸引眼球 -->
                 <h2>地图特效（百度迁徙）</h2>
-                <!-- 
+                <!-- tip:
                     今年春节百度和央视合作的百度迁徙，图中有 2k 条线路，
                     但是可以看出主要集中在从北上广流出到其它城市
                 -->
                 <div class="item" style="height:600px;margin-top:-100px;" data-action="showMigration"></div>
-                <!-- 
+                <!-- tip:
                     也可以对主要的边做捆绑，更清晰，放大到广州部分
                 -->
                 <div class='item' data-action="toggleEdgeBundling"></div>
@@ -138,7 +127,7 @@
             </article>
             <article>
                 <h2>百搭时间轴</h2>
-                <!-- 
+                <!-- tip:
                 通过时间轴可以对原先的数据在时间维度上进行扩展，
                 比如刚才的 dataRange 示例加入时间维度后可以看出这几年各省的经济发展，比如我们设置一个 人均 GDP 2w 的标准线，可以看到从哪一年开始又城市达到这个标准线
                 -->
@@ -146,7 +135,7 @@
             </article>
             <article>
                 <h2>Even Better</h2>
-                <!-- 
+                <!-- tip:
                 配合 markLine 和 markPoint 可以做出更有意思的效果
                 下面是单次进攻的演示，可以看出进攻和防守球员的移动和传球路线。
 
@@ -156,11 +145,11 @@
             </article>
             <article>
                 <h2>大规模数据的渲染与交互</h2>
-                <!-- 后面会提到拥有更强大能力的 ECharts-X -->
+                <!-- tip: 后面会提到拥有更强大能力的 ECharts-X -->
             </article>
             <article>
                 <h2>更多特性</h2>
-                <!-- 更多其它特性由于时间关系不在这一一介绍了 -->
+                <!-- tip: 更多其它特性由于时间关系不在这一一介绍了 -->
                 <ul></ul>
             </article>
             <article>
@@ -172,7 +161,9 @@
             </article>
             <article id="intro-3d" style="text-align:center;">
                 <h1 class="item">3D ?</h1>
-                <!-- 很多人问过 3D 图表 -->
+                <!-- tip: 
+                    很多人问过是否能做图中这样的 3D 图表，但是我们希望能够做得更有意思一些，能够通过 3D 展现使用 echarts 无法展现的东西
+                -->
                 <img class="item" src="http://docs.fusioncharts.com/charts/contents/ChartSS/Images/Col_3D.jpg" alt="">
             </article>
 
@@ -180,10 +171,16 @@
                 <h1>ECharts-X</h1>
             </article>
             <article>
+                <!-- tip: 
+                    这是使用 ECharts 绘制的一个基础的地球仪，上面还包括了当前时间的日照信息，如果大家注意看的话还可以看出不同高度所呈现出来的阴影。
+                -->
                 <h2>3D 地图（Globe）</h2>
                 <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobe"></div>
             </article>
             <article>
+                <!-- tip: 
+                    这是在地球仪上对不同地区的人口分布做的可视化。柱状的高度和颜色表现了该地区人口密度。
+                -->
                 <h2>人口分布</h2>
                 <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobePopulation"></div>
             </article>
@@ -191,37 +188,57 @@
                 <h2>飞机航线可视化</h2>
                 <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobeFlights"></div>
             </article>
-            <article>
-                <h2>洋流可视化</h2>
+            <article style="text-align:center">
+                <h2>NASA Perpetual Ocean</h2>
+                <!-- tip: 
+                    这张图片是 NASA 在 2012 年对洋流做的一个可视化效果，艺术效果很像梵高的名画“星夜”
+                -->
+                <img class="item" src="http://i.ytimg.com/vi/xusdWPuWAoU/maxresdefault.jpg" alt="">
+                <img class="item" src="http://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1920px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" style="margin-top:-300px;height:300px;" alt="">
             </article>
             <article>
+                <!-- tip: 
+                    这个案例是我们在刚开始开发 ECharts-X 的时候就想模仿的， 最终我们在发布的 v0.1 前加入了对向量场的可视化，然后找到了洋流的数据做了这个示例，但是因为数据没有 NASA 那么明显的湍流。
+                -->
                 <h2>洋流可视化</h2>
                 <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobeWave"></div>
             </article>
             <article>
+                <!-- tip
+
+                -->
                 <h1>更常用的 3D 图？</h1>
             </article>
             <!--TODO 贴公式 -->
             <article style="text-align:center">
                 <h2>曲面图（Surface）</h2>
-                <canvas class="item" style="margin:-50px auto;width:600px;height:600px;" data-action="showSurface"></canvas>
+                <canvas class="item" style="margin:-50px 0;height:600px;" data-action="showSurface"></canvas>
             </article>
             <!--TODO 贴公式 -->
             <article style="text-align:center">
+                <!--tip: 以及更复杂的参数曲面 -->
                 <h2>参数曲面（Parametric Surface）</h2>
-                <canvas class="item" style="margin:-50px auto;width:600px;height:600px;" data-action="showParametricSurface"></canvas>
+                <canvas class="item" style="margin:-50px 0;height:600px;" data-action="showParametricSurface"></canvas>
             </article>
+            <!--
             <article>
                 <h2>散点图</h2>
             </article>
+            -->
             <article>
                 <h1>Now ?</h1>
+                <ul>
+<li>移动版</li>
+<li>扩展性</li>
+<li>教程</li>
+                </ul>
             </article>
             <article>
                 <h1>Thanks</h1>
             </article>
         </div>
-
+    
+        <div id="timer"></div>
         <div id="slide-info">
             <h1 id="title">图说 ECharts</h1>
             <ul class="aboutme">
@@ -241,6 +258,7 @@
         <script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
         <script type="text/javascript" src="../../js/slides.js"></script>
         <script type="text/javascript" src="../../js/lib/echarts/echarts.js"></script>
+        <script type="text/javascript" src="../../js/lib/zrender.js"></script>
         <script type="text/javascript" src="../../js/lib/echarts-x/echarts-x.js"></script>
 
         <script>

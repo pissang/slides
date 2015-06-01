@@ -7,7 +7,6 @@ var slides = (function() {
 
     var articles = [];
     
-    var locked = false;
     var currentSlide = 0;
     var prevSlide = 0;
     var currentAppearIndex = -1;
@@ -50,7 +49,14 @@ var slides = (function() {
 
         articles = container.querySelectorAll('article');
 
-        appearSerial(opt.itemClass);
+
+        if (window.location.search.match('tip')) {
+            for (var i = 0; i < articles.length; i++) {
+                showTips(articles[i]);
+            }   
+        }
+
+        findAppearList(opt.itemClass);
 
         var urls = document.location.href.split('#')
         baseURL = urls[0];
@@ -96,7 +102,7 @@ var slides = (function() {
         initKeyEvent();
     };
 
-    function appearSerial(itemClass) {
+    function findAppearList(itemClass) {
         for (var k = 0; k < articles.length; k++) {
             appearQueue[k] = [];
             var selector = itemClass ? '.'+itemClass : 'ul>li'
@@ -112,9 +118,6 @@ var slides = (function() {
     function initKeyEvent() {
 
         document.addEventListener('keydown', function(e) {
-            if (locked) {
-                return false;
-            }
             switch(e.keyCode) {
                 case 39: // right arrow
                 case 13: // Enter
@@ -135,15 +138,7 @@ var slides = (function() {
             }
         })
     }
-    
-    var lock = function(time) {
-        locked = true;
-        setTimeout(unlock, time)
-    }
-    var unlock = function() {
-        locked = false;
-    }
-    
+
     var next = function() {
         leave();
         
@@ -268,6 +263,44 @@ var slides = (function() {
                 enterActions[functionName](item);
             }
         }
+
+    }
+
+    function showTips(article) {
+
+        var comments = [];
+
+        function findCommentTip(parent) {
+
+            var nodes = parent.childNodes;
+
+            for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].nodeType === 8) {
+                    var comment = nodes[i].nodeValue;
+                    if (comment.match(/\s*tip:/)) {
+                        comments.push(comment.replace(/\s*tip:\s*/,''));
+                    }
+                }
+                else if (nodes[i].nodeType === 1) {
+                    findCommentTip(nodes[i]);
+                }
+            }
+        }
+
+        findCommentTip(article);
+
+        var $tipContainer = document.createElement('div');
+        $tipContainer.className = 'slide-tip-container';
+
+        for (var i = 0; i < comments.length; i++) {
+            var $tip = document.createElement('div');
+            $tip.className = 'slide-tip';
+            $tip.innerHTML = comments[i];
+
+            $tipContainer.appendChild($tip);
+        }
+
+        article.appendChild($tipContainer);
 
     }
 
