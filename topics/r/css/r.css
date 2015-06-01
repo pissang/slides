@@ -72,3 +72,21 @@ article h2 {
     width: 100px;
     height: 50px;
 }
+
+#features, #next {
+    width: 600px;
+    margin: 100px auto;
+}
+
+#features li, #next li {
+    list-style: none;
+    float: left;
+    width: 200px;
+    line-height: 50px;
+    font-size: 22px;
+}
+#features li img, #next li img {
+    height: 50px;
+    margin-right: 10px;
+    vertical-align: middle;
+}

@@ -2,6 +2,8 @@ define(function (require) {
 
     var Polygon = require('zrender/shape/Polygon');
     var Circle = require('zrender/shape/Circle');
+    var Line = require('zrender/shape/Line');
+    var TextShape = require('zrender/shape/Text');
     var zrender = require('zrender');
 
     var branches = [{
@@ -9,11 +11,11 @@ define(function (require) {
         events: [{
             time: '2013-06-30',
             value: 1,
-            title: 'v1.0 发布',
+            title: 'ECharts v1.0 发布',
         }, {
             time: '2014-06-30',
             value: 3,
-            title: 'v2.0 发布',
+            title: 'ECharts v2.0 发布',
         }]
     }, {
         name: 'recharts',
@@ -41,7 +43,7 @@ define(function (require) {
         from: 'echarts',
         events: [{
             time: '2015-01-30',
-            title: 'v1.0.0 发布',
+            title: 'ECharts-m v1.0.0 发布',
             value: 1
         }]
     }, {
@@ -49,7 +51,7 @@ define(function (require) {
         from: 'echarts',
         events: [{
             time: '2015-02-04',
-            title: 'v0.1.0 发布',
+            title: 'ECharts-x v0.1.0 发布',
             value: 1.5
         }]
     }];
@@ -62,13 +64,10 @@ define(function (require) {
 
         var eventList = [];
 
-        var yPadding = 150;
-        var xPadding = 50;
+        var xPadding = 100;
 
-        var height = dom.clientHeight - yPadding * 2;
+        var height = dom.clientHeight;
         var width = dom.clientWidth - xPadding * 2;
-
-        var branchMap = {};
 
         branches.forEach(function (branch) {
             branch.events.forEach(function (event) {
@@ -76,106 +75,92 @@ define(function (require) {
                 event.timeStamp = Date.parse(event.time);
 
                 startTime = Math.min(event.timeStamp, startTime);
-
-                event.branch = branch.name;
-            });
-
-            branch.events.sort(function (a, b) {
-                return a.timeStamp - b.timeStamp;
             });
 
             branch.startTime = branch.events[0].timeStamp;
-
-            branchMap[branch.name] = branch;
-
-            branch.layout = {};
         });
 
-        branches.sort(function (a, b) {
-            return b.startTime - a.startTime;
+        eventList.sort(function (a, b) {
+            return a.timeStamp - b.timeStamp;
         });
-        var mainBranch = branches[branches.length - 1];
 
-        // Put main branch
-        mainBranch.layout.y = height / 2 + yPadding;
-        // Layout other branches
-        var branchMargin = height / (branches.length - 1);
+        var line = new Line({
+            style: {
+                xStart: xPadding,
+                xEnd: width,
+                yStart: height / 2,
+                yEnd: height / 2,
+                lineWidth: 2,
+                color: 'white'
+            },
+            hoverable: false
+        });
+        zr.addShape(line);
 
-        var positiveStack = branchMargin;
-        var negativeStack = branchMargin;
-        var sign = 1;
-        branches.forEach(function (branch) {
-            if (branch !== mainBranch) {
-                if (sign === 1) {
-                    branch.layout.y = mainBranch.layout.y + positiveStack;
-                    positiveStack += branchMargin;
-                }
-                else {
-                    branch.layout.y = mainBranch.layout.y - negativeStack;
-                    negativeStack += branchMargin;
-                }
-                sign = - sign;
+        var prevP = 0;
+        eventList.forEach(function (event, idx) {
+            var p = (event.timeStamp - startTime) / (endTime - startTime);
+            if (prevP && p - prevP < 0.05) {
+                p += 0.05;
             }
-        });
+            prevP = p;
 
-        function getEventX(timeStamp) {
-            var p = (timeStamp - startTime) / (endTime - startTime);
             var x = p * width + xPadding;
+            var y = height / 2;
 
-            return x;
-        }
-
-        // Build polygon
-        branches.forEach(function (branch) {
-            var points = [];
-
-            var events = branch.events;
-
-            // Grow from branch effect
-            if (branch.from) {
-                var fromBranch = branchMap[branch.from];
-                var x = getEventX(events[0].timeStamp);
-                points.push([x, fromBranch.layout.y]);
-
-                var nextEvent = events[1];
-                var nextX = getEventX(
-                    nextEvent ? nextEvent.timeStamp
-                    : (branch.end ? Date.parse(branch.end) : endTime)
-                );
-
-                // Break point
-                var breakX = (x + nextX) / 2;
-                // TODO height
-                points.push([breakX, branch.layout.y - 10]);
-
-                events = events.slice(1);
-            }
-
-            events.forEach(function (event) {
-                var x = getEventX(event.timeStamp);
-                points.push([x, branch.layout.y - 10]);
-            });
-
-            var endX = getEventX(branch.end ? Date.parse(branch.end) : endTime);
-            points.push([endX, branch.layout.y - 10]);
-
-            var len = points.length;
-            for (var i = len - 1; i >= 0; i--) {
-                if (branch.from && i === 0) {
-                    points.push(points[i].slice());
-                }
-                else {
-                    points.push([points[i][0], branch.layout.y * 2 - points[i][1]]);
-                }
-            }
-            var polygon = new Polygon({
-                hoverable: false,
+            var circle = new Circle({
                 style: {
-                    smooth: 0.2,
-                    pointList: points
+                    brushType: 'both',
+                    x: 0,
+                    y: 0,
+                    r: 5,
+                    lineWidth: 3,
+                    strokeColor: '#C1232B',
+                    color: 'white'
+                },
+                position: [x, y],
+                hoverable: false,
+                z: 1
+            });
+            zr.addShape(circle);
+
+            var textY;
+            var textBaseline;
+            if (idx % 2) {
+                textY = y + 30 + Math.random() * 60;
+                textBaseline = 'top';
+            }
+            else {
+                textY = y - 30 - Math.random() * 60;
+                textBaseline = 'bottom';
+            }
+
+            var line = new Line({
+                style: {
+                    xStart: x + 0.5,
+                    yStart: y,
+                    xEnd: x + 0.5,
+                    yEnd: textY,
+                    lineWidth: 1,
+                    color: 'white'
                 }
             });
-            zr.addShape(polygon);
+            zr.addShape(line);
+
+            var text = new TextShape({
+                style: {
+                    text: event.time + '\n' + event.title,
+                    color: 'white',
+                    x: 0,
+                    y: 0,
+                    textAlign: 'center',
+                    textBaseline: textBaseline,
+                    textFont: '100 16px Helvetica Neue'
+                },
+                position: [x, textY],
+                hoverable: false
+            });
+            zr.addShape(text);
         });
     }
 
