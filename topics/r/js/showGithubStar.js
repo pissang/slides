@@ -16,7 +16,7 @@ define(function (require) {
         myChart.setOption({
             tooltip : {
                 trigger: 'axis',
-                axisPointer:{type:'none'},
+                axisPointer:{type:'line'},
                 showDelay: 0
             },
             grid:{x:100,x2:20,y:40,y2:80},

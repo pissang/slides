@@ -130,11 +130,11 @@ define(function (require) {
             var textY;
             var textBaseline;
             if (idx % 2) {
-                textY = y + 30 + Math.random() * 60;
+                textY = y + 30 + Math.random() * 30;
                 textBaseline = 'top';
             }
             else {
-                textY = y - 30 - Math.random() * 60;
+                textY = y - 30 - Math.random() * 30;
                 textBaseline = 'bottom';
             }
 
@@ -168,23 +168,23 @@ define(function (require) {
 
         zr.addGroup(group);
 
-        group.clipShape = new Rectangle({
-            style: {
-                width: 0,
-                x: xPadding,
-                y: 0,
-                height: height
-            }
-        });
+        // group.clipShape = new Rectangle({
+        //     style: {
+        //         width: 0,
+        //         x: xPadding,
+        //         y: 0,
+        //         height: height
+        //     }
+        // });
 
-        zr.animation.animate(group.clipShape.style)
-            .when(2000, {
-                width: width
-            })
-            .during(function () {
-                zr.refreshNextFrame();
-            })
-            .start();
+        // zr.animation.animate(group.clipShape.style)
+        //     .when(2000, {
+        //         width: width
+        //     })
+        //     .during(function () {
+        //         zr.refreshNextFrame();
+        //     })
+        //     .start();
     }
 
     function dispose() {

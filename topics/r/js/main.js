@@ -13,6 +13,15 @@ define(function (require) {
             }
         },
 
+        showZhiShu: {
+            enter: function (dom) {
+                require('./showZhiShu').init(dom);
+            },
+            leave: function (dom) {
+                require('./showZhiShu').dispose();
+            }
+        },
+
         showKeywordCloud: {
             enter: function (dom) {
                 require('./showKeywordCloud').init(dom);

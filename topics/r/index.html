@@ -9,12 +9,22 @@
     </head>
     <body>
         <div id="articles">
-            <article id="about-me" style="text-align:center;">
+            <article style="text-align:center;">
                 <h2>About Me</h2>
                 
                 <!-- tip:
                 右上角这个时间的进度，是用echarts的仪表盘做的、可以看到几个可视化的元素，比如用表盘和指针直观的表示当前过去的时间和剩下的时间，不同阶段的颜色表示这阶段的重要或者紧张等程度，这里先红后绿并不是因为我是红绿色盲，之前每次做分享都会一紧张语速太快，所以需要在前半段时刻提醒自己放慢语速
                 -->
+                <!-- tip:
+                图形开发 
+                -->
+                <div id="about-me" class="item">
+                    <img src="img/avatar_2.png" id="avatar" alt="">
+                    <div id="description">
+                        <h3>沈 毅</h3>
+                        <p>ECharts 项目工程师</p>
+                    </div>
+                </div>
             </article>
 
             <article style="text-align:center;">
@@ -24,18 +34,14 @@
                 <h1 class="title item"> <span>图</span>说ECharts</h1>
                 <div class="item"></div>
             </article>
-            <article>
+            <article style="text-align:center;">
                 <h2>Schedule</h2>
-                <!--tip: 前15分钟介绍 ECharts  -->
-                <ul>
-                    <li>ECharts 的发展</li>
-                </ul>
-                <ul>
-                    <li>ECharts 特性介绍</li>
-                </ul>
-                <!--tip: 后 15 分钟介绍 ECharts 的衍生项目 -->
-                <ul>
-                    <li>ECharts 的衍生项目</li>
+                <!--tip: 前15分钟介绍 ECharts ，包括 ECharts 的特性和这两年的发展-->
+                <ul id="schedule">
+                    <li class="item"><span class="checkpoint"></span>ECharts 的发展</li>
+                    <li class="item"><span class="checkpoint"></span>ECharts 特性介绍</li>
+                <!--tip: 后 15 分钟介绍基于 ECharts 做的一些的衍生项目 -->
+                    <li class="item"><span class="checkpoint"></span>ECharts 的衍生项目</li>
                 </ul>
                 <!-- tip:
                     ECharts 从发布 1.0 到现在已经两年多了。
@@ -54,8 +60,8 @@
             </article>
             <article>
                 <h2>百度指数</h2>
-                <!-- tip: 这是百度的搜索指数曲线， -->
-                <p>TODO</p>
+                <!-- tip: 这是从 14年5月份到现在的百度的搜索指数曲线，现在的百度指数基本上跟 highcharts 一个水平 -->
+                <div class="item" style="height:500px;" data-action="showZhiShu"></div>
             </article>
             <article>
                 <!-- tip:
@@ -66,8 +72,8 @@
                 <div class="item" style="height:400px;" data-action="showKeywordCloud"></div>
             </article>
             <article>
-
-                <h2>ECharts 大事件</h2>
+                <!-- tip: 这是 ECharts 发布以来经历的对我们来说比较重大的里程碑 -->
+                <h2>ECharts Milestone</h2>
                 <div class="item" style="height:500px;" data-action="showEvolution"></div>
             </article>
             <article style="text-align:center;">
@@ -146,17 +152,21 @@
                  -->
                 <div class="item" style="height:500px;margin:0 100px;" data-action="showSoccerTimeline"></div>
             </article>
+             <!-- tip: 更多其它特性由于时间关系不在这一一介绍了 -->
+            <!--
             <article>
                 <h2>更多特性</h2>
-                <!-- tip: 更多其它特性由于时间关系不在这一一介绍了 -->
                 <ul></ul>
             </article>
+            -->
             <article>
                 <h1>图说</h1>
                 <!-- 截图 -->
             </article>
-            <article>
-                <p>图说介绍？？？</p>
+            <article style="text-align:center">
+                <h2>图说</h2>
+                <!-- 截图 -->
+                <img data-src="img/tushuo.jpg" class="item" width="1000" style="max-width:1000px;"alt="">
             </article>
             <article id="intro-3d" style="text-align:center;">
                 <h1 class="item">3D ?</h1>
@@ -168,6 +178,15 @@
 
             <article>
                 <h1>ECharts-X</h1>
+                <!-- tip:
+                    去年春节前我们发布了 ECharts-X v0.1
+
+                    X 有 extension 的意思，因为 ECharts-X 不管是在定位还是使用上都是作为 ECharts 的扩展，并不是一个独立的版本。
+
+                    X 也代表了这是对我们来说一个新的领域新的方向。
+
+                    最先加入了 ECharts-X 的是地图的 3D 版本。
+                -->
             </article>
             <article>
                 <!-- tip: 
@@ -178,19 +197,22 @@
             </article>
             <article>
                 <!-- tip: 
-                    这是在地球仪上对不同地区的人口分布做的可视化。柱状的高度和颜色表现了该地区人口密度。
+                    这是在地球仪上对不同地区的人口分布做的可视化。柱状的高度和颜色表现了该地区人口密度。我们也可以使用 ECharts 中提供的值域漫游组件选出全球人口密度前 50% 的地区。
                 -->
                 <h2>人口分布</h2>
                 <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobePopulation"></div>
             </article>
             <article>
+                <!-- tip:
+                    这是例子展示了全球几大航空公司的航线。同样的它可以复用 ECharts 中的图例组件，筛选出需要的航空公司。
+                -->
                 <h2>飞机航线可视化</h2>
                 <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobeFlights"></div>
             </article>
             <article style="text-align:center">
                 <h2>NASA Perpetual Ocean</h2>
                 <!-- tip: 
-                    这张图片是 NASA 在 2012 年对洋流做的一个可视化效果，艺术效果很像梵高的名画“星夜”
+                    接下来再看下这个粒子，这张图片是 NASA 在 2012 年对洋流做的一个可视化效果，艺术效果很像梵高的名画“星夜”
                 -->
                 <img class="item" src="img/maxresdefault.jpg" alt="">
                 <img class="item" src="img/1920px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" style="margin-top:-300px;height:300px;" alt="">
