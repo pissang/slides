@@ -19,6 +19,10 @@ define(function (require) {
         $.ajax({
             url: './data/population.json',
             success: function (data) {
+                if (! myChart) {
+                    return;
+                }
+
                 var max = -Infinity;
                 data = data.map(function (item) {
                     max = Math.max(item[2], max);

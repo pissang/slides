@@ -82,10 +82,13 @@ define(function (require) {
         showWeiboCheckin: {
             enter: function (dom) {
                 require('./showWeiboCheckin').init(dom);
-            },
+            }
+        },
+
+        disposeWeiboCheckin: {
             leave: function () {
                 require('./showWeiboCheckin').dispose();
-            }  
+            }
         },
 
         showTimeline: {

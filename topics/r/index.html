@@ -76,11 +76,11 @@
                     <!-- TODO Icon -->
                     <!--tip: 易用性：只提供一个 setOption 接口，数据驱动 -->
                     <!--tip: 易用性：输入数据，然后 ECharts 会帮你做好一切其它的事情 -->
-                    <li class="item"><img src="img/simple.png" alt="">易用性</li>
+                    <li class="item"><img data-src="img/simple.png" alt="">易用性</li>
                     <!--tip: 富交互：内置对数据的交互，比如最开始主打的拖拽重计算 -->
-                    <li class="item"><img src="img/interactive.png" alt="">富交互</li>
+                    <li class="item"><img data-src="img/interactive.png" alt="">富交互</li>
                     <!--tip: 高性能：处理的数据量比其它前端的图表库大 -->
-                    <li class="item"><img src="img/performance.png" alt="">高性能</li>
+                    <li class="item"><img data-src="img/performance.png" alt="">高性能</li>
                 </ul>
                 <!--tip: 接下来通过几个示例介绍这些特性 -->
             </article>
@@ -117,13 +117,16 @@
                 -->
                 <div class='item' data-action="toggleEdgeBundling"></div>
             </article>
-            <article>
+            <article data-action="disposeWeiboCheckin">
                 <h2>地图特效（微博签到）</h2>
-                <!-- 这个是来自 ThinkGIS 的示例 -->
+                <!-- 这个是来自 ThinkGIS 的示例, 11.85w个数据 -->
+
                 <div class="item" style="height:600px;margin-top:-100px;" data-action="showWeiboCheckin"></div>
-                <a href="http://www.thinkgis.cn/public/sina/" target="_blank" style="position:absolute;right:10px;top:10px;">
-                    <img src="http://tp2.sinaimg.cn/1707284737/50/5705927796/1" alt="">
+                <a href="http://www.thinkgis.cn/public/sina/" target="_blank" style="position:absolute;right:10px;bottom:50px;">
+                    <img data-src="http://tp2.sinaimg.cn/1707284737/50/5705927796/1" alt="">
                 </a>
+
+                <div class="item" style="margin-top:-300px;font-size:22px;">11.8w 数据</div>
             </article>
             <article>
                 <h2>百搭时间轴</h2>
@@ -142,10 +145,6 @@
                 使用 svg。
                  -->
                 <div class="item" style="height:500px;margin:0 100px;" data-action="showSoccerTimeline"></div>
-            </article>
-            <article>
-                <h2>大规模数据的渲染与交互</h2>
-                <!-- tip: 后面会提到拥有更强大能力的 ECharts-X -->
             </article>
             <article>
                 <h2>更多特性</h2>
@@ -193,8 +192,8 @@
                 <!-- tip: 
                     这张图片是 NASA 在 2012 年对洋流做的一个可视化效果，艺术效果很像梵高的名画“星夜”
                 -->
-                <img class="item" src="http://i.ytimg.com/vi/xusdWPuWAoU/maxresdefault.jpg" alt="">
-                <img class="item" src="http://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1920px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" style="margin-top:-300px;height:300px;" alt="">
+                <img class="item" src="img/maxresdefault.jpg" alt="">
+                <img class="item" src="img/1920px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" style="margin-top:-300px;height:300px;" alt="">
             </article>
             <article>
                 <!-- tip: 
@@ -228,9 +227,9 @@
             <article>
                 <h1>Next ?</h1>
                 <ul id="next">
-                    <li class="item"><img src="img/mobile.png" alt="">移动版</li>
-                    <li class="item"><img src="img/extension.png" alt="">扩展性</li>
-                    <li class="item"><img src="img/tutorial.png" alt="">教程</li>
+                    <li class="item"><img data-src="img/mobile.png" alt="">移动版</li>
+                    <li class="item"><img data-src="img/extension.png" alt="">扩展性</li>
+                    <li class="item"><img data-src="img/tutorial.png" alt="">教程</li>
                 </ul>
             </article>
             <article>

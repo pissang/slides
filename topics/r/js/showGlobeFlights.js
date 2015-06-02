@@ -19,6 +19,11 @@ define(function (require) {
         $.ajax({
             url: './data/flights.json',
             success: function (data) {
+
+                if (! myChart) {
+                    return;
+                }
+
                 var markPointStyle = {
                     normal: {
                         color: 'red'

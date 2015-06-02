@@ -1,9 +1,10 @@
 define(function (require) {
 
-    var Polygon = require('zrender/shape/Polygon');
+    var Rectangle = require('zrender/shape/Rectangle');
     var Circle = require('zrender/shape/Circle');
     var Line = require('zrender/shape/Line');
     var TextShape = require('zrender/shape/Text');
+    var Group = require('zrender/Group');
     var zrender = require('zrender');
 
     var branches = [{
@@ -84,6 +85,8 @@ define(function (require) {
             return a.timeStamp - b.timeStamp;
         });
 
+        var group = new Group();
+
         var line = new Line({
             style: {
                 xStart: xPadding,
@@ -95,7 +98,7 @@ define(function (require) {
             },
             hoverable: false
         });
-        zr.addShape(line);
+        group.addChild(line);
 
         var prevP = 0;
         eventList.forEach(function (event, idx) {
@@ -122,7 +125,7 @@ define(function (require) {
                 hoverable: false,
                 z: 1
             });
-            zr.addShape(circle);
+            group.addChild(circle);
 
             var textY;
             var textBaseline;
@@ -145,7 +148,7 @@ define(function (require) {
                     color: 'white'
                 }
             });
-            zr.addShape(line);
+            group.addChild(line);
 
             var text = new TextShape({
                 style: {
@@ -160,8 +163,28 @@ define(function (require) {
                 position: [x, textY],
                 hoverable: false
             });
-            zr.addShape(text);
+            group.addChild(text);
         });
+
+        zr.addGroup(group);
+
+        group.clipShape = new Rectangle({
+            style: {
+                width: 0,
+                x: xPadding,
+                y: 0,
+                height: height
+            }
+        });
+
+        zr.animation.animate(group.clipShape.style)
+            .when(2000, {
+                width: width
+            })
+            .during(function () {
+                zr.refreshNextFrame();
+            })
+            .start();
     }
 
     function dispose() {

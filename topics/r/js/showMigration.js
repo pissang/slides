@@ -105,6 +105,9 @@ define(function (require) {
             url: 'data/migration.json',
             dataType: 'json',
             success: function(data) {
+                if (! myChart) {
+                    return;
+                }
                 option.series[0].markLine.data = data.allLine.sort(function (a, b) {
                     return b.num - a.num
                 }).slice(0, 2000).map(function (line) {

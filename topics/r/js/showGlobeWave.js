@@ -19,6 +19,10 @@ define(function (require) {
         $.ajax({
             url: './data/wave.json',
             success: function (data) {
+                if (! myChart) {
+                    return;
+                }
+
                 var field = [];
                 var p = 0;
                 for (var j = 0; j < data.ny; j++) {

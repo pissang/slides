@@ -19,6 +19,9 @@ define(function (require) {
         $.ajax({
             url: 'data/weibo.json',
             success: function (data) {
+                if (! myChart) {
+                    return;
+                }
                 if (typeof (data) === 'string') {
                     data = JSON.parse(data);
                 }
@@ -41,9 +44,9 @@ define(function (require) {
                         px = x;
                         py = y;
                     }
-
                     return res;
                 });
+
                 myChart.setOption({
                     color: ['rgba(255, 255, 255, 0.8)', 'rgba(14, 241, 242, 0.8)', 'rgba(37, 140, 249, 0.8)'],
                     legend: {
