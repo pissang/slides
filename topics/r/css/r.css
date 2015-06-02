@@ -118,3 +118,20 @@ article h2 {
     margin-right: 10px;
     vertical-align: middle;
 }
+
+#community {
+    width: 450px;
+    margin: 50px auto;
+}
+#community li {
+    list-style: none;
+    float: left;
+    width: 150px;
+    line-height: 50px;
+    font-size: 30px;
+
+    text-shadow: 0 5px 10px black;
+}
+#community li img {
+    height: 30px;
+}

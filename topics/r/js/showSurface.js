@@ -23,8 +23,7 @@ define(function (require) {
                 data: function (x, y) {
                     return Math.sin(x * 2) * Math.sin(y * 2) * x / 2 * y / 2;
                 }
-            },
-            autoRotate: false
+            }
         });
     }
 
