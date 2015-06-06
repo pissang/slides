@@ -15,6 +15,10 @@ define(function (require) {
 
         myChart.setOption({
             calculable : true,
+            tooltip: {
+                show: true,
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
             series : [
                 {
                     name:'浏览器占比',

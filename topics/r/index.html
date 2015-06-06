@@ -13,106 +13,109 @@
                 <h2>About Me</h2>
                 
                 <!-- tip:
-                右上角这个时间的进度，是用echarts的仪表盘做的、可以看到几个可视化的元素，比如用表盘和指针直观的表示当前过去的时间和剩下的时间，不同阶段的颜色表示这阶段的重要或者紧张等程度，这里先红后绿并不是因为我是红绿色盲，之前每次做分享都会一紧张语速太快，所以需要在前半段时刻提醒自己放慢语速
-                -->
-                <!-- tip:
-                图形开发 
+                大家好，我叫沈毅，是百度EFE团队的一名前端工程师，接下来我会用大约半小时的时间来介绍我们团队在可视化方向的产品ECharts，大家可能注意到了ppt右上角这张图，
+                这张图是我用ECharts的仪表盘制作的，图上可以看到一些简单的可视化元素比如颜色表现我在演讲的不同阶段内心的紧张程度，比如这个指针现在就指向演讲开始这个红色的位置
                 -->
                 <div id="about-me" class="item">
                     <img src="img/avatar_2.png" id="avatar" alt="">
                     <div id="description">
                         <h3>沈 毅</h3>
-                        <p>ECharts 项目工程师</p>
+                        <p>百度 EFE 团队前端工程师</p>
                     </div>
                 </div>
             </article>
 
             <article style="text-align:center;">
-                <!-- tip: 扯了这么多，接下来进入这次分享的主题，“图说 ECharts”，为了让这场30分钟的广告，接下来主要通过各种图来介绍 ECharts，同时很多人应该了解图说是前段时间发布的基于 ECharts 的一个产品，定位能够让不会写程序的工作者能够方便快捷的制作出美观的图表。后面会介绍这个产品。 -->
-
-                <!-- tip: 大概介绍一下 ECharts 是一款怎么样的产品 ？ -->
+                <!-- tip:     
+            接下来进入正题
+            这次分享的主题是《图说ECHARTS》，为了使接下来的30分钟广告不那么枯燥，我会尽量通过各种图表和示例来让大家了解Echarts以及一些从Echarts衍生的其它比较有意思的项目
+                 -->
                 <h1 class="title item"> <span>图</span>说ECharts</h1>
                 <div class="item"></div>
-
-                <!--tip: 前15分钟介绍 ECharts ，包括 ECharts 的特性和这两年的发展-->
-                <!--tip: 后 15 分钟介绍基于 ECharts 做的一些的衍生项目 -->
             </article>
             <article>
                 <h2>Github 关注度</h2>
                 <!-- tip:
-                我们首先来看几张关于 ECharts 关注度的图表，这是 ECharts 1.0 发布以来的 github 关注度趋势。
-                基本上保持每个月 500 左右的平稳增长，中间14年底这段涨势喜人的一个月是14年底有外国友人帮忙做了宣传
+                我们首先来看几张图表，这个图表展示了自 2013年6月发布 1.0 版本以来，echarts在 github 上的关注度增长，这个是通过 github 上面的 star 数来统计的，这其中在2014年底我们发布了产品的英文版，开始有国外的开发者关注这个项目，并且主动帮我们做了产品的推广，所以可以看到这一段时间涨得特别快。
                  -->
                 <div class="item" style="height:500px;" data-action="showGithubStar"></div>
             </article>
             <article>
                 <h2>百度指数</h2>
-                <!-- tip: 这是从 14年5月份到现在的百度的搜索指数曲线，现在的百度指数基本上跟 highcharts 一个水平 -->
+                <!-- tip: 接下来这张图是从14年5月份 ECharts在百度上的搜索指数，到现在基本上维持在1300，1400左右 跟老牌的图表库 highcharts 差不多处于一个水平 -->
+                <!-- TODO  highcharts -->
                 <div class="item" style="height:500px;" data-action="showZhiShu"></div>
             </article>
             <article>
                 <!-- tip:
-                接下来这个是百度上 ECharts 搜索的关键词，这个是用最近这个版本新添加的词云做的。
-                中间最大的两个关键词可以看出大家对于教程的强烈渴望，其实视频教程前段时间林峰有录制放在云课堂上，教程是我们被频繁问到的，也是我们接下去会完善的一个点。这里其它几个关键词其实都是我们被问到比较多的问题。
+                然后这张是开发者在百度上会经常搜的关于 ECharts 关键词，我们用最近这个版本新添加的词云把它画了出来。可以看到大家搜的最多的还是教程特别是视频教程。
+
+                关于视频教程echarts的作者林峰前段时间在云课堂上发布了他制作的Echarts教程的一系列视频，大家有兴趣的话可以前去围观支持。
                 -->
                 <h2>搜索关键词</h2>
                 <div class="item" style="height:400px;" data-action="showKeywordCloud"></div>
             </article>
+            <!--
             <article>
-                <!-- tip: 这是 ECharts 发布以来经历的对我们来说比较重大的里程碑 -->
                 <h2>ECharts Milestone</h2>
                 <div class="item" style="height:500px;" data-action="showEvolution"></div>
             </article>
+            -->
             <article style="text-align:center;">
+                <!-- tip: 接下来我们来介绍一下 ECharts 的特性 -->
+                <!-- tip: ECharts 的诸多特性可以总结为3点 -->
                 <h1>ECharts 特性</h1>
                 <ul id="features">
-                    <!-- TODO Icon -->
-                    <!--tip: 易用性：只提供一个 setOption 接口，数据驱动 -->
-                    <!--tip: 易用性：输入数据，然后 ECharts 会帮你做好一切其它的事情 -->
-                    <li class="item"><img data-src="img/simple.png" alt="">易用性</li>
-                    <!--tip: 富交互：内置对数据的交互，比如最开始主打的拖拽重计算 -->
-                    <li class="item"><img data-src="img/interactive.png" alt="">富交互</li>
-                    <!--tip: 高性能：处理的数据量比其它前端的图表库大 -->
+                    <!--tip: 
+                        首先是易用性，ECharts 是数据驱动的，要绘制图表只需要在 setOption 接口传入数据以及图表配置项。
+                    -->
+                    <li class="item"><img data-src="img/simple.png" alt="">易用</li>
+                    <!--tip: 然后是富交互：ECharts 提供了诸多的交互手段，可以让你从不同视角来解读图表中的数据 -->
+                    <li class="item"><img data-src="img/interactive.png" alt="">交互</li>
+                    <!--tip: 最后一点是高性能，得益于canvas的性能，相比于其它的前端可视化库都，echarts能够展现更大的数据量 -->
                     <li class="item"><img data-src="img/performance.png" alt="">高性能</li>
                 </ul>
-                <!--tip: 接下来通过几个示例介绍这些特性 -->
+                <!--tip: 
+                我们接下来会通过几个示例来展现几个比较有代表性的特性
+                -->
             </article>
             <article>
                 <h2>拖拽重计算</h2>
                 <!-- tip:
-                拖拽重计算是 ECharts 刚发布的时候主打的一个特性，你可以使用这个特性与图表进行交互，对数据整合和剔除，比如这个饼图中是目前各个浏览器所占的半分比，对于前端开发人员来说，EI6,7,8，如果我们需要知道这三个浏览器共同所占百分比，就可以把这三者拖到一块得到这个百分比。如果接下去又想知道除了IE6，7，8的现代浏览器分别占多少比重，我们再把 IE6,7,8拖出来。剩余几个浏览器的占比可以清晰的表现出来了。
+                首先是拖拽重计算，在ECharts中可以通过简单的拖拽交互对图表中的数据整合和剔除，比如这个饼图中是目前各个浏览器所占的半分比，对于前端开发人员来说，IE6,7,8可能需要作为一个整体来看，这时候我们可以通过拖拽把这三者拖到一块。就可以直接得到IE6,7,8共同所占的市场份额，如果我们还需要知道知道除了IE6，7，8的现代浏览器分别占多少市场，我们可以再把再把 IE6,7,8拖出来。剩余几个浏览器的占比可以清晰的表现出来了。
                 -->
                 <div class="item" style="height:500px;" data-action="showCalculable"></div>
             </article>
             <article>
                 <h2>动态类型切换</h2>
-                <!-- tip: ECharts 中的图表之间切换很多只是改变 type 类型，比如折线图和柱状图，和弦图和力导向图 -->
-                <!-- TODO -->
+                <!-- tip: 有时候我们拿到一份数据不知道该如何展示，是使用折线图呢还是使用柱状图，数据是否要堆叠等等 -->
+                <!-- tip:  比如这个例子中用柱状图呈现了一周内某个股票的购买意向，预购，成交人数的变化，但是似乎用柱状图不能一眼看出各自的走势，我们切换成折线图试试，看起来好了很多，如果再加上堆叠，我们还可以看到总量的变化。-->
                 <div class="item" style="height:500px;" data-action="showMagicType"></div>
             </article>
+            <!-- TODO 和弦和力导向的切换 -->
             <article>
-                <h2>值域漫游(dataRange)</h2>
+                <h2>值域漫游(Data Range)</h2>
                 <!-- tip:
-                筛选出 GDP top 10% 的省份
+                值域漫游也是 ECharts 提供的一个很实用的交互手段，例如这个中国各省份GDP统计图，如果我们想要一个 GDP 的筛选区间，比如说这张图里想要知道GDP在4w到5w之间的省份有哪些，可以拖动左边的控件，实时并且直观的进行筛选
                 -->
                 <div class="item" style="height:500px;" data-action="showDataRange"></div>
             </article>
             <article data-action="disposeMigration">
-                <!-- tip: “浮夸”的特效？吸引眼球 -->
+                <!-- tip: 特效是echarts 非常重要的一个特性，可能有些人会觉得这些浮夸的特效对于清晰地表达数据并没有什么卵用，但是不能否认的是还是会有大量的普通用户觉得炫酷的特效非常吸引眼球。-->
                 <h2>地图特效（百度迁徙）</h2>
                 <!-- tip:
-                    今年春节百度和央视合作的百度迁徙，图中有 2k 条线路，
-                    但是可以看出主要集中在从北上广流出到其它城市
+                    比如之前春节的百度迁徙，就是使用 ECharts 做的，我们后来又做了一些优化，使得图中能够实时的展现 2k 条路线的迁徙动画，
+                    可以看出春节期间人口的流动主要集中在从北上广流出到其它城市，可以放大到广州城市。
                 -->
                 <div class="item" style="height:600px;margin-top:-100px;" data-action="showMigration"></div>
                 <!-- tip:
-                    也可以对主要的边做捆绑，更清晰，放大到广州部分
+                    也可以开启边捆绑，计算和区分出其中的主干线
                 -->
                 <div class='item' data-action="toggleEdgeBundling"></div>
             </article>
             <article data-action="disposeWeiboCheckin">
                 <h2>地图特效（微博签到）</h2>
-                <!-- 这个是来自 ThinkGIS 的示例, 11.85w个数据 -->
+                <!--tip: 同样的还有之前 ThinkGIS 做的一个微博签到的示例, 这里面大概展现了 11.85w个签到数据 -->
 
                 <div class="item" style="height:600px;margin-top:-100px;" data-action="showWeiboCheckin"></div>
                 <a href="http://www.thinkgis.cn/public/sina/" target="_blank" style="position:absolute;right:10px;bottom:50px;">
@@ -122,24 +125,22 @@
                 <div class="item" style="margin-top:-300px;font-size:22px;">11.8w 数据</div>
             </article>
             <article>
-                <h2>百搭时间轴</h2>
+                <h2>时间轴（Timeline）</h2>
                 <!-- tip:
-                通过时间轴可以对原先的数据在时间维度上进行扩展，
-                比如刚才的 dataRange 示例加入时间维度后可以看出这几年各省的经济发展，比如我们设置一个 人均 GDP 2w 的标准线，可以看到从哪一年开始又城市达到这个标准线
+                时间轴是 ECharts 2.0 中新加入的一个组件，
+                通过时间轴可以把数据扩展到时间维度，
+                比如刚才GDP的例子加入时间维度后我们可以通过动画看到这几年各省份特别是沿海地区的经济发展，我们也可以利用左边的值域漫游组件，比如设置一个 人均 GDP 2w 的标准线，可以看到从哪一年开始有哪些省份率先突破了这个标准线
                 -->
                 <div class="item" style="height:500px;margin:-50px 100px;" data-action="showTimeline"></div>
             </article>
             <article>
                 <h2>Even Better</h2>
                 <!-- tip:
-                配合 markLine 和 markPoint 可以做出更有意思的效果
-                下面是单次进攻的演示，可以看出进攻和防守球员的移动和传球路线。
-
-                使用 svg。
+                这是一个我觉得更有意思的使用时间轴的例子。是去年世界杯的时候有同学用 ECharts 做的一个专题，它使用地图上的标注和标线
+                配合时间轴做了一个球队单次进攻的演示，我们可以通过动画直观的看到进攻和防守球员的移动和传球路线。
                  -->
                 <div class="item" style="height:500px;margin:0 100px;" data-action="showSoccerTimeline"></div>
             </article>
-             <!-- tip: 更多其它特性由于时间关系不在这一一介绍了 -->
             <!--
             <article>
                 <h2>更多特性</h2>
@@ -147,15 +148,17 @@
             </article>
             -->
             <article>
+             <!-- tip: 由于时间关系其它更多的特性不在这一一介绍了，大家有兴趣的话可以去 echarts 的官网详细了解-->
                 <h1>图说</h1>
                 <!-- tip: 
-                    面向那些没有编程基础的用户，能够快速便捷的制作基于 ECharts 的报表，信息图。
+                    接下来我们要介绍的是图说。
+                    可能有些没有编程基础的用户还是觉得 ECharts 非常困难，图说就是面向这些用户开发的。通过图说我们只需要导入数据然后点点鼠标编辑一些参数，就能够制作出美观的报表，信息图。不过我猜大家大部分都是能写程序的开发人员。所以图说这个产品我就在这里大概提一下。
                 -->
             </article>
             <article style="text-align:center">
                 <h2>图说</h2>
                 <!-- tip:
-                这张是图说的界面截图，左边编辑区能够可视的调整颜色等参数，输入数据，右侧是实时的预览。
+                这张是图说的界面截图，左边这一块是图表的编辑区，上面有一些可以编辑的组件参数。右边这一块是图表的预览区。所有在左边的编辑在这边都会实时的更新。
                 -->
                 <img data-src="img/tushuo.jpg" class="item" width="1000" style="max-width:1000px;"alt="">
             </article>
@@ -175,7 +178,7 @@
             <article id="intro-3d" style="text-align:center;">
                 <h1 class="item">3D ?</h1>
                 <!-- tip: 
-                    很多人问过是否能做图中这样的 3D 图表，但是我们希望能够做得更有意思一些，能够通过 3D 展现使用 echarts 无法展现的东西
+                    很多人问过是否能做图中这样的 3D 图表，我们也一直有做3D的想法，但是我们希望能够做得更有意思一些，能够通过 3D 展现使用 echarts 无法展现的东西
                 -->
                 <img class="item" src="http://docs.fusioncharts.com/charts/contents/ChartSS/Images/Col_3D.jpg" alt="">
             </article>
@@ -183,11 +186,13 @@
             <article>
                 <h1>ECharts-X</h1>
                 <!-- tip:
-                    去年春节前我们发布了 ECharts-X v0.1
+                    于是就有了 ECharts-X 这个产品。
 
-                    X 有 extension 的意思，因为 ECharts-X 不管是在定位还是使用上都是作为 ECharts 的扩展，并不是一个独立的版本。
+                    X 有 extension 的意思，因为 ECharts-X 不管是在定位还是使用上都是作为 ECharts 的扩展，它无法脱离 ECharts 使用。
 
-                    X 也代表了这是对我们来说一个新的领域新的方向。
+                    但是同样的你也可以继续使用ECharts中的的图表，组件和 X 里面的 3D 图表进行混搭。
+
+                    同时 X 也是说这个产品对我们来说一个新的领域新的方向。我们可以在 X 上尝试之前都无法做甚至不敢想的事。
 
                     最先加入了 ECharts-X 的是地图的 3D 版本。
 
@@ -196,40 +201,45 @@
             </article>
             <article>
                 <!-- tip: 
-                    这是使用 ECharts 绘制的一个基础的地球仪，上面还包括了当前时间的日照信息，如果大家注意看的话还可以看出不同高度所呈现出来的阴影。
+                    这是使用 ECharts 绘制的一个基础的地球仪，在这上面有跟ECharts地图一样的不同国家的轮廓线，还有当前时间的日照效果，如果仔细看的话还可以看出地球上的阴影所呈现的地势变化。
                 -->
                 <h2>3D 地图（Globe）</h2>
                 <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobe"></div>
             </article>
             <article>
                 <!-- tip: 
-                    这是在地球仪上对不同地区的人口分布做的可视化。柱状的高度和颜色表现了该地区人口密度。我们也可以使用 ECharts 中提供的值域漫游组件选出全球人口密度前 50% 的地区。
+                    这是使用地球仪上对不同地区的人口分布做的可视化。图中柱子的高度和颜色表现了该地区人口密度。当时有同事看到的时候觉得这个图特别好玩，像个海胆，我们也可以使用 ECharts 中提供的值域漫游组件筛选出全球人口密度前 50% 的地区。
                 -->
-                <h2>人口分布</h2>
+                <h2>人口分布（海胆图）</h2>
                 <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobePopulation"></div>
             </article>
             <article>
                 <!-- tip:
-                    这是例子展示了全球几大航空公司的航线。同样的它可以复用 ECharts 中的图例组件，筛选出需要的航空公司。
+                    这是例子展示的是全球几大航空公司不同航班的航线。比如现在展现的是美航的航线，我们可以在图例中开启显示其它几个航空公司，比如国航和东航。
                 -->
                 <h2>飞机航线可视化</h2>
                 <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobeFlights"></div>
             </article>
             <article style="text-align:center">
-                <h2>NASA Perpetual Ocean</h2>
+                <h2>向量场可视化</h2>
                 <!-- tip: 
-                    接下来再看下这个粒子，这张图片是 NASA 在 2012 年对洋流做的一个可视化效果，艺术效果很像梵高的名画“星夜”
+                    接下来向量场的可视化，关于向量场可视化 NASA 在 2012 年有一个经典的例子，Perpetual Ocean, 它把洋流的向量场用粒子动画非常直观的展现出来，它的艺术效果有点像梵高的名画“星夜”
                 -->
                 <img class="item" src="img/maxresdefault.jpg" alt="">
                 <img class="item" src="img/1920px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" style="margin-top:-300px;height:300px;" alt="">
+
+                <!-- tip: 
+                    这个案例是我们在刚开始开发 ECharts-X 的时候就想模仿的， 
+                -->
             </article>
             <article>
                 <!-- tip: 
-                    这个案例是我们在刚开始开发 ECharts-X 的时候就想模仿的， 最终我们在发布的 v0.1 前加入了对向量场的可视化，然后找到了洋流的数据做了这个示例，但是因为数据没有 NASA 那么明显的湍流。
+                最终我们在发布的 v0.1 前加入了对向量场的可视化，然后找了一组洋流的向量场数据做了这个示例，但是因为数据没有 NASA 那么明显的湍流。
                 -->
-                <h2>洋流可视化</h2>
+                <h2>洋流</h2>
                 <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobeWave"></div>
             </article>
+            <!-- TODO 风场 -->
             <article>
                 <!-- tip
 
@@ -256,13 +266,12 @@
                 <h1>Next ?</h1>
                 <ul id="next">
                     <!-- tip:
-                        移动端一直是我们现在的软肋，尽管几个月前已经发布了移动版，但是任然不理想，频繁会有反馈库文件依然过于庞大，内存小的机器容易崩溃等问题，我们接下去会继续做优化，希望马上能够带来让大家满意的版本。
+                        首先是移动端，
+                        移动端一直是我们现在的软肋，尽管几个月前已经发布了移动版，但是依然存在着诸如代码体积过大，内存小的机器上容易崩溃等问题，所以我们后续会进行更多更深入的优化，希望马上能够带来让大家满意的版本。
                     -->
                     <li class="item"><img data-src="img/mobile.png" alt="">移动</li>
                     <!-- tip:
-                         然后是尽管现在已经诸多配置项，但是仍然无法满足很多都想不到的需求，我们也无法把很特殊的需求就合成进主版本中。
-
-                         针对需要高度定制组件的开发人员，开放底层模块，可以定制出最符合自己需要的图表或者组件。
+                         然后是扩展，尽管现在已经诸多配置项，但是可能还出现有需求无法满足的情况。 针对这种情况我们后续会开放出底层的模块，开发人员可以在这些模块的基础上可以定制出最符合自己需要的图表或者组件。
                     -->
                     <li class="item"><img data-src="img/extension.png" alt="">扩展</li>
                     <!-- tip:
@@ -276,7 +285,7 @@
                 <h1 style="margin-top:100px;">社区以及合作</h1>
                 <!-- tip:
                     最后如果大家在使用的时候有问题的话可以在下面三个社区反馈。
-                    GitHub，DIV.IO 以及开源中国，我们会尽力及时给出答复或者修复 bug。这是我们之前一直做得不太好的。
+                    GitHub，DIV.IO 以及开源中国，当然为了方便我们整理和记录bug，最好还是能够在github上反馈。
                 -->
                 <ul id="community">
                     <li class="item">GitHub</li>
@@ -291,10 +300,10 @@
                     教 程
                 </div>
                 <!-- tip:
-                    最后的最后，每个季度免费帮助一个合作伙伴做可视化技术方面的支持，有这个需求的小伙伴们可以在微博或者其它平台上联系我们。
+                    最后的最后，每个季度会免费和一个合作伙伴做可视化展现方面的合作，有这个需求的小伙伴们可以在微博或者其它平台上联系我们。
                 -->
                 <div style="margin-top:50px;" class="item">
-                    每个季度免费帮助一个合作伙伴做可视化技术方面的支持
+                    每个季度免费帮助一个合作伙伴做可视化展现项目的合作
                 </div>
             </article>
             <article>
