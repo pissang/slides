@@ -58,6 +58,15 @@ define(function (require) {
             }
         },
 
+        showMagicType2: {
+            enter: function (dom) {
+                require('./showMagicType2').init(dom);
+            },
+            leave: function (dom) {
+                require('./showMagicType2').dispose();
+            }
+        },
+
         showDataRange: {
             enter: function (dom) {
                 require('./showDataRange').init(dom);
@@ -151,6 +160,15 @@ define(function (require) {
             },
             leave: function () {
                 require('./showGlobeWave').dispose();
+            }
+        },
+
+        showGlobeWind: {
+            enter: function (dom) {
+                require('./showGlobeWind').init(dom);
+            },
+            leave: function () {
+                require('./showGlobeWind').dispose();
             }
         },
 
