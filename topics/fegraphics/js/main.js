@@ -108,19 +108,11 @@ define(function (require) {
         showParticleEffect: {
             enter: function (dom) {
                 setTimeout(function () {
-
-                    require('./showParticleEffect').init(dom);
-                })
-            },
-            leave: function (dom) {
-                require('./showParticleEffect').dispose(dom);  
-            }
-        },
-
-        showParticleEffectRandom: {
-            enter: function (dom) {
-                setTimeout(function () {
-                    require('./showParticleEffect').init(dom, true);
+                    require('./showParticleEffect').init(dom, {
+                        random: dom.getAttribute('data-random'),
+                        collision: dom.getAttribute('data-collision'),
+                        motionBlur: dom.getAttribute('data-motion-blur')
+                    });
                 })
             },
             leave: function (dom) {

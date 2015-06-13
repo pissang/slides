@@ -81,7 +81,7 @@ var ctx = canvas.getContext('2d');
 
             <article class="center">
                 <h2>Path</h2>
-                <ul class="content" style="font-size:30px;line-height:60px;margin-top:100px;">
+                <ul class="content list" style="margin-top:100px;">
                     <li>Line</li>
                     <li>Bezier Curve(Cubic, Quadratic)</li>
                     <li>Arc</li>
@@ -155,7 +155,7 @@ ctx.stroke();
                 </div>
             </article>
 
-            <article id="styling-path" data-action="initPathStyleAnimation">
+            <article id="styling-path" class="list" data-action="initPathStyleAnimation">
                 <h2>Styling Path</h2>
                 <div class="row">
                     <ul class="left">
@@ -304,21 +304,46 @@ function drawParticle() {
 
             <article class="center">
                 <h2>Add Some Randomness</h2>
-                <div class="item content" data-action="showParticleEffectRandom" style="height:500px;"></div>
+                <div class="item content" data-action="showParticleEffect" data-random="1"style="height:450px;"></div>
+            </article>
+
+            <article class="center">
+                <h2>Effector - Collision with Box</h2>
+                <div class="item content" data-action="showParticleEffect" data-random="1" data-collision="1" style="height:450px;"></div>
             </article>
 
             <article>
-                <h2>Add Force Field</h2>
+                <h2>Effector - Force Field</h2>
             </article>
 
-            <article>
+            <article class="center">
                 <!-- 保存上一帧的图片作为残影 -->
                 <!-- https://www.chromeexperiments.com/experiment/noise-field -->
                 <h2>With Motion Blur</h2>
+<pre class="prettyprint item" style="position:absolute;left: 0;top:50px;text-align:left;">
+backCtx.drawImage(canvas, 0, 0, width, height);
+ctx.clearRect(0, 0, width, height);
+ctx.globalAlpha = 0.9;
+ctx.drawImage(backCanvas, 0, 0, width, height);
+ctx.globalAlpha = 1;
+....
+</pre>
+                <div class="item content" data-action="showParticleEffect" data-random="1" data-collision="1" data-motion-blur="1" style="height:450px;"></div>
             </article>
 
-            <article>
+            <article class="center">
                 <h2>Optimization</h2>
+                <ul class="content list" style="margin-top:100px;">
+                    <li>
+                        Use subpath instead of path
+                        <p>Less stroke(), fill()</p>
+                        <p>Less fillStyle, strokeStyle</p>
+                    </li>
+                    <li>
+                        Use layer
+                        <p>Only repaint the moving objects</p>
+                    </li>
+                </ul>
             </article>
     
             <article>
@@ -329,41 +354,81 @@ function drawParticle() {
             <article>
                 <h1>Image Processing with Canvas</h1>
             </article>
-            <article>
+            <article class="center">
                 <h2>getImageData()</h2>
+                <div class="content">
+<pre class="prettyprint item">
+var pixels = ctx.getImageData(x, y, width, height).data;
+</pre>
+                </div>
+                <div class="item">
+                    <h3>Pixel Layout - Uint8ClampedArray</h3>
+                    <img src="img/pixellayout.png" alt="">
+                </div>
             </article>
             <article>
-                <h2>Pixels</h2>
-            </article>
-            <article>
-                <h2>Convolve the Pixels</h2>
-            </article>
-            <article>
-                <h2>Gray</h2>
+                <h2>Gray - Luminance</h2>
+                <div class="row">
+<pre class="prettyprint item left">
+var lum = r * 0.21 + g * 0.72 + b * 0.07;
+pixels[i * 4] = lum;
+pixels[i * 4 + 1] = lum;
+pixels[i * 4 + 2] = lum;
+</pre>
+                </div>
             </article>
             <article>
                 <h2>Gaussian Filter</h2>
+<pre class="prettyprint item left">
+pixels[i * 4] = lum;
+pixels[i * 4 + 1] = lum;
+pixels[i * 4 + 2] = lum;
+</pre>
             </article>
             <article>
                 <h2>Sobel Edge Filter</h2>
             </article>
-
+            <article>
+                <h2>putImageData()</h2>
+            </article>
+<!--
             <article>
                 <h2>Canvas in Game</h2>
             </article>
-
+-->
             <article>
                 <h1>SVG and Canvas</h1>
             </article>
-            <article>
-                <h2>Draw SVG with Canvas</h2>
+            <article class="center">
+                <h2>Advantage of SVG</h2>
+
+                <ul class="content list" style="margin-top:20px;">
+                    <li>
+                        Dom tree
+                        <p>Graph objects management</p>
+                    </li>
+                    <li>
+                        Event handling
+                        <p>Mouse picking</p>
+                    </li>
+                    <li>Animation</li>
+                    <li>CSS</li>
+                </ul>
+            </article>
+            <article class="center">
+                <h2>Advantage of Canvas</h2>
+                <ul class="content list" style="margin-top:0px;">
+                    <li>Pixel manipulation</li>
+                    <li>Better integration with WebGL</li>
+                    <li>Performance</li>
+                </ul>
             </article>
             <article>
                 <h1>WebGL Basic</h1>
             </article>
-            <article>
+            <article class="center">
                 <h2>WebGL Introduction</h2>
-                <ul>
+                <ul class="content list">
                     <li>Currently 1.0</li>
                     <li>Closely to the OpenGL ES 2.0</li>
                     <li>Many extensions</li>
@@ -380,40 +445,40 @@ function drawParticle() {
                 <h2>Shading Pipeline</h2>
                 <p>Convert vertices to pixels</p>
             </article>
-            <article>
+            <article class="center">
+                <h2>WebGL Libraries</h2>
                 <!--
                 tip: 刚才的描述可能会有一点晦涩，有一些 WebGL 库会封装底层的图形接口，抽象出更高层的概念，
                 比如场景，摄像机，材质，灯光等等，这些概念更接近现实生活。
                 -->
-                <ul class="item">
-                    <li>THREE.js</li>
-                    <li>BabylonJS</li>
-                    <li>lightgl</li>
-                    <li>qtek</li>
-                    <li>...</li>
-                </ul>
-                <ul class="item">
-                    <li>Scene</li>
-                    <li>Camera</li>
-                    <li>Light</li>
-                    <li>Material</li>
-                    <li>...</li>
+                <div class="row content">
+                    <ul class="item left list">
+                        <li>THREE.js</li>
+                        <li>BabylonJS</li>
+                        <li>lightgl</li>
+                        <li>qtek</li>
+                        <li>...</li>
+                    </ul>
+                    <ul class="item left list">
+                        <li>Scene</li>
+                        <li>Camera</li>
+                        <li>Light</li>
+                        <li>Material</li>
+                        <li>...</li>
+                    </ul>
+                </div>
+            </article>
+            <article class="center">
+                <h2>Assets</h2>
+                <ul class="item list content">
+                    <li>Model</li>
+                    <li>Shader</li>
+                    <li>Texture</li>
                 </ul>
             </article>
-            <article>
-                <h2>Transform</h2>
-                <ul>
-                    <li>World</li>
-                    <li>Camera</li>
-                    <li>Perspective</li>
-                </ul>
-            </article>
-            <article>
-                <h2>Scene Description</h2>
-                <ul>
-                    <li>Collada</li>
-                    <li>glTF</li>
-                </ul>
+            <article class="center">
+                <h2>Web3D Pipeline</h2>
+                <img src="img/web3d-flow.jpg" alt="">
             </article>
             <article>
                 <h2>WebGL Particle Effects</h2>
@@ -424,9 +489,7 @@ function drawParticle() {
             <article>
                 <h2>Realtime Lowpolify</h2>
             </article>
-            <article>
-                
-            </article>
+            <article></article>
             <article>
                 <h1>Show Cases</h1>
             </article>

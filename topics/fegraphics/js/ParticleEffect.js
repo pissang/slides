@@ -2,12 +2,32 @@ define(function (require) {
 
     var Vector2 = require('qtek/math/Vector2');
 
-    function ForceField() {
-        this.force = new Vector2();
+    var ShapeBundle = require('zrender/shape/ShapeBundle');
+
+    function ForceField(force) {
+        this.force = force || new Vector2();
     }
 
     ForceField.prototype.applyTo = function (velocity, position, weight, deltaTime) {
         Vector2.scaleAndAdd(velocity, velocity, this.force, deltaTime);
+    }
+
+    function BoxCollision(rect) {
+        this.rect = rect || [[0, 0], [100, 100]];
+    }
+
+    BoxCollision.prototype.applyTo = function (velocity, position, weight, deltaTime) {
+        var rect = this.rect;
+        var min = rect[0];
+        var max = rect[1];
+        position = position._array;
+        velocity = velocity._array;
+        if (position[0] < min[0] || position[0] > max[0]) {
+            velocity[0] = -velocity[0] * 0.8;
+        }
+        if (position[1] < min[1] || position[1] > max[1]) {
+            velocity[1] = -velocity[1] * 0.8;
+        }
     }
 
     function Particle() {
@@ -29,14 +49,12 @@ define(function (require) {
     }
 
     function Emitter(createShape) {
-        this.max = 1000;
-        this.amount = 20;
+        this.max = 4000;
+        this.amount = 15;
 
         this.life = null;
         this.position = null;
         this.velocity = null;
-
-        this.zr = null;
 
         this._particlePool = [];
 
@@ -63,8 +81,6 @@ define(function (require) {
                 particle.life = this.life.get();
             }
 
-            this.zr.addShape(particle.shape);
-
             particle.age = 0;
 
             out.push(particle);
@@ -73,7 +89,6 @@ define(function (require) {
 
     Emitter.prototype.kill = function (particle) {
         this._particlePool.push(particle);
-        this.zr.delShape(particle.shape);
     }
 
     function ParticleEffect(zr) {
@@ -82,13 +97,20 @@ define(function (require) {
 
         this._particles = [];
 
-        this._fields = [];
+        this._effectors = [];
 
         this._emitters = [];
 
         this._elapsedTime = 0;
 
         this._emitting = true;
+
+        this._shapeBundle = new ShapeBundle({
+            style: {
+                color: 'white'
+            }
+        });
+        zr.addShape(this._shapeBundle);
     }
 
     ParticleEffect.prototype = {
@@ -98,8 +120,8 @@ define(function (require) {
             this._emitters.push(emitter);
         },
 
-        addField: function (field) {
-            this._fields.push(field);
+        addEffector: function (effector) {
+            this._effectors.push(effector);
         },
 
         update: function (deltaTime) {
@@ -118,6 +140,7 @@ define(function (require) {
                 }
             }
 
+            var shapeList = [];
             // Aging
             var len = particles.length;
             for (var i = 0; i < len;) {
@@ -129,32 +152,36 @@ define(function (require) {
                     particles.pop();
                     len--;
                 } else {
+                    shapeList.push(p.shape);
                     i++;
                 }
             }
 
+            this._shapeBundle.style.shapeList = shapeList;
+            this.zr.modShape(this._shapeBundle);
+
             for (var i = 0; i < len; i++) {
                 // Update
                 var p = particles[i];
-                if (this._fields.length > 0) {
-                    for (var j = 0; j < this._fields.length; j++) {
-                        this._fields[j].applyTo(p.velocity, p.position, p.weight, deltaTime);
+                if (this._effectors.length > 0) {
+                    for (var j = 0; j < this._effectors.length; j++) {
+                        this._effectors[j].applyTo(p.velocity, p.position, p.weight, deltaTime);
                     }
                 }
                 p.update(deltaTime);
 
                 var shape = p.shape;
                 if (shape) {
-                    shape.position[0] = p.position.x;
-                    shape.position[1] = p.position.y;
+                    shape.style.x = p.position.x;
+                    shape.style.y = p.position.y;
                 }
-                this.zr.modShape(shape);
             }
         }
     };
 
     ParticleEffect.Emitter = Emitter;
     ParticleEffect.ForceField = ForceField;
+    ParticleEffect.BoxCollision = BoxCollision;
 
     return ParticleEffect;
 });
