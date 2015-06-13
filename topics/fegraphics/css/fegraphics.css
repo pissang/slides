@@ -116,5 +116,14 @@ article h2 {
     opacity: 0.8;
     margin: 0;
     padding: 0;
+}
 
+#particle-images {
+    position: absolute;
+    top: 130px;
+    left: 350px;
+}
+
+#particle-images img {
+    position: absolute;
 }

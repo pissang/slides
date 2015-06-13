@@ -57,6 +57,75 @@ define(function (require) {
             leave: function () {
                 require('./pathStyleAnimation').dispose();
             }
+        },
+
+        showCanvasImage: {
+            enter: function (dom) {
+                require('./showCanvasImage').init(dom);
+            },
+
+            leave: function () {
+                require('./showCanvasImage').dispose();
+            }
+        },
+
+        showCanvasText: {
+            enter: function (dom) {
+                require('./showCanvasText').init(dom);
+            },
+
+            leave: function () {
+                require('./showCanvasText').dispose();
+            }
+        },
+
+        showParticle: {
+            enter: function (dom) {
+                require('./showParticle').init(dom);
+            },
+
+            leave: function () {
+                require('./showParticle').dispose();
+            }
+        },
+
+        initParticleKinematic: {
+            enter: function (dom) {
+                require('./particleKinematic').init(dom);
+            },
+
+            leave: function (dom) {
+                require('./particleKinematic').dispose(dom);
+            }
+        },
+
+        addParticleKinematic: {
+            enter: function (dom) {
+                require('./particleKinematic').step(dom);
+            }
+        },
+
+        showParticleEffect: {
+            enter: function (dom) {
+                setTimeout(function () {
+
+                    require('./showParticleEffect').init(dom);
+                })
+            },
+            leave: function (dom) {
+                require('./showParticleEffect').dispose(dom);  
+            }
+        },
+
+        showParticleEffectRandom: {
+            enter: function (dom) {
+                setTimeout(function () {
+                    require('./showParticleEffect').init(dom, true);
+                })
+            },
+            leave: function (dom) {
+                require('./showParticleEffect').dispose(dom);  
+            }
         }
     };
 

@@ -20,11 +20,18 @@ TODO
                 <h1 class="title">Graphics in Front End Developing</h1>
             </article>
 
-<!-- 挣脱 dom 的束缚 -->
-            <article>
+<!-- tip:
+之前要表达一个图形，可能最多只是贴图片，
+挣脱 dom 的束缚, 来看看前端还能有哪些更高级，更有意思的图形绘制方式
+-->
+            <article class="center">
                 <h2>Contents</h2>
-                <ul>
+                <ul class="content">
+<!--
+    介绍一些基本的 Canvas 的命令
+-->
                     <li>Canvas Basic</li>
+<!-- tip: 
 <!-- tip: 可能用 svg 或者 dom 也可以做粒子效果，但是在粒子数量比较大的时候还是用 canvas 是最合适的 -->
                     <li>Writing particle effect with Canvas</li>
                     <li>Image processing with Canvas</li>
@@ -39,8 +46,8 @@ TODO
                 <h1>Canvas Basic</h1>
             </article>
 
-            <article>
-                <ul>
+            <article class="center">
+                <ul class="content">
                     <li>Immediate mode API
                     <p>Call rendering commands to draw the entire scene</p></li>
                     <li>Currently 1.0</li>
@@ -174,7 +181,7 @@ ctx.stroke();
                             </p>
                         </li>
                     </ul>
-                    <div class="right" id="zr-path-style-animation"></div>
+                    <div class="right" id="path-style-animation"></div>
                     <div class="item" data-action="pathStyleAnimation" data-step="fillStyle"></div>
                     <div class="item" data-action="pathStyleAnimation" data-step="strokeStyle"></div>
                     <div class="item" data-action="pathStyleAnimation" data-step="lineWidth"></div>
@@ -185,17 +192,33 @@ ctx.stroke();
 
             <article>
                 <h2>Image</h2>
-<pre class="prettyprint item">
-ctx.drawImage(image, 0, 0, image.width, image.height);
+                <div class="row canvas-demo">
+                <!-- tip: 第一个参数可以是 ImageElement, CanvasElement, VideoElement -->
+                <!-- tip: 这个就跟 dom 的 image 对象差不多了，甚至还远没有 image 使用方便，不能设置圆角，需要在图片加载完成才能画，但是在配合做像素处理的时候是很强大的，后面会提到 -->
+<pre class="prettyprint item left">
+var image = new Image();
+image.onload = function () {
+    // Draw after image loaded
+    ctx.drawImage(
+        image, 0, 0, image.width, image.height
+    );
+}
+image.src = 'some.jpg';
 </pre>
+                    <div class="right item" data-action="showCanvasImage"></div>
+                </div>
             </article>
 
             <article>
                 <h2>Text</h2>
+                <div class="row canvas-demo">
 <pre class="prettyprint item">
 ctx.fontStyle = '30px Helvetica Neue';
+ctx.strokeStyle = '#fff';
 ctx.strokeText('蛤蛤蛤蛤', 30, 30);
-</pre>
+</pre>              
+                    <div class="right item" data-action="showCanvasText"></div>
+                </div>
             </article>
 
             <article>
@@ -203,49 +226,85 @@ ctx.strokeText('蛤蛤蛤蛤', 30, 30);
             </article>
 
             <article>
-                <h2>What is Particle Effect</h2>
-                <!-- 贴图片-->
-            </article>
-
-            <article>
-                <h2>Draw a Single Particle</h2>
-<pre class="prettyprint item">
-function drawParticle() {
-    ctx.beginPath();
-    ctx.arc(100, 100, 10, 0, Math.PI * 2, true);
-    ctx.fill();
-}
-</pre>
-            </article>
-
-            <article>
-                <!-- 加入一些运动学的属性 -->
-                <h2>Make it Alive - Add Kinematics</h2>
-                <!-- 想像扔出一个球，丢出一张纸片 -->
-                <ul>
-                    <li>Life</li>
-                    <li>Color</li>
-                    <li>Size</li>
-                    <li>Velocity</li>
-                    <li>Acceleration</li>
-                    <li>Position</li>
+                <h2>Particle Effect</h2>
+                <ul style="font-size:28px;line-height:50px;">
+                <!--tip: 可以模拟生活中的一些现象 -->
+                    <li>Fire</li>
+                    <li>Fireworks</li>
+                    <li>Snow, Rain</li>
+                    <li>Water</li>
+                <!--tip: 也可以制作游戏的特效 -->
+                    <li>Explosion</li>
+                    <li>Magic Effect</li>
                 </ul>
-            </article>
-
-            <article>
-                <h2>Add More Particles</h2>
-                <div>
-                    <h3>Particle Management</h3>
-                    <ul>
-                        <li>Emit particles</li>
-                        <li>Update and draw particles</li>
-                        <li>Remove dead particles</li>
-                    </ul>
+                <div id="particle-images">
+                    <img class="item" data-src="img/particle_fire.jpg" alt="">
+                    <img class="item" data-src="img/particle_fireworks.jpg" alt="">
+                    <img class="item" data-src="img/particle_snow.jpg" alt="">
+                    <img class="item" data-src="img/particle_rain.jpg" alt="">
+                    <img class="item" data-src="img/particle_explosion.jpg" alt="">
+                    <img class="item" data-src="img/particle_magic.jpg" alt="">
                 </div>
             </article>
 
             <article>
+                <h2>Draw a Single Particle</h2>
+                <div class="row canvas-demo">
+<pre class="prettyprint item left">
+function drawParticle() {
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.arc(100, 50, 10, 0, Math.PI * 2, true);
+    ctx.fill();
+}
+</pre>
+                    <div class="right item" data-action="showParticle"></div>
+                </div>
+            </article>
+
+            <article data-action="initParticleKinematic">
+                <!-- 加入一些运动学的属性 -->
+                <h2>Make it Alive - Add Kinematics</h2>
+                <div class="row canvas-demo">
+                    <!-- 想像扔出一个球，丢出一张纸片 -->
+                    <ul class="left" style="font-size:28px;line-height:50px;">
+                        <li>Life</li>
+                    <!--tip: 加入一些运动学的属性 -->
+                        <li>Position</li>
+                        <li>Velocity</li>
+                        <li>Acceleration</li>
+
+                    <!--tip: 加入一些绘制样式 -->
+                        <li>Color</li>
+                        <li>Size</li>
+                    </ul>
+
+                    <div class="right" id="particle-kinematic"></div>
+                    <div class="item" data-action="addParticleKinematic" data-step="velocity"></div>
+                    <div class="item" data-action="addParticleKinematic" data-step="acceleration"></div>
+                    <div class="item" data-action="addParticleKinematic" data-step="color"></div>
+                    <div class="item" data-action="addParticleKinematic" data-step="size"></div>
+                </div>
+            </article>
+
+            <article>
+                <h2>Add More Particles</h2>
+                <div class="row canvas-demo">
+                    <div class="left">
+                        <h3>Particle Management</h3>
+                        <ul style="font-size:28px;line-height:50px;">
+                            <li>Emit particles</li>
+                            <li>Update and draw particles</li>
+                            <li>Remove dead particles</li>
+                        </ul>
+                    </div>
+                    <div class="right item" data-action="showParticleEffect"></div>
+                </div>
+            </article>
+
+            <article class="center">
                 <h2>Add Some Randomness</h2>
+                <div class="item content" data-action="showParticleEffectRandom" style="height:500px;"></div>
             </article>
 
             <article>
@@ -256,6 +315,10 @@ function drawParticle() {
                 <!-- 保存上一帧的图片作为残影 -->
                 <!-- https://www.chromeexperiments.com/experiment/noise-field -->
                 <h2>With Motion Blur</h2>
+            </article>
+
+            <article>
+                <h2>Optimization</h2>
             </article>
     
             <article>
@@ -397,6 +460,7 @@ function drawParticle() {
         <script type="text/javascript" src="../../js/lib/esl.js"></script>
         <script type="text/javascript" src="../../js/lib/prettify.js"></script>
         <script type="text/javascript" src="../../js/lib/zrender.js"></script>
+        <script type="text/javascript" src="../../js/lib/qtek.amd.min.js"></script>
         <script type="text/javascript" src="../../js/slides.js"></script>
 
         <script>

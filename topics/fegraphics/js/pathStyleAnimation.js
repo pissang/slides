@@ -11,7 +11,7 @@ define(function (require) {
         if (zr) {
             return;
         }
-        zr = zrender.init($('#zr-path-style-animation')[0]);
+        zr = zrender.init($('#path-style-animation')[0]);
         star = new StarShape({
             style: {
                 x: zr.getWidth() / 2,
