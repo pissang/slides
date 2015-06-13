@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Graphics in Front End Developing</title>
+        <meta charset="utf-8" />
+        <link rel=stylesheet type=text/css href="../../css/slide.css" />
+        <link rel=stylesheet type=text/css href="../../css/desert.css" />
+        <link rel=stylesheet type=text/css href="css/fegraphics.css" />
+    </head>
+<!--
+TODO 
+- Particle Effects
+- Canvas Fill Animation
+- WebGL
+-->
+
+    <body id="fegraphics">
+        <div id="articles">
+            <article>
+                <h1 class="title">Graphics in Front End Developing</h1>
+            </article>
+
+<!-- 挣脱 dom 的束缚 -->
+            <article>
+                <h2>Contents</h2>
+                <ul>
+                    <li>Canvas Basic</li>
+<!-- tip: 可能用 svg 或者 dom 也可以做粒子效果，但是在粒子数量比较大的时候还是用 canvas 是最合适的 -->
+                    <li>Writing particle effect with Canvas</li>
+                    <li>Image processing with Canvas</li>
+                    <li>SVG and Canvas</li>
+                    <li>WebGL Basic</li>
+                    <li>Image processing with WebGL</li>
+                    <li>Show cases</li>
+                </ul>
+            </article>
+
+            <article>
+                <h1>Canvas Basic</h1>
+            </article>
+
+            <article>
+                <ul>
+                    <li>Immediate mode API
+                    <p>Call rendering commands to draw the entire scene</p></li>
+                    <li>Currently 1.0</li>
+                    <li>IE9+, Chrome, Firefox, Safari...</li>
+                    <li>Coming 2.0</li>
+                </ul>
+            </article>
+
+            <article class="center">
+                <h2>Create Context</h2>
+<pre class="prettyprint large content">
+var canvas = document.createElement('canvas');
+canvas.width = 500;
+canvas.height = 500;
+var ctx = canvas.getContext('2d');
+</pre>
+            </article>
+            
+            <article class="center">
+            <!-- tip:
+            创建完 Context 我们就可以开始在这个画布上画图形了
+            Canvas 的图形可以分为三类，路径 Path, 图片 Image 和文字 Text
+            严格来讲文字也应该算路径，但是 Canvas 的接口文字和路径还是不太一样，所以这里分为两类
+            -->
+                <ul class="content">
+                    <li>Path</li>
+                    <li>Image</li>
+                    <li>Text</li>
+                </ul>
+            </article>
+
+            <article class="center">
+                <h2>Path</h2>
+                <ul class="content" style="font-size:30px;line-height:60px;margin-top:100px;">
+                    <li>Line</li>
+                    <li>Bezier Curve(Cubic, Quadratic)</li>
+                    <li>Arc</li>
+                </ul>
+            </article>
+
+<!-- 先举几个简单的例子介绍 Canvas Path 的绘制 -->
+            <article>
+                <h2>Draw a line</h2>
+                <div class="row canvas-demo">
+<pre class="prettyprint item left" id="draw-line">
+ctx.beginPath();
+ctx.moveTo(100, 100);
+ctx.lineTo(500, 100);
+ctx.stroke();
+</pre>
+                    <div class="right item" data-action="pathDrawAnimation" data-code="draw-line"></div>
+                </div>
+            </article>
+
+            <article>
+                <h2>Draw a Cubic Bezier</h2>
+                <div class="row canvas-demo">
+<pre class="prettyprint item left" id="draw-cubic">
+ctx.beginPath();
+ctx.moveTo(100, 100);
+ctx.bezierCurveTo(300, 100, 200, 300, 500, 300);
+ctx.stroke();
+</pre>
+                    <div class="right item" data-action="pathDrawAnimation" data-code="draw-cubic"></div>
+                </div>
+            </article>
+
+            <article>
+                <h2>Draw a Quadratic Bezier</h2>
+                <!--tip: 二次的贝塞尔曲线可以用三次贝塞尔曲线表达 -->
+                <div class="row canvas-demo">
+<pre class="prettyprint item left" id="draw-quadratic">
+ctx.beginPath();
+ctx.moveTo(100, 100);
+ctx.quadraticCurveTo(300, 100, 500, 300);
+ctx.stroke();
+</pre>
+                    <div class="right item" data-action="pathDrawAnimation" data-code="draw-quadratic"></div>
+                </div>
+            </article>
+    
+            <article>
+                <h2>Draw a Circle</h2>
+                <div class="row canvas-demo">
+<pre class="prettyprint item left" id="draw-circle">
+ctx.beginPath();
+ctx.arc(300, 200, 100, 0, Math.PI * 2, true);
+ctx.stroke();
+</pre>
+                    <div class="right item" data-action="pathDrawAnimation" data-code="draw-circle"></div>
+                </div>
+            </article>
+
+            <article>
+                <h2>Smile</h2>
+                <!-- 来画个大大的笑脸 -->
+                <div class="row canvas-demo">
+<pre class="prettyprint item left" id="draw-arc">
+ctx.beginPath();
+ctx.arc(300, 180, 100, 0.2, 3, false);
+<!-- ctx.arc(300, 200, 150, 0, Math.PI * 2, false); -->
+ctx.stroke();
+</pre>
+                    <div class="right item" data-action="pathDrawAnimation" data-code="draw-arc"></div>
+                </div>
+            </article>
+
+            <article id="styling-path" data-action="initPathStyleAnimation">
+                <h2>Styling Path</h2>
+                <div class="row">
+                    <ul class="left">
+                        <li>fillStyle
+                            <p>- ctx.fillStyle = '#fff', CanvasGradient, CanvasPattern</p>
+                        </li>
+                        <li>strokeStyle
+                            <p>- ctx.strokeStyle = '#fff', CanvasGradient, CanvasPattern</p>
+                        </li>
+                        <li>Line Style
+                            <p>
+                            -ctx.lineWidth = 2;<br />
+                            -ctx.lineCap = 'butt', 'round', 'square';<br />
+                            -ctx.lineJoin = 'round', 'bevel';
+                            </p>
+                        </li>
+                        <li>Shadow
+                            <p>
+                            -ctx.shadowColor = '#000'; <br />
+                            -ctx.shadowBlur = 5; <br />
+                            -ctx.shadowOffsetX = 40; <br />
+                            -ctx.shadowOffsetY = 40;<br />
+                            </p>
+                        </li>
+                    </ul>
+                    <div class="right" id="zr-path-style-animation"></div>
+                    <div class="item" data-action="pathStyleAnimation" data-step="fillStyle"></div>
+                    <div class="item" data-action="pathStyleAnimation" data-step="strokeStyle"></div>
+                    <div class="item" data-action="pathStyleAnimation" data-step="lineWidth"></div>
+                    <div class="item" data-action="pathStyleAnimation" data-step="shadow"></div>
+                    <div class="item" data-action="pathStyleAnimation" data-step="lineJoin"></div>
+                </div>
+            </article>
+
+            <article>
+                <h2>Image</h2>
+<pre class="prettyprint item">
+ctx.drawImage(image, 0, 0, image.width, image.height);
+</pre>
+            </article>
+
+            <article>
+                <h2>Text</h2>
+<pre class="prettyprint item">
+ctx.fontStyle = '30px Helvetica Neue';
+ctx.strokeText('蛤蛤蛤蛤', 30, 30);
+</pre>
+            </article>
+
+            <article>
+                <h1>Writing Particle Effect with Canvas</h1>
+            </article>
+
+            <article>
+                <h2>What is Particle Effect</h2>
+                <!-- 贴图片-->
+            </article>
+
+            <article>
+                <h2>Draw a Single Particle</h2>
+<pre class="prettyprint item">
+function drawParticle() {
+    ctx.beginPath();
+    ctx.arc(100, 100, 10, 0, Math.PI * 2, true);
+    ctx.fill();
+}
+</pre>
+            </article>
+
+            <article>
+                <!-- 加入一些运动学的属性 -->
+                <h2>Make it Alive - Add Kinematics</h2>
+                <!-- 想像扔出一个球，丢出一张纸片 -->
+                <ul>
+                    <li>Life</li>
+                    <li>Color</li>
+                    <li>Size</li>
+                    <li>Velocity</li>
+                    <li>Acceleration</li>
+                    <li>Position</li>
+                </ul>
+            </article>
+
+            <article>
+                <h2>Add More Particles</h2>
+                <div>
+                    <h3>Particle Management</h3>
+                    <ul>
+                        <li>Emit particles</li>
+                        <li>Update and draw particles</li>
+                        <li>Remove dead particles</li>
+                    </ul>
+                </div>
+            </article>
+
+            <article>
+                <h2>Add Some Randomness</h2>
+            </article>
+
+            <article>
+                <h2>Add Force Field</h2>
+            </article>
+
+            <article>
+                <!-- 保存上一帧的图片作为残影 -->
+                <!-- https://www.chromeexperiments.com/experiment/noise-field -->
+                <h2>With Motion Blur</h2>
+            </article>
+    
+            <article>
+                <h2>Particle Texture</h2>
+                <!-- http://29a.ch/sandbox/2011/neonflames/ -->
+            </article>
+
+            <article>
+                <h1>Image Processing with Canvas</h1>
+            </article>
+            <article>
+                <h2>getImageData()</h2>
+            </article>
+            <article>
+                <h2>Pixels</h2>
+            </article>
+            <article>
+                <h2>Convolve the Pixels</h2>
+            </article>
+            <article>
+                <h2>Gray</h2>
+            </article>
+            <article>
+                <h2>Gaussian Filter</h2>
+            </article>
+            <article>
+                <h2>Sobel Edge Filter</h2>
+            </article>
+
+            <article>
+                <h2>Canvas in Game</h2>
+            </article>
+
+            <article>
+                <h1>SVG and Canvas</h1>
+            </article>
+            <article>
+                <h2>Draw SVG with Canvas</h2>
+            </article>
+            <article>
+                <h1>WebGL Basic</h1>
+            </article>
+            <article>
+                <h2>WebGL Introduction</h2>
+                <ul>
+                    <li>Currently 1.0</li>
+                    <li>Closely to the OpenGL ES 2.0</li>
+                    <li>Many extensions</li>
+                    <li>Coming 2.0</li>
+                </ul>
+            </article>
+            <article>
+                <h2>Draw a Triangle</h2>
+            </article>
+            <article>
+                <h2>Shading</h2>
+            </article>
+            <article>
+                <h2>Shading Pipeline</h2>
+                <p>Convert vertices to pixels</p>
+            </article>
+            <article>
+                <!--
+                tip: 刚才的描述可能会有一点晦涩，有一些 WebGL 库会封装底层的图形接口，抽象出更高层的概念，
+                比如场景，摄像机，材质，灯光等等，这些概念更接近现实生活。
+                -->
+                <ul class="item">
+                    <li>THREE.js</li>
+                    <li>BabylonJS</li>
+                    <li>lightgl</li>
+                    <li>qtek</li>
+                    <li>...</li>
+                </ul>
+                <ul class="item">
+                    <li>Scene</li>
+                    <li>Camera</li>
+                    <li>Light</li>
+                    <li>Material</li>
+                    <li>...</li>
+                </ul>
+            </article>
+            <article>
+                <h2>Transform</h2>
+                <ul>
+                    <li>World</li>
+                    <li>Camera</li>
+                    <li>Perspective</li>
+                </ul>
+            </article>
+            <article>
+                <h2>Scene Description</h2>
+                <ul>
+                    <li>Collada</li>
+                    <li>glTF</li>
+                </ul>
+            </article>
+            <article>
+                <h2>WebGL Particle Effects</h2>
+            </article>
+            <article>
+                <h1>Image Processing with WebGL</h1>
+            </article>
+            <article>
+                <h2>Realtime Lowpolify</h2>
+            </article>
+            <article>
+                
+            </article>
+            <article>
+                <h1>Show Cases</h1>
+            </article>
+            <article>
+                <!-- 广告时间 -->
+            </article>
+            <article>
+                <h1>Thanks</h1>
+            </article>
+        </div>
+    
+        <div id="timer"></div>
+        <div id="slide-info">
+            <h1 id="title">Graphics in Front End Developing</h1>
+            <ul class="aboutme">
+                <li id="author">沈毅</li>
+                <li id="date">2015-06-16</li>
+                <li id="github">
+                    github : 
+                    <a href="https://github.com/pissang" target="_blank">pissang</a>
+                </li>
+                <li id="weibo">
+                    @
+                    <a href="http://weibo.com/pissang" target="_blank">pissang</a>
+                </li>
+            </ul>
+        </div>
+
+        <link rel=stylesheet type=text/css href="../../css/desert.css" />
+        <script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
+        <script type="text/javascript" src="../../js/lib/esl.js"></script>
+        <script type="text/javascript" src="../../js/lib/prettify.js"></script>
+        <script type="text/javascript" src="../../js/lib/zrender.js"></script>
+        <script type="text/javascript" src="../../js/slides.js"></script>
+
+        <script>
+            require.config({
+                paths: {
+                    echarts: '../../js/lib/echarts'
+                }
+            });
+            require(['js/main']);
+        </script>
+    </body>
+</html>

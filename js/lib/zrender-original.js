@@ -254,8 +254,8 @@ if (!document.createElement('canvas').getContext) {
     o2.font          = o1.font;
     o2.textAlign     = o1.textAlign;
     o2.textBaseline  = o1.textBaseline;
-    o2.arcScaleX_    = o1.arcScaleX_;
-    o2.arcScaleY_    = o1.arcScaleY_;
+    o2.scaleX_    = o1.scaleX_;
+    o2.scaleY_    = o1.scaleY_;
     o2.lineScale_    = o1.lineScale_;
   }
 
@@ -607,8 +607,8 @@ if (!document.createElement('canvas').getContext) {
     canvasElement.appendChild(overlayEl);
 
     this.element_ = el;
-    this.arcScaleX_ = 1;
-    this.arcScaleY_ = 1;
+    this.scaleX_ = 1;
+    this.scaleY_ = 1;
     this.lineScale_ = 1;
   }
 
@@ -845,9 +845,8 @@ if (!document.createElement('canvas').getContext) {
         this.m_[1][1] != 1 || this.m_[1][0]) {
       var filter = [];
 
-      scaleX = Math.sqrt(this.m_[0][0] * this.m_[0][0] + this.m_[0][1] * this.m_[0][1]);
-      scaleY = Math.sqrt(this.m_[1][0] * this.m_[1][0] + this.m_[1][1] * this.m_[1][1]);
-
+     var scaleX = this.scaleX_;
+     var scaleY = this.scaleY_;
       // Note the 12/21 reversal
       filter.push('M11=', this.m_[0][0] / scaleX, ',',
                   'M12=', this.m_[1][0] / scaleY, ',',
@@ -868,7 +867,7 @@ if (!document.createElement('canvas').getContext) {
 
       vmlStr.push('padding:0 ', mr(max.x / Z), 'px ', mr(max.y / Z),
                   'px 0;filter:progid:DXImageTransform.Microsoft.Matrix(',
-                  filter.join(''), ", sizingmethod='clip');");
+                  filter.join(''), ", SizingMethod='clip');");
 
     } else {
       vmlStr.push('top:', mr(d.y / Z), 'px;left:', mr(d.x / Z), 'px;');
@@ -950,10 +949,10 @@ if (!document.createElement('canvas').getContext) {
         case 'at':
         case 'wa':
           lineStr.push(' ', p.type, ' ',
-                       mr(p.x - this.arcScaleX_ * p.radius), ',',
-                       mr(p.y - this.arcScaleY_ * p.radius), ' ',
-                       mr(p.x + this.arcScaleX_ * p.radius), ',',
-                       mr(p.y + this.arcScaleY_ * p.radius), ' ',
+                       mr(p.x - this.scaleX_ * p.radius), ',',
+                       mr(p.y - this.scaleY_ * p.radius), ' ',
+                       mr(p.x + this.scaleX_ * p.radius), ',',
+                       mr(p.y + this.scaleY_ * p.radius), ' ',
                        mr(p.xStart), ',', mr(p.yStart), ' ',
                        mr(p.xEnd), ',', mr(p.yEnd));
           break;
@@ -1018,8 +1017,8 @@ if (!document.createElement('canvas').getContext) {
 
   function appendFill(ctx, lineStr, min, max) {
     var fillStyle = ctx.fillStyle;
-    var arcScaleX = ctx.arcScaleX_;
-    var arcScaleY = ctx.arcScaleY_;
+    var arcScaleX = ctx.scaleX_;
+    var arcScaleY = ctx.scaleY_;
     var width = max.x - min.x;
     var height = max.y - min.y;
     if (fillStyle instanceof CanvasGradient_) {
@@ -1162,6 +1161,9 @@ if (!document.createElement('canvas').getContext) {
     }
     ctx.m_ = m;
 
+    ctx.scaleX_ = Math.sqrt(m[0][0] * m[0][0] + m[0][1] * m[0][1]);
+    ctx.scaleY_ = Math.sqrt(m[1][0] * m[1][0] + m[1][1] * m[1][1]);
+
     if (updateLineScale) {
       // Get the line scale.
       // Determinant of this.m_ means how much the area is enlarged by the
@@ -1196,8 +1198,6 @@ if (!document.createElement('canvas').getContext) {
   };
 
   contextPrototype.scale = function(aX, aY) {
-    this.arcScaleX_ *= aX;
-    this.arcScaleY_ *= aY;
     var m1 = [
       [aX, 0,  0],
       [0,  aY, 0],
@@ -1215,6 +1215,7 @@ if (!document.createElement('canvas').getContext) {
     ];
 
     setM(this, matrixMultiply(m1, this.m_), true);
+
   };
 
   contextPrototype.setTransform = function(m11, m12, m21, m22, dx, dy) {
@@ -1339,7 +1340,12 @@ if (!document.createElement('canvas').getContext) {
     }
     var doc = this.element_.ownerDocument;
     this.textMeasureEl_.innerHTML = '';
-    this.textMeasureEl_.style.font = this.font;
+    try {
+        this.textMeasureEl_.style.font = this.font;
+    } catch (ex) {
+        // Ignore failures to set to invalid font.
+    }
+    
     // Don't use innerHTML or innerText because they allow markup/whitespace.
     this.textMeasureEl_.appendChild(doc.createTextNode(text));
     return {width: this.textMeasureEl_.offsetWidth};
@@ -1448,18 +1454,21 @@ else { // make the canvas test simple by kener.linfeng@gmail.com
     G_vmlCanvasManager = false;
 }
 return G_vmlCanvasManager;
-}); // define;
+}); // define
+;
 /**
- * zrender: 公共辅助函数
- *
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
- *
- * clone：深度克隆
- * merge：合并源对象的属性到目标对象
- * getContext：获取一个自由使用的canvas 2D context，使用原生方法，如isPointInPath，measureText等
+ * @module zrender/tool/util
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
+ *         Yi Shen(https://github.com/pissang)
  */
 define(
     'zrender/tool/util',['require','../dep/excanvas'],function(require) {
+
+        var ArrayProto = Array.prototype;
+        var nativeForEach = ArrayProto.forEach;
+        var nativeMap = ArrayProto.map;
+        var nativeFilter = ArrayProto.filter;
+
         // 用于处理merge时无法遍历Date等对象的问题
         var BUILTIN_OBJECT = {
             '[object Function]': 1,
@@ -1469,11 +1478,18 @@ define(
             '[object CanvasGradient]': 1
         };
 
+        var objToString = Object.prototype.toString;
+
+        function isDom(obj) {
+            return obj && obj.nodeType === 1
+                   && typeof(obj.nodeName) == 'string';
+        }
+
         /**
          * 对一个object进行深度拷贝
-         *
-         * @param {Any} source 需要进行拷贝的对象
-         * @return {Any} 拷贝后的新对象
+         * @memberOf module:zrender/tool/util
+         * @param {*} source 需要进行拷贝的对象
+         * @return {*} 拷贝后的新对象
          */
         function clone(source) {
             if (typeof source == 'object' && source !== null) {
@@ -1484,7 +1500,11 @@ define(
                         result[i] = clone(source[i]);
                     }
                 }
-                else if (!BUILTIN_OBJECT[Object.prototype.toString.call(source)]) {
+                else if (
+                    !BUILTIN_OBJECT[objToString.call(source)]
+                    // 是否为 dom 对象
+                    && !isDom(source)
+                ) {
                     result = {};
                     for (var key in source) {
                         if (source.hasOwnProperty(key)) {
@@ -1501,8 +1521,11 @@ define(
 
         function mergeItem(target, source, key, overwrite) {
             if (source.hasOwnProperty(key)) {
-                if (typeof target[key] == 'object'
-                    && !BUILTIN_OBJECT[ Object.prototype.toString.call(target[key]) ]
+                var targetProp = target[key];
+                if (typeof targetProp == 'object'
+                    && !BUILTIN_OBJECT[objToString.call(targetProp)]
+                    // 是否为 dom 对象
+                    && !isDom(targetProp)
                 ) {
                     // 如果需要递归覆盖，就递归调用merge
                     merge(
@@ -1520,7 +1543,7 @@ define(
 
         /**
          * 合并源对象的属性到目标对象
-         * modify from Tangram
+         * @memberOf module:zrender/tool/util
          * @param {*} target 目标对象
          * @param {*} source 源对象
          * @param {boolean} overwrite 是否覆盖
@@ -1539,7 +1562,7 @@ define(
             if (!_ctx) {
                 require('../dep/excanvas');
                 /* jshint ignore:start */
-                if (G_vmlCanvasManager) {
+                if (window['G_vmlCanvasManager']) {
                     var _div = document.createElement('div');
                     _div.style.position = 'absolute';
                     _div.style.top = '-1000px';
@@ -1556,82 +1579,10 @@ define(
             return _ctx;
         }
 
-        var _canvas;
-        var _pixelCtx;
-        var _width;
-        var _height;
-        var _offsetX = 0;
-        var _offsetY = 0;
-
         /**
-         * 获取像素拾取专用的上下文
-         * @return {Object} 上下文
-         */
-        function getPixelContext() {
-            if (!_pixelCtx) {
-                _canvas = document.createElement('canvas');
-                _width = _canvas.width;
-                _height = _canvas.height;
-                _pixelCtx = _canvas.getContext('2d');
-            }
-            return _pixelCtx;
-        }
-
-        /**
-         * 如果坐标处在_canvas外部，改变_canvas的大小
-         * @param {number} x : 横坐标
-         * @param {number} y : 纵坐标
-         * 注意 修改canvas的大小 需要重新设置translate
-         */
-        function adjustCanvasSize(x, y) {
-            // 每次加的长度
-            var _v = 100;
-            var _flag;
-
-            if (x + _offsetX > _width) {
-                _width = x + _offsetX + _v;
-                _canvas.width = _width;
-                _flag = true;
-            }
-
-            if (y + _offsetY > _height) {
-                _height = y + _offsetY + _v;
-                _canvas.height = _height;
-                _flag = true;
-            }
-
-            if (x < -_offsetX) {
-                _offsetX = Math.ceil(-x / _v) * _v;
-                _width += _offsetX;
-                _canvas.width = _width;
-                _flag = true;
-            }
-
-            if (y < -_offsetY) {
-                _offsetY = Math.ceil(-y / _v) * _v;
-                _height += _offsetY;
-                _canvas.height = _height;
-                _flag = true;
-            }
-
-            if (_flag) {
-                _pixelCtx.translate(_offsetX, _offsetY);
-            }
-        }
-
-        /**
-         * 获取像素canvas的偏移量
-         * @return {Object} 偏移量
-         */
-        function getPixelOffset() {
-            return {
-                x : _offsetX,
-                y : _offsetY
-            };
-        }
-
-        /**
-         * 查询数组中元素的index
+         * @memberOf module:zrender/tool/util
+         * @param {Array} array
+         * @param {*} value
          */
         function indexOf(array, value) {
             if (array.indexOf) {
@@ -1647,7 +1598,7 @@ define(
 
         /**
          * 构造类继承关系
-         * 
+         * @memberOf module:zrender/tool/util
          * @param {Function} clazz 源类
          * @param {Function} baseClazz 基类
          */
@@ -1663,15 +1614,101 @@ define(
             clazz.constructor = clazz;
         }
 
+        /**
+         * 数组或对象遍历
+         * @memberOf module:zrender/tool/util
+         * @param {Object|Array} obj
+         * @param {Function} cb
+         * @param {*} [context]
+         */
+        function each(obj, cb, context) {
+            if (!(obj && cb)) {
+                return;
+            }
+            if (obj.forEach && obj.forEach === nativeForEach) {
+                obj.forEach(cb, context);
+            }
+            else if (obj.length === +obj.length) {
+                for (var i = 0, len = obj.length; i < len; i++) {
+                    cb.call(context, obj[i], i, obj);
+                }
+            }
+            else {
+                for (var key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        cb.call(context, obj[key], key, obj);
+                    }
+                }
+            }
+        }
+
+        /**
+         * 数组映射
+         * @memberOf module:zrender/tool/util
+         * @param {Array} obj
+         * @param {Function} cb
+         * @param {*} [context]
+         * @return {Array}
+         */
+        function map(obj, cb, context) {
+            if (!(obj && cb)) {
+                return;
+            }
+            if (obj.map && obj.map === nativeMap) {
+                return obj.map(cb, context);
+            }
+            else {
+                var result = [];
+                for (var i = 0, len = obj.length; i < len; i++) {
+                    result.push(cb.call(context, obj[i], i, obj));
+                }
+                return result;
+            }
+        }
+
+        /**
+         * 数组过滤
+         * @memberOf module:zrender/tool/util
+         * @param {Array} obj
+         * @param {Function} cb
+         * @param {*} [context]
+         * @return {Array}
+         */
+        function filter(obj, cb, context) {
+            if (!(obj && cb)) {
+                return;
+            }
+            if (obj.filter && obj.filter === nativeFilter) {
+                return obj.filter(cb, context);
+            }
+            else {
+                var result = [];
+                for (var i = 0, len = obj.length; i < len; i++) {
+                    if (cb.call(context, obj[i], i, obj)) {
+                        result.push(obj[i]);
+                    }
+                }
+                return result;
+            }
+        }
+
+        function bind(func, context) {
+            
+            return function () {
+                func.apply(context, arguments);
+            }
+        }
+
         return {
             inherits: inherits,
-            clone : clone,
-            merge : merge,
-            getContext : getContext,
-            getPixelContext : getPixelContext,
-            getPixelOffset : getPixelOffset,
-            adjustCanvasSize : adjustCanvasSize,
-            indexOf : indexOf
+            clone: clone,
+            merge: merge,
+            getContext: getContext,
+            indexOf: indexOf,
+            each: each,
+            map: map,
+            filter: filter,
+            bind: bind
         };
     }
 );
@@ -1680,7 +1717,7 @@ define('zrender/config',[],function () {
     /**
      * config默认配置项
      * @exports zrender/config
-     * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+     * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
      */
     var config = {
         /**
@@ -1786,7 +1823,10 @@ define('zrender/config',[],function () {
          * 1 : 异常抛出，调试用
          * 2 : 控制台输出，调试用
          */
-        debugMode: 0
+        debugMode: 0,
+
+        // retina 屏幕优化
+        devicePixelRatio: Math.max(window.devicePixelRatio || 1, 1)
     };
     return config;
 });
@@ -1798,7 +1838,7 @@ define(
 
         /**
          * @exports zrender/tool/log
-         * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+         * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
          */
         return function() {
             if (config.debugMode === 0) {
@@ -1915,9 +1955,9 @@ define('zrender/tool/env',[],function() {
         return {
             browser: browser,
             os: os,
-            // 原生canvas支持
-            canvasSupported : document.createElement('canvas').getContext 
-                              ? true : false 
+            // 原生canvas支持，改极端点了
+            // canvasSupported : !(browser.ie && parseFloat(browser.version) < 9)
+            canvasSupported : document.createElement('canvas').getContext ? true : false
         };
     }
 
@@ -1926,7 +1966,7 @@ define('zrender/tool/env',[],function() {
 /**
  * 事件扩展
  * @module zrender/mixin/Eventful
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *         pissang (https://www.github.com/pissang)
  */
 define('zrender/mixin/Eventful',['require'],function (require) {
@@ -1970,7 +2010,7 @@ define('zrender/mixin/Eventful',['require'],function (require) {
      * 绑定事件
      * @param {string} event 事件名
      * @param {Function} handler 事件处理函数
-     * @param {Object} context
+     * @param {Object} [context]
      */
     Eventful.prototype.bind = function (event, handler, context) {
         var _h = this._handlers;
@@ -2194,7 +2234,7 @@ define('zrender/mixin/Eventful',['require'],function (require) {
 /**
  * 事件辅助类
  * @module zrender/tool/event
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  */
 define(
     'zrender/tool/event',['require','../mixin/Eventful'],function(require) {
@@ -2274,6 +2314,10 @@ define(
         var ArrayCtor = typeof Float32Array === 'undefined'
             ? Array
             : Float32Array;
+
+        /**
+         * @typedef {Float32Array|Array.<number>} Vector2
+         */
         /**
          * 二维向量类
          * @exports zrender/tool/vector
@@ -2283,7 +2327,7 @@ define(
              * 创建一个向量
              * @param {number} [x=0]
              * @param {number} [y=0]
-             * @return {Float32Array|Array.<number>}
+             * @return {Vector2}
              */
             create: function (x, y) {
                 var out = new ArrayCtor(2);
@@ -2293,9 +2337,10 @@ define(
             },
 
             /**
-             * 复制一个向量
-             * @return {Float32Array|Array.<number>} out
-             * @return {Float32Array|Array.<number>} v
+             * 复制向量数据
+             * @param {Vector2} out
+             * @param {Vector2} v
+             * @return {Vector2}
              */
             copy: function (out, v) {
                 out[0] = v[0];
@@ -2304,11 +2349,23 @@ define(
             },
 
             /**
+             * 克隆一个向量
+             * @param {Vector2} v
+             * @return {Vector2}
+             */
+            clone: function (v) {
+                var out = new ArrayCtor(2);
+                out[0] = v[0];
+                out[1] = v[1];
+                return out;
+            },
+
+            /**
              * 设置向量的两个项
-             * @param {Float32Array|Array.<number>} out
+             * @param {Vector2} out
              * @param {number} a
              * @param {number} b
-             * @return {Float32Array|Array.<number>} 结果
+             * @return {Vector2} 结果
              */
             set: function (out, a, b) {
                 out[0] = a;
@@ -2318,9 +2375,9 @@ define(
 
             /**
              * 向量相加
-             * @param {Float32Array|Array.<number>} out
-             * @param {Float32Array|Array.<number>} v1
-             * @param {Float32Array|Array.<number>} v2
+             * @param {Vector2} out
+             * @param {Vector2} v1
+             * @param {Vector2} v2
              */
             add: function (out, v1, v2) {
                 out[0] = v1[0] + v2[0];
@@ -2330,9 +2387,9 @@ define(
 
             /**
              * 向量缩放后相加
-             * @param {Float32Array|Array.<number>} out
-             * @param {Float32Array|Array.<number>} v1
-             * @param {Float32Array|Array.<number>} v2
+             * @param {Vector2} out
+             * @param {Vector2} v1
+             * @param {Vector2} v2
              * @param {number} a
              */
             scaleAndAdd: function (out, v1, v2, a) {
@@ -2343,9 +2400,9 @@ define(
 
             /**
              * 向量相减
-             * @param {Float32Array|Array.<number>} out
-             * @param {Float32Array|Array.<number>} v1
-             * @param {Float32Array|Array.<number>} v2
+             * @param {Vector2} out
+             * @param {Vector2} v1
+             * @param {Vector2} v2
              */
             sub: function (out, v1, v2) {
                 out[0] = v1[0] - v2[0];
@@ -2355,7 +2412,7 @@ define(
 
             /**
              * 向量长度
-             * @param {Float32Array|Array.<number>} v
+             * @param {Vector2} v
              * @return {number}
              */
             len: function (v) {
@@ -2364,7 +2421,7 @@ define(
 
             /**
              * 向量长度平方
-             * @param {Float32Array|Array.<number>} v
+             * @param {Vector2} v
              * @return {number}
              */
             lenSquare: function (v) {
@@ -2373,9 +2430,9 @@ define(
 
             /**
              * 向量乘法
-             * @param {Float32Array|Array.<number>} out
-             * @param {Float32Array|Array.<number>} v1
-             * @param {Float32Array|Array.<number>} v2
+             * @param {Vector2} out
+             * @param {Vector2} v1
+             * @param {Vector2} v2
              */
             mul: function (out, v1, v2) {
                 out[0] = v1[0] * v2[0];
@@ -2385,9 +2442,9 @@ define(
 
             /**
              * 向量除法
-             * @param {Float32Array|Array.<number>} out
-             * @param {Float32Array|Array.<number>} v1
-             * @param {Float32Array|Array.<number>} v2
+             * @param {Vector2} out
+             * @param {Vector2} v1
+             * @param {Vector2} v2
              */
             div: function (out, v1, v2) {
                 out[0] = v1[0] / v2[0];
@@ -2397,8 +2454,8 @@ define(
 
             /**
              * 向量点乘
-             * @param {Float32Array|Array.<number>} v1
-             * @param {Float32Array|Array.<number>} v2
+             * @param {Vector2} v1
+             * @param {Vector2} v2
              * @return {number}
              */
             dot: function (v1, v2) {
@@ -2407,8 +2464,8 @@ define(
 
             /**
              * 向量缩放
-             * @param {Float32Array|Array.<number>} out
-             * @param {Float32Array|Array.<number>} v
+             * @param {Vector2} out
+             * @param {Vector2} v
              * @param {number} s
              */
             scale: function (out, v, s) {
@@ -2419,8 +2476,8 @@ define(
 
             /**
              * 向量归一化
-             * @param {Float32Array|Array.<number>} out
-             * @param {Float32Array|Array.<number>} v
+             * @param {Vector2} out
+             * @param {Vector2} v
              */
             normalize: function (out, v) {
                 var d = vector.len(v);
@@ -2437,8 +2494,8 @@ define(
 
             /**
              * 计算向量间距离
-             * @param {Float32Array|Array.<number>} v1
-             * @param {Float32Array|Array.<number>} v2
+             * @param {Vector2} v1
+             * @param {Vector2} v2
              * @return {number}
              */
             distance: function (v1, v2) {
@@ -2450,8 +2507,8 @@ define(
 
             /**
              * 向量距离平方
-             * @param {Float32Array|Array.<number>} v1
-             * @param {Float32Array|Array.<number>} v2
+             * @param {Vector2} v1
+             * @param {Vector2} v2
              * @return {number}
              */
             distanceSquare: function (v1, v2) {
@@ -2461,8 +2518,8 @@ define(
 
             /**
              * 求负向量
-             * @param {Float32Array|Array.<number>} out
-             * @param {Float32Array|Array.<number>} v
+             * @param {Vector2} out
+             * @param {Vector2} v
              */
             negate: function (out, v) {
                 out[0] = -v[0];
@@ -2472,14 +2529,14 @@ define(
 
             /**
              * 插值两个点
-             * @param {Float32Array|Array.<number>} out
-             * @param {Float32Array|Array.<number>} v1
-             * @param {Float32Array|Array.<number>} v2
+             * @param {Vector2} out
+             * @param {Vector2} v1
+             * @param {Vector2} v2
              * @param {number} t
              */
             lerp: function (out, v1, v2, t) {
-                var ax = v1[0];
-                var ay = v1[1];
+                // var ax = v1[0];
+                // var ay = v1[1];
                 out[0] = v1[0] + t * (v2[0] - v1[0]);
                 out[1] = v1[1] + t * (v2[1] - v1[1]);
                 return out;
@@ -2487,9 +2544,9 @@ define(
             
             /**
              * 矩阵左乘向量
-             * @param {Float32Array|Array.<number>} out
-             * @param {Float32Array|Array.<number>} v
-             * @param {Float32Array|Array.<number>} m
+             * @param {Vector2} out
+             * @param {Vector2} v
+             * @param {Vector2} m
              */
             applyTransform: function (out, v, m) {
                 var x = v[0];
@@ -2500,9 +2557,9 @@ define(
             },
             /**
              * 求两个向量最小值
-             * @param  {Float32Array|Array.<number>} out
-             * @param  {Float32Array|Array.<number>} v1
-             * @param  {Float32Array|Array.<number>} v2
+             * @param  {Vector2} out
+             * @param  {Vector2} v1
+             * @param  {Vector2} v2
              */
             min: function (out, v1, v2) {
                 out[0] = Math.min(v1[0], v2[0]);
@@ -2511,9 +2568,9 @@ define(
             },
             /**
              * 求两个向量最大值
-             * @param  {Float32Array|Array.<number>} out
-             * @param  {Float32Array|Array.<number>} v1
-             * @param  {Float32Array|Array.<number>} v2
+             * @param  {Vector2} out
+             * @param  {Vector2} v1
+             * @param  {Vector2} v2
              */
             max: function (out, v1, v2) {
                 out[0] = Math.max(v1[0], v2[0]);
@@ -2526,7 +2583,7 @@ define(
         vector.lengthSquare = vector.lenSquare;
         vector.dist = vector.distance;
         vector.distSquare = vector.distanceSquare;
-
+        
         return vector;
     }
 );
@@ -2677,26 +2734,6 @@ define(
                 out[4] = (ac * aty - ad * atx) * det;
                 out[5] = (ab * atx - aa * aty) * det;
                 return out;
-            },
-
-            /**
-             * 矩阵左乘向量
-             * @param {Float32Array|Array.<number>} out
-             * @param {Float32Array|Array.<number>} a
-             * @param {Float32Array|Array.<number>} v
-             */
-            mulVector : function(out, a, v) {
-                var aa = a[0];
-                var ac = a[2];
-                var atx = a[4];
-                var ab = a[1];
-                var ad = a[3];
-                var aty = a[5];
-
-                out[0] = v[0] * aa + v[1] * ac + atx;
-                out[1] = v[0] * ab + v[1] * ad + aty;
-
-                return out;
             }
         };
 
@@ -2707,10 +2744,12 @@ define(
 /**
  * Handler控制模块
  * @module zrender/Handler
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *         errorrik (errorrik@gmail.com)
+ *
  */
-
+// TODO mouseover 只触发一次
+// 目前的高亮因为每次都需要 addHover 所以不能只是开始的时候触发一次
 define(
     'zrender/Handler',['require','./config','./tool/env','./tool/event','./tool/util','./tool/vector','./tool/matrix','./mixin/Eventful'],function (require) {
 
@@ -2760,7 +2799,11 @@ define(
                 if ((_lastHover && _lastHover.clickable)
                     || !_lastHover
                 ) {
-                    this._dispatchAgency(_lastHover, EVENT.CLICK, event);
+
+                    // 判断没有发生拖拽才触发click事件
+                    if (this._clickThreshold < 5) {
+                        this._dispatchAgency(_lastHover, EVENT.CLICK, event);
+                    }
                 }
 
                 this._mousemoveHandler(event);
@@ -2772,6 +2815,7 @@ define(
              * @param {Event} event
              */
             dblclick: function (event) {
+                event = event || window.event;
                 event = this._zrenderEventFixed(event);
 
                 // 分发config.EVENT.DBLCLICK事件
@@ -2779,7 +2823,11 @@ define(
                 if ((_lastHover && _lastHover.clickable)
                     || !_lastHover
                 ) {
-                    this._dispatchAgency(_lastHover, EVENT.DBLCLICK, event);
+
+                    // 判断没有发生拖拽才触发dblclick事件
+                    if (this._clickThreshold < 5) {
+                        this._dispatchAgency(_lastHover, EVENT.DBLCLICK, event);
+                    }
                 }
 
                 this._mousemoveHandler(event);
@@ -2800,33 +2848,34 @@ define(
                             || -event.detail; // Firefox
                 var scale = delta > 0 ? 1.1 : 1 / 1.1;
 
-                var layers = this.painter.getLayers();
-
                 var needsRefresh = false;
-                for (var z in layers) {
-                    if (z !== 'hover') {
-                        var layer = layers[z];
-                        var pos = layer.position;
-                        if (layer.zoomable) {
-                            layer.__zoom = layer.__zoom || 1;
-                            var newZoom = layer.__zoom;
-                            newZoom *= scale;
-                            newZoom = Math.max(
-                                Math.min(layer.maxZoom, newZoom),
-                                layer.minZoom
-                            );
-                            scale = newZoom / layer.__zoom;
-                            layer.__zoom = newZoom;
-                            // Keep the mouse center when scaling
-                            pos[0] -= (this._mouseX - pos[0]) * (scale - 1);
-                            pos[1] -= (this._mouseY - pos[1]) * (scale - 1);
-                            layer.scale[0] *= scale;
-                            layer.scale[1] *= scale;
-                            layer.dirty = true;
-                            needsRefresh = true;
-                        }
+
+                var mouseX = this._mouseX;
+                var mouseY = this._mouseY;
+                this.painter.eachBuildinLayer(function (layer) {
+                    var pos = layer.position;
+                    if (layer.zoomable) {
+                        layer.__zoom = layer.__zoom || 1;
+                        var newZoom = layer.__zoom;
+                        newZoom *= scale;
+                        newZoom = Math.max(
+                            Math.min(layer.maxZoom, newZoom),
+                            layer.minZoom
+                        );
+                        scale = newZoom / layer.__zoom;
+                        layer.__zoom = newZoom;
+                        // Keep the mouse center when scaling
+                        pos[0] -= (mouseX - pos[0]) * (scale - 1);
+                        pos[1] -= (mouseY - pos[1]) * (scale - 1);
+                        layer.scale[0] *= scale;
+                        layer.scale[1] *= scale;
+                        layer.dirty = true;
+                        needsRefresh = true;
+
+                        // Prevent browser default scroll action 
+                        eventTool.stop(event);
                     }
-                }
+                });
                 if (needsRefresh) {
                     this.painter.refresh();
                 }
@@ -2888,27 +2937,26 @@ define(
                 // 如果存在拖拽中元素，被拖拽的图形元素最后addHover
                 if (this._draggingTarget) {
                     this.storage.drift(this._draggingTarget.id, dx, dy);
+                    this._draggingTarget.modSelf();
                     this.storage.addHover(this._draggingTarget);
+
+                    // 拖拽不触发click事件
+                    this._clickThreshold++;
                 }
                 else if (this._isMouseDown) {
-                    // Layer dragging
-                    var layers = this.painter.getLayers();
-
                     var needsRefresh = false;
-                    for (var z in layers) {
-                        if (z !== 'hover') {
-                            var layer = layers[z];
-                            if (layer.panable) {
-                                // PENDING
-                                cursor = 'move';
-                                // Keep the mouse center when scaling
-                                layer.position[0] += dx;
-                                layer.position[1] += dy;
-                                needsRefresh = true;
-                                layer.dirty = true;
-                            }
+                    // Layer dragging
+                    this.painter.eachBuildinLayer(function (layer) {
+                        if (layer.panable) {
+                            // PENDING
+                            cursor = 'move';
+                            // Keep the mouse center when scaling
+                            layer.position[0] += dx;
+                            layer.position[1] += dy;
+                            needsRefresh = true;
+                            layer.dirty = true;
                         }
-                    }
+                    });
                     if (needsRefresh) {
                         this.painter.refresh();
                     }
@@ -2972,6 +3020,9 @@ define(
              * @param {Event} event
              */
             mousedown: function (event) {
+                // 重置 clickThreshold
+                this._clickThreshold = 0;
+
                 if (this._lastDownButton == 2) {
                     this._lastDownButton = event.button;
                     this._mouseDownTarget = null;
@@ -3017,7 +3068,7 @@ define(
                 this._lastTouchMoment = new Date();
 
                 // 平板补充一次findHover
-                this._mobildFindFixed(event);
+                this._mobileFindFixed(event);
                 this._mousedownHandler(event);
             },
 
@@ -3046,7 +3097,7 @@ define(
                 
                 var now = new Date();
                 if (now - this._lastTouchMoment < EVENT.touchClickDelay) {
-                    this._mobildFindFixed(event);
+                    this._mobileFindFixed(event);
                     this._clickHandler(event);
                     if (now - this._lastClickMoment < EVENT.touchClickDelay / 2) {
                         this._dblclickHandler(event);
@@ -3160,7 +3211,8 @@ define(
                 window.attachEvent('onresize', this._resizeHandler);
 
                 root.attachEvent('onclick', this._clickHandler);
-                root.attachEvent('ondblclick ', this._dblclickHandler);
+                //root.attachEvent('ondblclick ', this._dblclickHandler);
+                root.ondblclick = this._dblclickHandler;
                 root.attachEvent('onmousewheel', this._mousewheelHandler);
                 root.attachEvent('onmousemove', this._mousemoveHandler);
                 root.attachEvent('onmouseout', this._mouseoutHandler);
@@ -3173,9 +3225,10 @@ define(
          * 自定义事件绑定
          * @param {string} eventName 事件名称，resize，hover，drag，etc~
          * @param {Function} handler 响应函数
+         * @param {Object} [context] 响应函数
          */
-        Handler.prototype.on = function (eventName, handler) {
-            this.bind(eventName, handler);
+        Handler.prototype.on = function (eventName, handler, context) {
+            this.bind(eventName, handler, context);
             return this;
         };
 
@@ -3459,9 +3512,19 @@ define(
             }
             else if (!draggedShape) {
                 // 无hover目标，无拖拽对象，原生事件分发
-                this.dispatch(eventName, {
+                var eveObj = {
                     type: eventName,
                     event: event
+                };
+                this.dispatch(eventName, eveObj);
+                // 分发事件到用户自定义层
+                this.painter.eachOtherLayer(function (layer) {
+                    if (typeof(layer[eventHandler]) == 'function') {
+                        layer[eventHandler](eveObj);
+                    }
+                    if (layer.dispatch) {
+                        layer.dispatch(eventName, eveObj);
+                    }
                 });
             }
         };
@@ -3508,7 +3571,7 @@ define(
         ];
 
         // touch有指尖错觉，四向尝试，让touch上的点击更好触发事件
-        Handler.prototype._mobildFindFixed = function (event) {
+        Handler.prototype._mobileFindFixed = function (event) {
             this._lastHover = null;
             this._mouseX = event.zrenderX;
             this._mouseY = event.zrenderY;
@@ -3516,11 +3579,10 @@ define(
             this._event = event;
 
             this._iterateAndFindHover();
-
             for (var i = 0; !this._lastHover && i < MOBILE_TOUCH_OFFSETS.length ; i++) {
                 var offset = MOBILE_TOUCH_OFFSETS[ i ];
                 offset.x && (this._mouseX += offset.x);
-                offset.y && (this._mouseX += offset.y);
+                offset.y && (this._mouseY += offset.y);
 
                 this._iterateAndFindHover();
             }
@@ -3621,7 +3683,7 @@ define(
                                 ? event.targetTouches[0]
                                 : event.changedTouches[0];
                 if (touch) {
-                    var rBounding = this.root.getBoundingClientRect();
+                    var rBounding = this.painter._domRoot.getBoundingClientRect();
                     // touch事件坐标是全屏的~
                     event.zrenderX = touch.clientX - rBounding.left;
                     event.zrenderY = touch.clientY - rBounding.top;
@@ -3639,6 +3701,7 @@ define(
 );
 
 /**
+ * 曲线辅助模块
  * @module zrender/tool/curve
  * @author pissang(https://www.github.com/pissang)
  */
@@ -3657,7 +3720,7 @@ define('zrender/tool/curve',['require','./vector'],function(require) {
     var _v0 = vector.create();
     var _v1 = vector.create();
     var _v2 = vector.create();
-    var _v3 = vector.create();
+    // var _v3 = vector.create();
 
     function isAroundZero(val) {
         return val > -EPSILON && val < EPSILON;
@@ -3665,10 +3728,11 @@ define('zrender/tool/curve',['require','./vector'],function(require) {
     function isNotAroundZero(val) {
         return val > EPSILON || val < -EPSILON;
     }
-
+    /*
     function evalCubicCoeff(a, b, c, d, t) {
         return ((a * t + b) * t + c) * t + d;
     }
+    */
 
     /** 
      * 计算三次贝塞尔值
@@ -3734,7 +3798,7 @@ define('zrender/tool/curve',['require','./vector'],function(require) {
             }
             else {
                 var t1 = -c / b;  //t1, t2, t3, b is not zero
-                if (t1 >=0 && t1 <= 1) {
+                if (t1 >= 0 && t1 <= 1) {
                     roots[n++] = t1;
                 }
             }
@@ -3998,7 +4062,7 @@ define('zrender/tool/curve',['require','./vector'],function(require) {
             if (isNotAroundZero(b)) {
                 var t1 = -c / b;
                 if (t1 >= 0 && t1 <= 1) {
-                    extrema[n++] = t1;
+                    roots[n++] = t1;
                 }
             }
         }
@@ -4035,13 +4099,38 @@ define('zrender/tool/curve',['require','./vector'],function(require) {
      */
     function quadraticExtremum(p0, p1, p2) {
         var divider = p0 + p2 - 2 * p1;
-        if (divider == 0) {
+        if (divider === 0) {
             // p1 is center of p0 and p2 
             return 0.5;
         }
         else {
             return (p0 - p1) / divider;
         }
+    }
+
+    /**
+     * 细分二次贝塞尔曲线
+     * @memberOf module:zrender/tool/curve
+     * @param  {number} p0
+     * @param  {number} p1
+     * @param  {number} p2
+     * @param  {number} t
+     * @param  {Array.<number>} out
+     */
+    function quadraticSubdivide(p0, p1, p2, t, out) {
+        var p01 = (p1 - p0) * t + p0;
+        var p12 = (p2 - p1) * t + p1;
+        var p012 = (p12 - p01) * t + p01;
+
+        // Seg0
+        out[0] = p0;
+        out[1] = p01;
+        out[2] = p012;
+
+        // Seg1
+        out[3] = p012;
+        out[4] = p12;
+        out[5] = p2;
     }
 
     /**
@@ -4145,13 +4234,15 @@ define('zrender/tool/curve',['require','./vector'],function(require) {
 
         quadraticExtremum: quadraticExtremum,
 
+        quadraticSubdivide: quadraticSubdivide,
+
         quadraticProjectPoint: quadraticProjectPoint
-    }
+    };
 });
 /**
  * zrender: 图形空间辅助类
  *
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *         pissang (https://www.github.com/pissang)
  *
  * isInside：是否在区域内部
@@ -4200,8 +4291,8 @@ define(
 
             _ctx = _ctx || util.getContext();
 
-            // 未实现或不可用时(excanvas不支持)则数学运算，主要是line，brokenLine，ring
-            var _mathReturn = _mathMethod(zoneType, area, x, y);
+            // 未实现或不可用时(excanvas不支持)则数学运算，主要是line，polyline，ring
+            var _mathReturn = _mathMethod(shape, area, x, y);
             if (typeof _mathReturn != 'undefined') {
                 return _mathReturn;
             }
@@ -4212,8 +4303,6 @@ define(
 
             // 上面的方法都行不通时
             switch (zoneType) {
-                case 'heart': // 心形---------10 // Todo，不精确
-                case 'droplet':// 水滴----------11 // Todo，不精确
                 case 'ellipse': // Todo，不精确
                     return true;
                 // 旋轮曲线  不准确
@@ -4232,15 +4321,14 @@ define(
         }
 
         /**
-         * 用数学方法判断，三个方法中最快，但是支持的shape少
-         *
-         * @param {string} zoneType ： 图形类型
+         * @param {Object} shape : 图形
          * @param {Object} area ：目标区域
          * @param {number} x ： 横坐标
          * @param {number} y ： 纵坐标
          * @return {boolean=} true表示坐标处在图形中
          */
-        function _mathMethod(zoneType, area, x, y) {
+        function _mathMethod(shape, area, x, y) {
+            var zoneType = shape.type;
             // 在矩形内则部分图形需要进一步判断
             switch (zoneType) {
                 // 贝塞尔曲线
@@ -4253,49 +4341,52 @@ define(
                             area.lineWidth, x, y
                         );
                     }
-                    else {
-                        return isInsideCubicStroke(
-                            area.xStart, area.yStart,
-                            area.cpX1, area.cpY1, 
-                            area.cpX2, area.cpY2, 
-                            area.xEnd, area.yEnd,
-                            area.lineWidth, x, y
-                        );
-                    }
-                // 线-----------------------1
+                    return isInsideCubicStroke(
+                        area.xStart, area.yStart,
+                        area.cpX1, area.cpY1, 
+                        area.cpX2, area.cpY2, 
+                        area.xEnd, area.yEnd,
+                        area.lineWidth, x, y
+                    );
+                // 线
                 case 'line':
                     return isInsideLine(
                         area.xStart, area.yStart,
                         area.xEnd, area.yEnd,
                         area.lineWidth, x, y
                     );
-                // 折线----------------------2
-                case 'broken-line':
-                    return isInsideBrokenLine(
+                // 折线
+                case 'polyline':
+                    return isInsidePolyline(
                         area.pointList, area.lineWidth, x, y
                     );
-                // 文本----------------------3
-                case 'text':
-                    return true;
-                // 圆环----------------------4
+                // 圆环
                 case 'ring':
                     return isInsideRing(
                         area.x, area.y, area.r0, area.r, x, y
                     );
-                // 矩形----------------------5
-                case 'rectangle':
-                    return true;
-                // 圆形----------------------6
+                // 圆形
                 case 'circle':
                     return isInsideCircle(
                         area.x, area.y, area.r, x, y
                     );
-                // 扇形----------------------7
+                // 扇形
                 case 'sector':
-                    return isInsideSector(area, x, y);
-                // 多边形---------------------8
+                    var startAngle = area.startAngle * Math.PI / 180;
+                    var endAngle = area.endAngle * Math.PI / 180;
+                    if (!area.clockWise) {
+                        startAngle = -startAngle;
+                        endAngle = -endAngle;
+                    }
+                    return isInsideSector(
+                        area.x, area.y, area.r0, area.r,
+                        startAngle, endAngle,
+                        !area.clockWise,
+                        x, y
+                    );
+                // 多边形
                 case 'path':
-                    return isInsidePath(
+                    return area.pathArray && isInsidePath(
                         area.pathArray, Math.max(area.lineWidth, 5),
                         area.brushType, x, y
                     );
@@ -4303,9 +4394,19 @@ define(
                 case 'star':
                 case 'isogon':
                     return isInsidePolygon(area.pointList, x, y);
-                // 图片----------------------9
+                // 文本
+                case 'text':
+                    var rect =  area.__rect || shape.getRect(area);
+                    return isInsideRect(
+                        rect.x, rect.y, rect.width, rect.height, x, y
+                    );
+                // 矩形
+                case 'rectangle':
+                // 图片
                 case 'image':
-                    return true;
+                    return isInsideRect(
+                        area.x, area.y, area.width, area.height, x, y
+                    );
             }
         }
 
@@ -4479,9 +4580,14 @@ define(
             if ((d - _l > r) || (d + _l < r)) {
                 return false;
             }
+            if (Math.abs(startAngle - endAngle) >= PI2) {
+                // Is a circle
+                return true;
+            }
             if (anticlockwise) {
+                var tmp = startAngle;
                 startAngle = normalizeRadian(endAngle);
-                endAngle = normalizeRadian(startAngle);
+                endAngle = normalizeRadian(tmp);
             } else {
                 startAngle = normalizeRadian(startAngle);
                 endAngle = normalizeRadian(endAngle);
@@ -4498,7 +4604,7 @@ define(
                 || (angle + PI2 >= startAngle && angle + PI2 <= endAngle);
         }
 
-        function isInsideBrokenLine(points, lineWidth, x, y) {
+        function isInsidePolyline(points, lineWidth, x, y) {
             var lineWidth = Math.max(lineWidth, 10);
             for (var i = 0, l = points.length - 1; i < l; i++) {
                 var x0 = points[i][0];
@@ -4538,29 +4644,13 @@ define(
         /**
          * 扇形包含判断
          */
-        function isInsideSector(area, x, y) {
-            if (!isInsideRing(area.x, area.y, area.r0, area.r, x, y)) {
-                // 大圆外或者小圆内直接false
-                return false;
-            }
-
-            // 判断夹角
-            if (Math.abs(area.endAngle - area.startAngle) >= 360) {
-                // 大于360度的扇形，在环内就为true
-                return true;
-            }
-            
-            var angle = (360
-                         - Math.atan2(y - area.y, x - area.x) / Math.PI
-                         * 180)
-                         % 360;
-            var endA = (360 + area.endAngle) % 360;
-            var startA = (360 + area.startAngle) % 360;
-            if (endA > startA) {
-                return (angle >= startA && angle <= endA);
-            }
-
-            return !(angle >= endA && angle <= startA);
+        function isInsideSector(
+            cx, cy, r0, r, startAngle, endAngle, anticlockwise, x, y
+        ) {
+            return isInsideArcStroke(
+                cx, cy, (r0 + r) / 2, startAngle, endAngle, anticlockwise,
+                r - r0, x, y
+            );
         }
 
         /**
@@ -4682,7 +4772,7 @@ define(
                     var y_ = curve.quadraticAt(y0, y1, y2, t);
                     for (var i = 0; i < nRoots; i++) {
                         var x_ = curve.quadraticAt(x0, x1, x2, roots[i]);
-                        if (x_ > x) {
+                        if (x_ < x) {
                             continue;
                         }
                         if (roots[i] < t) {
@@ -4696,7 +4786,7 @@ define(
                 } 
                 else {
                     var x_ = curve.quadraticAt(x0, x1, x2, roots[0]);
-                    if (x_ > x) {
+                    if (x_ < x) {
                         return 0;
                     }
                     return y2 < y0 ? 1 : -1;
@@ -4717,12 +4807,25 @@ define(
             roots[0] = -tmp;
             roots[1] = tmp;
 
+            if (Math.abs(startAngle - endAngle) >= PI2) {
+                // Is a circle
+                startAngle = 0;
+                endAngle = PI2;
+                var dir = anticlockwise ? 1 : -1;
+                if (x >= roots[0] + cx && x <= roots[1] + cx) {
+                    return dir;
+                } else {
+                    return 0;
+                }
+            }
+
             if (anticlockwise) {
+                var tmp = startAngle;
                 startAngle = normalizeRadian(endAngle);
-                endAngle = normalizeRadian(startAngle);
+                endAngle = normalizeRadian(tmp);   
             } else {
                 startAngle = normalizeRadian(startAngle);
-                endAngle = normalizeRadian(endAngle);
+                endAngle = normalizeRadian(endAngle);   
             }
             if (startAngle > endAngle) {
                 endAngle += PI2;
@@ -4762,11 +4865,14 @@ define(
             var x0 = 0;
             var y0 = 0;
             var beginSubpath = true;
+            var firstCmd = true;
+
+            brushType = brushType || 'fill';
 
             var hasStroke = brushType === 'stroke' || brushType === 'both';
             var hasFill = brushType === 'fill' || brushType === 'both';
 
-            var roots = [-1, -1, -1];
+            // var roots = [-1, -1, -1];
             for (var i = 0; i < pathArray.length; i++) {
                 var seg = pathArray[i];
                 var p = seg.points;
@@ -4784,6 +4890,14 @@ define(
                     x0 = p[p.length - 2];
                     y0 = p[p.length - 1];
                     beginSubpath = false;
+                    if (firstCmd && seg.command !== 'A') {
+                        // 如果第一个命令不是M, 是lineTo, bezierCurveTo
+                        // 等绘制命令的话，是会从该绘制的起点开始算的
+                        // Arc 会在之后做单独处理所以这里忽略
+                        firstCmd = false;
+                        xi = x0;
+                        yi = y0;
+                    }
                 }
                 switch (seg.command) {
                     case 'M':
@@ -4849,7 +4963,15 @@ define(
                         var dTheta = p[5];
                         var x1 = Math.cos(theta) * rx + cx;
                         var y1 = Math.sin(theta) * ry + cy;
-                        w += windingLine(xi, yi, x1, y1);
+                        // 不是直接使用 arc 命令
+                        if (!firstCmd) {
+                            w += windingLine(xi, yi, x1, y1);
+                        } else {
+                            firstCmd = false;
+                            // 第一个命令起点还未定义
+                            x0 = x1;
+                            y0 = y1;
+                        }
                         // zr 使用scale来模拟椭圆, 这里也对x做一定的缩放
                         var _x = (x - cx) * ry / rx + cx;
                         if (hasStroke) {
@@ -4884,7 +5006,7 @@ define(
             if (hasFill) {
                 w += windingLine(xi, yi, x0, y0, x, y);
             }
-            return w != 0;
+            return w !== 0;
         }
 
         /**
@@ -4969,7 +5091,10 @@ define(
             isInsideCircle: isInsideCircle,
             isInsideLine: isInsideLine,
             isInsideRect: isInsideRect,
-            isInsideBrokenLine: isInsideBrokenLine
+            isInsidePolyline: isInsidePolyline,
+
+            isInsideCubicStroke: isInsideCubicStroke,
+            isInsideQuadraticStroke: isInsideQuadraticStroke
         };
     }
 );
@@ -4985,7 +5110,9 @@ define('zrender/mixin/Transformable',['require','../tool/matrix','../tool/vector
 
     var matrix = require('../tool/matrix');
     var vector = require('../tool/vector');
-    var origin = [ 0, 0 ];
+    var origin = [0, 0];
+
+    var mTranslate = matrix.translate;
 
     var EPSILON = 5e-5;
 
@@ -5057,12 +5184,8 @@ define('zrender/mixin/Transformable',['require','../tool/matrix','../tool/vector
             
             this.updateNeedTransform();
 
-            if (this.parent) {
-                this.needTransform = this.needLocalTransform || this.parent.needTransform;
-            }
-            else {
-                this.needTransform = this.needLocalTransform;
-            }
+            var parentHasTransform = this.parent && this.parent.needTransform;
+            this.needTransform = this.needLocalTransform || parentHasTransform;
             
             if (!this.needTransform) {
                 return;
@@ -5072,26 +5195,23 @@ define('zrender/mixin/Transformable',['require','../tool/matrix','../tool/vector
             matrix.identity(m);
 
             if (this.needLocalTransform) {
+                var scale = this.scale;
                 if (
-                    isNotAroundZero(this.scale[0])
-                 || isNotAroundZero(this.scale[1])
+                    isNotAroundZero(scale[0])
+                 || isNotAroundZero(scale[1])
                 ) {
-                    origin[0] = -this.scale[2] || 0;
-                    origin[1] = -this.scale[3] || 0;
+                    origin[0] = -scale[2] || 0;
+                    origin[1] = -scale[3] || 0;
                     var haveOrigin = isNotAroundZero(origin[0])
                                   || isNotAroundZero(origin[1]);
                     if (haveOrigin) {
-                        matrix.translate(
-                            m, m, origin
-                        );
+                        mTranslate(m, m, origin);
                     }
-                    matrix.scale(m, m, this.scale);
+                    matrix.scale(m, m, scale);
                     if (haveOrigin) {
                         origin[0] = -origin[0];
                         origin[1] = -origin[1];
-                        matrix.translate(
-                            m, m, origin
-                        );
+                        mTranslate(m, m, origin);
                     }
                 }
 
@@ -5102,17 +5222,13 @@ define('zrender/mixin/Transformable',['require','../tool/matrix','../tool/vector
                         var haveOrigin = isNotAroundZero(origin[0])
                                       || isNotAroundZero(origin[1]);
                         if (haveOrigin) {
-                            matrix.translate(
-                                m, m, origin
-                            );
+                            mTranslate(m, m, origin);
                         }
                         matrix.rotate(m, m, this.rotation[0]);
                         if (haveOrigin) {
                             origin[0] = -origin[0];
                             origin[1] = -origin[1];
-                            matrix.translate(
-                                m, m, origin
-                            );
+                            mTranslate(m, m, origin);
                         }
                     }
                 }
@@ -5125,22 +5241,24 @@ define('zrender/mixin/Transformable',['require','../tool/matrix','../tool/vector
                 if (
                     isNotAroundZero(this.position[0]) || isNotAroundZero(this.position[1])
                 ) {
-                    matrix.translate(m, m, this.position);
+                    mTranslate(m, m, this.position);
                 }
             }
 
+            // 应用父节点变换
+            if (parentHasTransform) {
+                if (this.needLocalTransform) {
+                    matrix.mul(m, this.parent.transform, m);
+                }
+                else {
+                    matrix.copy(m, this.parent.transform);
+                }
+            }
             // 保存这个变换矩阵
             this.transform = m;
 
-            // 应用父节点变换
-            if (this.parent && this.parent.needTransform) {
-                if (this.needLocalTransform) {
-                    matrix.mul(this.transform, this.parent.transform, this.transform);
-                }
-                else {
-                    matrix.copy(this.transform, this.parent.transform);
-                }
-            }
+            this.invTransform = this.invTransform || matrix.create();
+            matrix.invert(this.invTransform, m);
         },
         /**
          * 将自己的transform应用到context上
@@ -5149,11 +5267,7 @@ define('zrender/mixin/Transformable',['require','../tool/matrix','../tool/vector
         setTransform: function (ctx) {
             if (this.needTransform) {
                 var m = this.transform;
-                ctx.transform(
-                    m[0], m[1],
-                    m[2], m[3],
-                    m[4], m[5]
-                );
+                ctx.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
             }
         },
         /**
@@ -5173,13 +5287,14 @@ define('zrender/mixin/Transformable',['require','../tool/matrix','../tool/vector
                     return;
                 }
                 vector.normalize(v, v);
+                var scale = this.scale;
                 // Y Axis
                 // TODO Scale origin ?
-                m[2] = v[0] * this.scale[1];
-                m[3] = v[1] * this.scale[1];
+                m[2] = v[0] * scale[1];
+                m[3] = v[1] * scale[1];
                 // X Axis
-                m[0] = v[1] * this.scale[0];
-                m[1] = -v[0] * this.scale[0];
+                m[0] = v[1] * scale[0];
+                m[1] = -v[0] * scale[0];
                 // Position
                 m[4] = this.position[0];
                 m[5] = this.position[1];
@@ -5213,6 +5328,21 @@ define('zrender/mixin/Transformable',['require','../tool/matrix','../tool/vector
             scale[2] = scale[3] = 0;
             rotation[0] = Math.atan2(-m[1] / sy, m[0] / sx);
             rotation[1] = rotation[2] = 0;
+        },
+
+        /**
+         * 变换坐标位置到 shape 的局部坐标空间
+         * @method
+         * @param {number} x
+         * @param {number} y
+         * @return {Array.<number>}
+         */
+        transformCoordToLocal: function (x, y) {
+            var v2 = [x, y];
+            if (this.needTransform && this.invTransform) {
+                vector.applyTransform(v2, v2, this.invTransform);
+            }
+            return v2;
         }
     };
 
@@ -5220,9 +5350,8 @@ define('zrender/mixin/Transformable',['require','../tool/matrix','../tool/vector
 });
 
 /**
- * 颜色辅助类
+ * 颜色辅助模块
  * @module zrender/tool/color
- * @author CrossDo (chenhuaimu@baidu.com)
  */
 define('zrender/tool/color',['require','../tool/util'],function(require) {
     var util = require('../tool/util');
@@ -5510,23 +5639,26 @@ define('zrender/tool/color',['require','../tool/util'],function(require) {
         var stepR = (end[0] - start[0]) / step;
         var stepG = (end[1] - start[1]) / step;
         var stepB = (end[2] - start[2]) / step;
+        var stepA = (end[3] - start[3]) / step;
         // 生成颜色集合
         // fix by linfeng 颜色堆积
-        for (var i = 0, r = start[0], g = start[1], b = start[2]; i < step; i++
-        ) {
+        for (var i = 0, r = start[0], g = start[1], b = start[2], a = start[3]; i < step; i++) {
             colors[i] = toColor([
                 adjust(Math.floor(r), [ 0, 255 ]),
                 adjust(Math.floor(g), [ 0, 255 ]), 
-                adjust(Math.floor(b), [ 0, 255 ])
-            ]);
+                adjust(Math.floor(b), [ 0, 255 ]),
+                a.toFixed(4) - 0
+            ],'rgba');
             r += stepR;
             g += stepG;
             b += stepB;
+            a += stepA;
         }
         r = end[0];
         g = end[1];
         b = end[2];
-        colors[i] = toColor([ r, g, b ]);
+        a = end[3];
+        colors[i] = toColor([r, g, b, a], 'rgba');
         return colors;
     }
 
@@ -5635,6 +5767,9 @@ define('zrender/tool/color',['require','../tool/util'],function(require) {
      * @return {string} 颜色
      */
     function convert(color, format) {
+        if (!isCalculableColor(color)) {
+            return color;
+        }
         var data = getData(color);
         var alpha = data[3];
         if (typeof alpha === 'undefined') {
@@ -5812,6 +5947,9 @@ define('zrender/tool/color',['require','../tool/util'],function(require) {
      * @return {string} 加深或减淡后颜色值
      */
     function lift(color, level) {
+        if (!isCalculableColor(color)) {
+            return color;
+        }
         var direct = level > 0 ? 1 : -1;
         if (typeof level === 'undefined') {
             level = 0;
@@ -5837,6 +5975,9 @@ define('zrender/tool/color',['require','../tool/util'],function(require) {
      * @return {string} 翻转颜色
      */
     function reverse(color) {
+        if (!isCalculableColor(color)) {
+            return color;
+        }
         var data = getData(toRGBA(color));
         data = map(data,
             function(c) {
@@ -5855,6 +5996,10 @@ define('zrender/tool/color',['require','../tool/util'],function(require) {
      * @return {string} 结果色,rgb(r,g,b)或rgba(r,g,b,a)
      */
     function mix(color1, color2, weight) {
+        if (!isCalculableColor(color1) || !isCalculableColor(color2)) {
+            return color1;
+        }
+        
         if (typeof weight === 'undefined') {
             weight = 0.5;
         }
@@ -5891,7 +6036,7 @@ define('zrender/tool/color',['require','../tool/util'],function(require) {
      * @return {string} 颜色值，#rrggbb格式
      */
     function random() {
-        return '#' + Math.random().toString(16).slice(2, 8);
+        return '#' + (Math.random().toString(16) + '0000').slice(2, 8);
     }
 
     /**
@@ -5984,6 +6129,9 @@ define('zrender/tool/color',['require','../tool/util'],function(require) {
      * @return {string} rgba颜色值
      */
     function alpha(color, a) {
+        if (!isCalculableColor(color)) {
+            return color;
+        }
         if (a === null) {
             a = 1;
         }
@@ -6016,6 +6164,10 @@ define('zrender/tool/color',['require','../tool/util'],function(require) {
             value = region[1];
         }
         return value;
+    }
+    
+    function isCalculableColor(color) {
+        return color instanceof Array || typeof color === 'string';
     }
 
     // 参见 http:// www.easyrgb.com/index.php?X=MATH
@@ -6275,7 +6427,7 @@ define('zrender/tool/color',['require','../tool/util'],function(require) {
 /**
  * shape基类
  * @module zrender/shape/Base
- * @author  Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author  Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *          errorrik (errorrik@gmail.com)
  */
 
@@ -6311,6 +6463,8 @@ define('zrender/tool/color',['require','../tool/util'],function(require) {
 
 define(
     'zrender/shape/Base',['require','../tool/matrix','../tool/guid','../tool/util','../tool/log','../mixin/Transformable','../mixin/Eventful','../tool/area','../tool/area','../tool/color','../tool/area'],function(require) {
+        var vmlCanvasManager = window['G_vmlCanvasManager'];
+
         var matrix = require('../tool/matrix');
         var guid = require('../tool/guid');
         var util = require('../tool/util');
@@ -6437,6 +6591,8 @@ define(
 
             this.__dirty = true;
 
+            this.__clipShapes = [];
+
             Transformable.call(this);
             Eventful.call(this);
         };
@@ -6508,6 +6664,36 @@ define(
          *        让painter更新视图，base.brush没用，需要的话重载brush
          */
         Base.prototype.brush = function (ctx, isHighlight) {
+
+            var style = this.beforeBrush(ctx, isHighlight);
+
+            ctx.beginPath();
+            this.buildPath(ctx, style);
+
+            switch (style.brushType) {
+                /* jshint ignore:start */
+                case 'both':
+                    ctx.fill();
+                case 'stroke':
+                    style.lineWidth > 0 && ctx.stroke();
+                    break;
+                /* jshint ignore:end */
+                default:
+                    ctx.fill();
+            }
+            
+            this.drawText(ctx, style, this.style);
+
+            this.afterBrush(ctx);
+        };
+
+        /**
+         * 具体绘制操作前的一些公共操作
+         * @param {CanvasRenderingContext2D} ctx
+         * @param {boolean} [isHighlight=false] 是否使用高亮属性
+         * @return {Object} 处理后的样式
+         */
+        Base.prototype.beforeBrush = function (ctx, isHighlight) {
             var style = this.style;
             
             if (this.brushTypeOnly) {
@@ -6529,28 +6715,21 @@ define(
 
             ctx.save();
 
+            this.doClip(ctx);
+
             this.setContext(ctx, style);
 
             // 设置transform
             this.setTransform(ctx);
 
-            ctx.beginPath();
-            this.buildPath(ctx, style);
+            return style;
+        };
 
-            switch (style.brushType) {
-                /* jshint ignore:start */
-                case 'both':
-                    ctx.fill();
-                case 'stroke':
-                    style.lineWidth > 0 && ctx.stroke();
-                    break;
-                /* jshint ignore:end */
-                default:
-                    ctx.fill();
-            }
-            
-            this.drawText(ctx, style, this.style);
-
+        /**
+         * 绘制后的处理
+         * @param {CanvasRenderingContext2D} ctx
+         */
+        Base.prototype.afterBrush = function (ctx) {
             ctx.restore();
         };
 
@@ -6581,6 +6760,36 @@ define(
 
                 if (typeof styleValue != 'undefined') {
                     ctx[ctxProp] = styleValue;
+                }
+            }
+        };
+
+        var clipShapeInvTransform = matrix.create();
+        Base.prototype.doClip = function (ctx) {
+            if (this.__clipShapes && !vmlCanvasManager) {
+                for (var i = 0; i < this.__clipShapes.length; i++) {
+                    var clipShape = this.__clipShapes[i];
+                    if (clipShape.needTransform) {
+                        var m = clipShape.transform;
+                        matrix.invert(clipShapeInvTransform, m);
+                        ctx.transform(
+                            m[0], m[1],
+                            m[2], m[3],
+                            m[4], m[5]
+                        );
+                    }
+                    ctx.beginPath();
+                    clipShape.buildPath(ctx, clipShape.style);
+                    ctx.clip();
+                    // Transform back
+                    if (clipShape.needTransform) {
+                        var m = clipShapeInvTransform;
+                        ctx.transform(
+                            m[0], m[1],
+                            m[2], m[3],
+                            m[4], m[5]
+                        );
+                    }
                 }
             }
         };
@@ -6652,34 +6861,6 @@ define(
         };
 
         /**
-         * 变换鼠标位置到 shape 的局部坐标空间
-         * @method
-         * @param {number} x
-         * @param {number} y
-         * @return {Array.<number>}
-         */
-        Base.prototype.getTansform = (function() {
-            
-            var invTransform = [];
-
-            return function (x, y) {
-                var originPos = [ x, y ];
-                // 对鼠标的坐标也做相同的变换
-                if (this.needTransform && this.transform) {
-                    matrix.invert(invTransform, this.transform);
-
-                    matrix.mulVector(originPos, invTransform, [ x, y, 1 ]);
-
-                    if (x == originPos[0] && y == originPos[1]) {
-                        // 避免外部修改导致的needTransform不准确
-                        this.updateNeedTransform();
-                    }
-                }
-                return originPos;
-            };
-        })();
-
-        /**
          * 构建绘制的Path
          * @param {CanvasRenderingContext2D} ctx
          * @param {module:zrender/shape/Base~IBaseShapeStyle} style
@@ -6704,26 +6885,29 @@ define(
          * @return {boolean}
          */
         Base.prototype.isCover = function (x, y) {
-            var originPos = this.getTansform(x, y);
+            var originPos = this.transformCoordToLocal(x, y);
             x = originPos[0];
             y = originPos[1];
 
             // 快速预判并保留判断矩形
-            var rect = this.style.__rect;
-            if (!rect) {
-                rect = this.style.__rect = this.getRect(this.style);
-            }
-
-            if (x >= rect.x
-                && x <= (rect.x + rect.width)
-                && y >= rect.y
-                && y <= (rect.y + rect.height)
-            ) {
+            if (this.isCoverRect(x, y)) {
                 // 矩形内
                 return require('../tool/area').isInside(this, this.style, x, y);
             }
             
             return false;
+        };
+
+        Base.prototype.isCoverRect = function (x, y) {
+            // 快速预判并保留判断矩形
+            var rect = this.style.__rect;
+            if (!rect) {
+                rect = this.style.__rect = this.getRect(this.style);
+            }
+            return x >= rect.x
+                && x <= (rect.x + rect.width)
+                && y >= rect.y
+                && y <= (rect.y + rect.height);
         };
 
         /**
@@ -6802,66 +6986,65 @@ define(
                     break;
                 case 'start':
                 case 'end':
+                    var pointList = style.pointList
+                                    || [
+                                        [style.xStart || 0, style.yStart || 0],
+                                        [style.xEnd || 0, style.yEnd || 0]
+                                    ];
+                    var length = pointList.length;
+                    if (length < 2) {
+                        // 少于2个点就不画了~
+                        return;
+                    }
                     var xStart;
                     var xEnd;
                     var yStart;
                     var yEnd;
-                    if (typeof style.pointList != 'undefined') {
-                        var pointList = style.pointList;
-                        if (pointList.length < 2) {
-                            // 少于2个点就不画了~
-                            return;
-                        }
-                        var length = pointList.length;
-                        switch (textPosition) {
-                            case 'start':
-                                xStart = pointList[0][0];
-                                xEnd = pointList[1][0];
-                                yStart = pointList[0][1];
-                                yEnd = pointList[1][1];
-                                break;
-                            case 'end':
-                                xStart = pointList[length - 2][0];
-                                xEnd = pointList[length - 1][0];
-                                yStart = pointList[length - 2][1];
-                                yEnd = pointList[length - 1][1];
-                                break;
-                        }
-                    }
-                    else {
-                        xStart = style.xStart || 0;
-                        xEnd = style.xEnd || 0;
-                        yStart = style.yStart || 0;
-                        yEnd = style.yEnd || 0;
-                    }
-
                     switch (textPosition) {
                         case 'start':
-                            al = xStart < xEnd ? 'end' : 'start';
-                            bl = yStart < yEnd ? 'bottom' : 'top';
-                            tx = xStart;
-                            ty = yStart;
+                            xStart = pointList[1][0];
+                            xEnd = pointList[0][0];
+                            yStart = pointList[1][1];
+                            yEnd = pointList[0][1];
                             break;
                         case 'end':
-                            al = xStart < xEnd ? 'start' : 'end';
-                            bl = yStart < yEnd ? 'top' : 'bottom';
-                            tx = xEnd;
-                            ty = yEnd;
+                            xStart = pointList[length - 2][0];
+                            xEnd = pointList[length - 1][0];
+                            yStart = pointList[length - 2][1];
+                            yEnd = pointList[length - 1][1];
                             break;
                     }
-                    dd -= 4;
-                    if (xStart != xEnd) {
-                        tx -= (al == 'end' ? dd : -dd);
-                    } 
-                    else {
-                        al = 'center';
+                    tx = xEnd;
+                    ty = yEnd;
+                    
+                    var angle = Math.atan((yStart - yEnd) / (xEnd - xStart)) / Math.PI * 180;
+                    if ((xEnd - xStart) < 0) {
+                        angle += 180;
                     }
-
-                    if (yStart != yEnd) {
-                        ty -= (bl == 'bottom' ? dd : -dd);
-                    } 
-                    else {
+                    else if ((yStart - yEnd) < 0) {
+                        angle += 360;
+                    }
+                    
+                    dd = 5;
+                    if (angle >= 30 && angle <= 150) {
+                        al = 'center';
+                        bl = 'bottom';
+                        ty -= dd;
+                    }
+                    else if (angle > 150 && angle < 210) {
+                        al = 'right';
                         bl = 'middle';
+                        tx -= dd;
+                    }
+                    else if (angle >= 210 && angle <= 330) {
+                        al = 'center';
+                        bl = 'top';
+                        ty += dd;
+                    }
+                    else {
+                        al = 'left';
+                        bl = 'middle';
+                        tx += dd;
                     }
                     break;
                 case 'specific':
@@ -6889,7 +7072,10 @@ define(
             if (this.style) {
                 this.style.__rect = null;
             }
-        }
+            if (this.highlightStyle) {
+                this.highlightStyle.__rect = null;
+            }
+        };
 
         /**
          * 图形是否会触发事件
@@ -6915,7 +7101,7 @@ define(
 
 /**
  * @module zrender/shape/Text
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  * @example
  *     var Text = require('zrender/shape/Text');
  *     var shape = new Text({
@@ -6936,8 +7122,7 @@ define(
  * @property {string} text 文本内容
  * @property {number} [maxWidth=null] 最大宽度限制
  * @property {string} [textFont] 附加文本样式，eg:'bold 18px verdana'
- * @property {string} [textAlign] 默认根据textPosition自动设置，附加文本水平对齐。
- *                                可以是start, end, left, right, center
+ * @property {string} [textAlign] 可以是start, end, left, right, center
  * @property {string} [textBaseline] 默认根据textPosition自动设置，附加文本垂直对齐。
  *                                可以是top, bottom, middle, alphabetic, hanging, ideographic
  * @property {string} [brushType='fill']
@@ -6993,6 +7178,8 @@ define(
                 }
 
                 ctx.save();
+                this.doClip(ctx);
+
                 this.setContext(ctx, style);
 
                 // 设置transform
@@ -7127,8 +7314,8 @@ define(
 /**
  * 矩形
  * @module zrender/shape/Rectangle
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com) , 
- *         strwind (@劲风FEI, yaofeifei@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com) , 
+ *         strwind (@劲风FEI)
  * @example
  *     var Rectangle = require('zrender/shape/Rectangle');
  *     var shape = new Rectangle({
@@ -7294,6 +7481,7 @@ define(
                 else {
                     this._buildRadiusPath(ctx, style);
                 }
+                ctx.closePath();
                 return;
             },
 
@@ -7333,7 +7521,7 @@ define(
 /**
  * zrender: loading特效类
  *
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *         errorrik (errorrik@gmail.com)
  */
 
@@ -7491,6 +7679,218 @@ define(
 );
 
 /**
+ * @module zrender/Layer
+ * @author pissang(https://www.github.com/pissang)
+ */
+define('zrender/Layer',['require','./mixin/Transformable','./tool/util','./config'],function (require) {
+
+    var Transformable = require('./mixin/Transformable');
+    var util = require('./tool/util');
+    var vmlCanvasManager = window['G_vmlCanvasManager'];
+    var config = require('./config');
+
+    function returnFalse() {
+        return false;
+    }
+
+    /**
+     * 创建dom
+     * 
+     * @inner
+     * @param {string} id dom id 待用
+     * @param {string} type dom type，such as canvas, div etc.
+     * @param {Painter} painter painter instance
+     */
+    function createDom(id, type, painter) {
+        var newDom = document.createElement(type);
+        var width = painter.getWidth();
+        var height = painter.getHeight();
+
+        // 没append呢，请原谅我这样写，清晰~
+        newDom.style.position = 'absolute';
+        newDom.style.left = 0;
+        newDom.style.top = 0;
+        newDom.style.width = width + 'px';
+        newDom.style.height = height + 'px';
+        newDom.width = width * config.devicePixelRatio;
+        newDom.height = height * config.devicePixelRatio;
+
+        // id不作为索引用，避免可能造成的重名，定义为私有属性
+        newDom.setAttribute('data-zr-dom-id', id);
+        return newDom;
+    }
+
+    /**
+     * @alias module:zrender/Layer
+     * @constructor
+     * @extends module:zrender/mixin/Transformable
+     * @param {string} id
+     * @param {module:zrender/Painter} painter
+     */
+    var Layer = function(id, painter) {
+
+        this.id = id;
+
+        this.dom = createDom(id, 'canvas', painter);
+        this.dom.onselectstart = returnFalse; // 避免页面选中的尴尬
+        this.dom.style['-webkit-user-select'] = 'none';
+        this.dom.style['user-select'] = 'none';
+        this.dom.style['-webkit-touch-callout'] = 'none';
+        this.dom.style['-webkit-tap-highlight-color'] = 'rgba(0,0,0,0)';
+
+        vmlCanvasManager && vmlCanvasManager.initElement(this.dom);
+
+        this.domBack = null;
+        this.ctxBack = null;
+
+        this.painter = painter;
+
+        this.unusedCount = 0;
+
+        this.config = null;
+
+        this.dirty = true;
+
+        this.elCount = 0;
+
+        // Configs
+        /**
+         * 每次清空画布的颜色
+         * @type {string}
+         * @default 0
+         */
+        this.clearColor = 0;
+        /**
+         * 是否开启动态模糊
+         * @type {boolean}
+         * @default false
+         */
+        this.motionBlur = false;
+        /**
+         * 在开启动态模糊的时候使用，与上一帧混合的alpha值，值越大尾迹越明显
+         * @type {number}
+         * @default 0.7
+         */
+        this.lastFrameAlpha = 0.7;
+        /**
+         * 层是否支持鼠标平移操作
+         * @type {boolean}
+         * @default false
+         */
+        this.zoomable = false;
+        /**
+         * 层是否支持鼠标缩放操作
+         * @type {boolean}
+         * @default false
+         */
+        this.panable = false;
+
+        this.maxZoom = Infinity;
+        this.minZoom = 0;
+
+        Transformable.call(this);
+    };
+
+    Layer.prototype.initContext = function () {
+        this.ctx = this.dom.getContext('2d');
+
+        var dpr = config.devicePixelRatio;
+        if (dpr != 1) { 
+            this.ctx.scale(dpr, dpr);
+        }
+    };
+
+    Layer.prototype.createBackBuffer = function () {
+        if (vmlCanvasManager) { // IE 8- should not support back buffer
+            return;
+        }
+        this.domBack = createDom('back-' + this.id, 'canvas', this.painter);
+        this.ctxBack = this.domBack.getContext('2d');
+
+        var dpr = config.devicePixelRatio;
+
+        if (dpr != 1) { 
+            this.ctxBack.scale(dpr, dpr);
+        }
+    };
+
+    /**
+     * @param  {number} width
+     * @param  {number} height
+     */
+    Layer.prototype.resize = function (width, height) {
+        var dpr = config.devicePixelRatio;
+
+        this.dom.style.width = width + 'px';
+        this.dom.style.height = height + 'px';
+
+        this.dom.setAttribute('width', width * dpr);
+        this.dom.setAttribute('height', height * dpr);
+
+        if (dpr != 1) { 
+            this.ctx.scale(dpr, dpr);
+        }
+
+        if (this.domBack) {
+            this.domBack.setAttribute('width', width * dpr);
+            this.domBack.setAttribute('height', height * dpr);
+
+            if (dpr != 1) { 
+                this.ctxBack.scale(dpr, dpr);
+            }
+        }
+    };
+
+    /**
+     * 清空该层画布
+     */
+    Layer.prototype.clear = function () {
+        var dom = this.dom;
+        var ctx = this.ctx;
+        var width = dom.width;
+        var height = dom.height;
+
+        var haveClearColor = this.clearColor && !vmlCanvasManager;
+        var haveMotionBLur = this.motionBlur && !vmlCanvasManager;
+        var lastFrameAlpha = this.lastFrameAlpha;
+        
+        var dpr = config.devicePixelRatio;
+
+        if (haveMotionBLur) {
+            if (!this.domBack) {
+                this.createBackBuffer();
+            } 
+
+            this.ctxBack.globalCompositeOperation = 'copy';
+            this.ctxBack.drawImage(
+                dom, 0, 0,
+                width / dpr,
+                height / dpr
+            );
+        }
+
+        ctx.clearRect(0, 0, width / dpr, height / dpr);
+        if (haveClearColor) {
+            ctx.save();
+            ctx.fillStyle = this.clearColor;
+            ctx.fillRect(0, 0, width / dpr, height / dpr);
+            ctx.restore();
+        }
+
+        if (haveMotionBLur) {
+            var domBack = this.domBack;
+            ctx.save();
+            ctx.globalAlpha = lastFrameAlpha;
+            ctx.drawImage(domBack, 0, 0, width / dpr, height / dpr);
+            ctx.restore();
+        }
+    };
+
+    util.merge(Layer.prototype, Transformable.prototype);
+
+    return Layer;
+});
+/**
  * 图片绘制
  * @module zrender/shape/Image
  * @author pissang(https://www.github.com/pissang)
@@ -7534,9 +7934,6 @@ define(
 define(
     'zrender/shape/Image',['require','./Base','../tool/util'],function (require) {
 
-        var _needsRefresh = [];
-        var _refreshTimeout;
-
         var Base = require('./Base');
 
         /**
@@ -7547,8 +7944,6 @@ define(
          */
         var ZImage = function(options) {
             Base.call(this, options);
-
-            this._imageCache = {};
             /**
              * 图片绘制样式
              * @name module:zrender/shape/Image#style
@@ -7565,7 +7960,7 @@ define(
             
             type: 'image',
 
-            brush : function(ctx, isHighlight, refresh) {
+            brush : function(ctx, isHighlight, refreshNextFrame) {
                 var style = this.style || {};
 
                 if (isHighlight) {
@@ -7576,8 +7971,11 @@ define(
                 }
 
                 var image = style.image;
-                var me = this;
+                var self = this;
 
+                if (!this._imageCache) {
+                    this._imageCache = {};
+                }
                 if (typeof(image) === 'string') {
                     var src = image;
                     if (this._imageCache[src]) {
@@ -7586,14 +7984,8 @@ define(
                         image = new Image();
                         image.onload = function () {
                             image.onload = null;
-                            clearTimeout(_refreshTimeout);
-                            _needsRefresh.push(me);
-                            // 防止因为缓存短时间内触发多次onload事件
-                            _refreshTimeout = setTimeout(function () {
-                                refresh && refresh(_needsRefresh);
-                                // 清空needsRefresh
-                                _needsRefresh = [];
-                            }, 10);
+                            self.modSelf();
+                            refreshNextFrame();
                         };
 
                         image.src = src;
@@ -7619,13 +8011,15 @@ define(
                     var height = style.height || image.height;
                     var x = style.x;
                     var y = style.y;
-                    
                     // 图片加载失败
                     if (!image.width || !image.height) {
                         return;
                     }
 
                     ctx.save();
+
+                    this.doClip(ctx);
+
                     this.setContext(ctx, style);
 
                     // 设置transform
@@ -7701,28 +8095,23 @@ define(
 /**
  * Painter绘图模块
  * @module zrender/Painter
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *         errorrik (errorrik@gmail.com)
  *         pissang (https://www.github.com/pissang)
  */
  define(
-    'zrender/Painter',['require','./config','./tool/util','./tool/log','./tool/matrix','./loadingEffect/Base','./mixin/Transformable','./shape/Image'],function (require) {
+    'zrender/Painter',['require','./config','./tool/util','./tool/log','./loadingEffect/Base','./Layer','./shape/Image'],function (require) {
         
 
         var config = require('./config');
         var util = require('./tool/util');
         // var vec2 = require('./tool/vector');
         var log = require('./tool/log');
-        var matrix = require('./tool/matrix');
+        // var matrix = require('./tool/matrix');
         var BaseLoadingEffect = require('./loadingEffect/Base');
-        var Transformable = require('./mixin/Transformable');
 
-        // retina 屏幕优化
-        var devicePixelRatio = window.devicePixelRatio || 1;
-        devicePixelRatio = Math.max(devicePixelRatio, 1);
-        var vmlCanvasManager = window['G_vmlCanvasManager'];
+        var Layer = require('./Layer');
 
-        
         // 返回false的方法，用于避免页面被选中
         function returnFalse() {
             return false;
@@ -7730,6 +8119,24 @@ define(
 
         // 什么都不干的空方法
         function doNothing() {}
+
+        function isLayerValid(layer) {
+            if (!layer) {
+                return false;
+            }
+            
+            if (layer.isBuildin) {
+                return true;
+            }
+
+            if (typeof(layer.resize) !== 'function'
+                || typeof(layer.refresh) !== 'function'
+            ) {
+                return false;
+            }
+
+            return true;
+        }
 
         /**
          * @alias module:zrender/Painter
@@ -7743,6 +8150,11 @@ define(
              * @type {HTMLElement}
              */
             this.root = root;
+            root.style['-webkit-tap-highlight-color'] = 'transparent';
+            root.style['-webkit-user-select'] = 'none';
+            root.style['user-select'] = 'none';
+            root.style['-webkit-touch-callout'] = 'none';
+
             /**
              * @type {module:zrender/Storage}
              */
@@ -7764,6 +8176,8 @@ define(
 
             this._layers = {};
 
+            this._zlevelList = [];
+
             this._layerConfig = {};
 
             this._loadingEffect = new BaseLoadingEffect({});
@@ -7771,12 +8185,17 @@ define(
 
             // 创建各层canvas
             // 背景
-            this._bgDom = createDom('bg', 'div', this);
+            this._bgDom = document.createElement('div');
+            this._bgDom.style.cssText = [
+                'position:absolute;left:0px;top:0px;width:',
+                this._width, 'px;height:', this._height + 'px;', 
+                '-webkit-user-select:none;user-select;none;',
+                '-webkit-touch-callout:none;'
+            ].join('');
+            this._bgDom.setAttribute('data-zr-dom-id', 'bg');
+
             domRoot.appendChild(this._bgDom);
             this._bgDom.onselectstart = returnFalse;
-            this._bgDom.style['-webkit-user-select'] = 'none';
-            this._bgDom.style['user-select'] = 'none';
-            // this._bgDom.style[' -webkit-touch-callout'] = 'none';
 
             // 高亮
             var hoverLayer = new Layer('_zrender_hover_', this);
@@ -7787,12 +8206,10 @@ define(
             hoverLayer.dom.onselectstart = returnFalse;
             hoverLayer.dom.style['-webkit-user-select'] = 'none';
             hoverLayer.dom.style['user-select'] = 'none';
-            // hoverLayer.dom.style[' -webkit-touch-callout'] = 'none';
+            hoverLayer.dom.style['-webkit-touch-callout'] = 'none';
 
-            var me = this;
-            this.updatePainter = function (shapeList, callback) {
-                me.refreshShapes(shapeList, callback);
-            };
+            // Will be injected by zrender instance
+            this.refreshNextFrame = null;
         };
 
         /**
@@ -7819,6 +8236,15 @@ define(
             var list = this.storage.getShapeList(true);
             this._paintList(list, paintAll);
 
+            // Paint custum layers
+            for (var i = 0; i < this._zlevelList.length; i++) {
+                var z = this._zlevelList[i];
+                var layer = this._layers[z];
+                if (! layer.isBuildin && layer.refresh) {
+                    layer.refresh();
+                }
+            }
+
             if (typeof callback == 'function') {
                 callback();
             }
@@ -7826,6 +8252,23 @@ define(
             return this;
         };
 
+        Painter.prototype._preProcessLayer = function (layer) {
+            layer.unusedCount++;
+            layer.updateTransform();
+        };
+
+        Painter.prototype._postProcessLayer = function (layer) {
+            layer.dirty = false;
+            // 删除过期的层
+            // PENDING
+            // if (layer.unusedCount >= 500) {
+            //     this.delLayer(z);
+            // }
+            if (layer.unusedCount == 1) {
+                layer.clear();
+            }
+        };
+ 
         Painter.prototype._paintList = function (list, paintAll) {
 
             if (typeof(paintAll) == 'undefined') {
@@ -7838,26 +8281,33 @@ define(
             var currentZLevel;
             var ctx;
 
-            for (var id in this._layers) {
-                if (id !== 'hover') {
-                    this._layers[id].unusedCount++;
-                    this._layers[id].updateTransform();
-                }
-            }
+            this.eachBuildinLayer(this._preProcessLayer);
 
-            var invTransform = [];
+            // var invTransform = [];
 
             for (var i = 0, l = list.length; i < l; i++) {
                 var shape = list[i];
 
+                // Change draw layer
                 if (currentZLevel !== shape.zlevel) {
-                    if (currentLayer && currentLayer.needTransform) {
-                        ctx.restore();
+                    if (currentLayer) {
+                        if (currentLayer.needTransform) {
+                            ctx.restore();
+                        }
+                        ctx.flush && ctx.flush();
                     }
 
-                    currentLayer = this.getLayer(shape.zlevel, currentLayer);
-                    ctx = currentLayer.ctx;
                     currentZLevel = shape.zlevel;
+                    currentLayer = this.getLayer(currentZLevel);
+
+                    if (!currentLayer.isBuildin) {
+                        log(
+                            'ZLevel ' + currentZLevel
+                            + ' has been used by unkown layer ' + currentLayer.id
+                        );
+                    }
+
+                    ctx = currentLayer.ctx;
 
                     // Reset the count
                     currentLayer.unusedCount = 0;
@@ -7872,36 +8322,6 @@ define(
                     }
                 }
 
-                // Start group clipping
-                if (shape.__startClip && !vmlCanvasManager) {
-                    var clipShape = shape.__startClip;
-                    ctx.save();
-                    // Set transform
-                    if (clipShape.needTransform) {
-                        var m = clipShape.transform;
-                        matrix.invert(invTransform, m);
-                        ctx.transform(
-                            m[0], m[1],
-                            m[2], m[3],
-                            m[4], m[5]
-                        );
-                    }
-
-                    ctx.beginPath();
-                    clipShape.buildPath(ctx, clipShape.style);
-                    ctx.clip();
-
-                    // Transform back
-                    if (clipShape.needTransform) {
-                        var m = invTransform;
-                        ctx.transform(
-                            m[0], m[1],
-                            m[2], m[3],
-                            m[4], m[5]
-                        );
-                    }
-                }
-
                 if ((currentLayer.dirty || paintAll) && !shape.invisible) {
                     if (
                         !shape.onbrush
@@ -7909,7 +8329,7 @@ define(
                     ) {
                         if (config.catchBrushException) {
                             try {
-                                shape.brush(ctx, false, this.updatePainter);
+                                shape.brush(ctx, false, this.refreshNextFrame);
                             }
                             catch (error) {
                                 log(
@@ -7920,80 +8340,126 @@ define(
                             }
                         }
                         else {
-                            shape.brush(ctx, false, this.updatePainter);
+                            shape.brush(ctx, false, this.refreshNextFrame);
                         }
                     }
-                }
-
-                // Stop group clipping
-                if (shape.__stopClip && !vmlCanvasManager) {
-                    ctx.restore();
                 }
 
                 shape.__dirty = false;
             }
 
-            if (currentLayer && currentLayer.needTransform) {
-                ctx.restore();
+            if (currentLayer) {
+                if (currentLayer.needTransform) {
+                    ctx.restore();
+                }
+                ctx.flush && ctx.flush();
             }
 
-            for (var id in this._layers) {
-                if (id !== 'hover') {
-                    var layer = this._layers[id];
-                    layer.dirty = false;
-                    // 删除过期的层
-                    // PENDING
-                    // if (layer.unusedCount >= 500) {
-                    //     this.delLayer(id);
-                    // }
-                    if (layer.unusedCount == 1) {
-                        layer.clear();
-                    }
-                }
-            }
+            this.eachBuildinLayer(this._postProcessLayer);
         };
 
         /**
          * 获取 zlevel 所在层，如果不存在则会创建一个新的层
          * @param {number} zlevel
-         * @param {module:zrender/Painter~Layer} [prevLayer]
-         *        在需要创建新的层时需要使用，新创建层的dom节点会插在该层后面
+         * @return {module:zrender/Layer}
          */
-        Painter.prototype.getLayer = function (zlevel, prevLayer) {
-            // Change draw layer
-            var currentLayer = this._layers[zlevel];
-            if (!currentLayer) {
+        Painter.prototype.getLayer = function (zlevel) {
+            var layer = this._layers[zlevel];
+            if (!layer) {
                 // Create a new layer
-                currentLayer = new Layer(zlevel, this);
-                var prevDom = prevLayer ? prevLayer.dom : this._bgDom;
-                if (prevDom.nextSibling) {
-                    prevDom.parentNode.insertBefore(
-                        currentLayer.dom,
-                        prevDom.nextSibling
-                    );
-                }
-                else {
-                    prevDom.parentNode.appendChild(
-                        currentLayer.dom
-                    );
-                }
-                currentLayer.initContext();
-                
-                this._layers[zlevel] = currentLayer;
+                layer = new Layer(zlevel, this);
+                layer.isBuildin = true;
 
                 if (this._layerConfig[zlevel]) {
-                    util.merge(currentLayer, this._layerConfig[zlevel], true);
+                    util.merge(layer, this._layerConfig[zlevel], true);
                 }
 
-                currentLayer.updateTransform();
+                layer.updateTransform();
+
+                this.insertLayer(zlevel, layer);
+
+                // Context is created after dom inserted to document
+                // Or excanvas will get 0px clientWidth and clientHeight
+                layer.initContext();
             }
 
-            return currentLayer;
+            return layer;
+        };
+
+        Painter.prototype.insertLayer = function (zlevel, layer) {
+            if (this._layers[zlevel]) {
+                log('ZLevel ' + zlevel + ' has been used already');
+                return;
+            }
+            // Check if is a valid layer
+            if (!isLayerValid(layer)) {
+                log('Layer of zlevel ' + zlevel + ' is not valid');
+                return;
+            }
+
+            var len = this._zlevelList.length;
+            var prevLayer = null;
+            var i = -1;
+            if (len > 0 && zlevel > this._zlevelList[0]) {
+                for (i = 0; i < len - 1; i++) {
+                    if (
+                        this._zlevelList[i] < zlevel
+                        && this._zlevelList[i + 1] > zlevel
+                    ) {
+                        break;
+                    }
+                }
+                prevLayer = this._layers[this._zlevelList[i]];
+            }
+            this._zlevelList.splice(i + 1, 0, zlevel);
+
+            var prevDom = prevLayer ? prevLayer.dom : this._bgDom;
+            if (prevDom.nextSibling) {
+                prevDom.parentNode.insertBefore(
+                    layer.dom,
+                    prevDom.nextSibling
+                );
+            }
+            else {
+                prevDom.parentNode.appendChild(layer.dom);
+            }
+
+            this._layers[zlevel] = layer;
+        };
+
+        // Iterate each layer
+        Painter.prototype.eachLayer = function (cb, context) {
+            for (var i = 0; i < this._zlevelList.length; i++) {
+                var z = this._zlevelList[i];
+                cb.call(context, this._layers[z], z);
+            }
+        };
+
+        // Iterate each buildin layer
+        Painter.prototype.eachBuildinLayer = function (cb, context) {
+            for (var i = 0; i < this._zlevelList.length; i++) {
+                var z = this._zlevelList[i];
+                var layer = this._layers[z];
+                if (layer.isBuildin) {
+                    cb.call(context, layer, z);
+                }
+            }
+        };
+
+        // Iterate each other layer except buildin layer
+        Painter.prototype.eachOtherLayer = function (cb, context) {
+            for (var i = 0; i < this._zlevelList.length; i++) {
+                var z = this._zlevelList[i];
+                var layer = this._layers[z];
+                if (! layer.isBuildin) {
+                    cb.call(context, layer, z);
+                }
+            }
         };
 
         /**
          * 获取所有已创建的层
-         * @param {Array.<module:zrender/Painter~Layer>} [prevLayer]
+         * @param {Array.<module:zrender/Layer>} [prevLayer]
          */
         Painter.prototype.getLayers = function () {
             return this._layers;
@@ -8004,12 +8470,11 @@ define(
             var layers = this._layers;
 
             var elCounts = {};
-            for (var z in layers) {
-                if (z !== 'hover') {
-                    elCounts[z] = layers[z].elCount;
-                    layers[z].elCount = 0;
-                }
-            }
+
+            this.eachBuildinLayer(function (layer, z) {
+                elCounts[z] = layer.elCount;
+                layer.elCount = 0;
+            });
 
             for (var i = 0, l = list.length; i < l; i++) {
                 var shape = list[i];
@@ -8026,13 +8491,11 @@ define(
             }
 
             // 层中的元素数量有发生变化
-            for (var z in layers) {
-                if (z !== 'hover') {
-                    if (elCounts[z] !== layers[z].elCount) {
-                        layers[z].dirty = true;
-                    }
+            this.eachBuildinLayer(function (layer, z) {
+                if (elCounts[z] !== layer.elCount) {
+                    layer.dirty = true;
                 }
-            }
+            });
         };
 
         /**
@@ -8043,7 +8506,7 @@ define(
         Painter.prototype.refreshShapes = function (shapeList, callback) {
             for (var i = 0, l = shapeList.length; i < l; i++) {
                 var shape = shapeList[i];
-                this.storage.mod(shape.id);
+                shape.modSelf();
             }
 
             this.refresh(callback);
@@ -8065,14 +8528,12 @@ define(
          * 清除hover层外所有内容
          */
         Painter.prototype.clear = function () {
-            for (var k in this._layers) {
-                if (k == 'hover') {
-                    continue;
-                }
-                this._layers[k].clear();
-            }
-
+            this.eachBuildinLayer(this._clearLayer);
             return this;
+        };
+
+        Painter.prototype._clearLayer = function (layer) {
+            layer.clear();
         };
 
         /**
@@ -8124,6 +8585,8 @@ define(
             });
             layer.dom.parentNode.removeChild(layer.dom);
             delete this._layers[zlevel];
+
+            this._zlevelList.splice(util.indexOf(this._zlevelList, zlevel), 1);
         };
 
         /**
@@ -8135,6 +8598,9 @@ define(
             for (var i = 0, l = list.length; i < l; i++) {
                 this._brushHover(list[i]);
             }
+            var ctx = this._layers.hover.ctx;
+            ctx.flush && ctx.flush();
+
             this.storage.delHover();
 
             return this;
@@ -8252,27 +8718,21 @@ define(
          * @return {string} 图片的Base64 url
          */
         Painter.prototype.toDataURL = function (type, backgroundColor, args) {
-            if (vmlCanvasManager) {
+            if (window['G_vmlCanvasManager']) {
                 return null;
             }
 
-            var imageDom = createDom('image', 'canvas', this);
-            this._bgDom.appendChild(imageDom);
-            var ctx = imageDom.getContext('2d');
-            devicePixelRatio != 1 
-                && ctx.scale(devicePixelRatio, devicePixelRatio);
+            var imageLayer = new Layer('image', this);
+            this._bgDom.appendChild(imageLayer.dom);
+            imageLayer.initContext();
             
-            ctx.fillStyle = backgroundColor || '#fff';
-            ctx.rect(
-                0, 0, 
-                this._width * devicePixelRatio,
-                this._height * devicePixelRatio
-            );
-            ctx.fill();
+            var ctx = imageLayer.ctx;
+            imageLayer.clearColor = backgroundColor || '#fff';
+            imageLayer.clear();
             
             var self = this;
             // 升序遍历，shape上的zlevel指定绘画图层的z轴层叠
-            
+
             this.storage.iterShape(
                 function (shape) {
                     if (!shape.invisible) {
@@ -8282,7 +8742,7 @@ define(
                         ) {
                             if (config.catchBrushException) {
                                 try {
-                                    shape.brush(ctx, false, self.updatePainter);
+                                    shape.brush(ctx, false, self.refreshNextFrame);
                                 }
                                 catch (error) {
                                     log(
@@ -8293,16 +8753,16 @@ define(
                                 }
                             }
                             else {
-                                shape.brush(ctx, false, self.updatePainter);
+                                shape.brush(ctx, false, self.refreshNextFrame);
                             }
                         }
                     }
                 },
                 { normal: 'up', update: true }
             );
-            var image = imageDom.toDataURL(type, args); 
+            var image = imageLayer.dom.toDataURL(type, args); 
             ctx = null;
-            this._bgDom.removeChild(imageDom);
+            this._bgDom.removeChild(imageLayer.dom);
             return image;
         };
 
@@ -8355,7 +8815,7 @@ define(
                 // Retina 优化
                 if (config.catchBrushException) {
                     try {
-                        shape.brush(ctx, true, this.updatePainter);
+                        shape.brush(ctx, true, this.refreshNextFrame);
                     }
                     catch (error) {
                         log(
@@ -8364,7 +8824,7 @@ define(
                     }
                 }
                 else {
-                    shape.brush(ctx, true, this.updatePainter);
+                    shape.brush(ctx, true, this.refreshNextFrame);
                 }
                 if (layer.needTransform) {
                     ctx.restore();
@@ -8377,7 +8837,6 @@ define(
         ) {
             var canvas = document.createElement('canvas');
             var ctx = canvas.getContext('2d');
-            var devicePixelRatio = window.devicePixelRatio || 1;
             
             canvas.style.width = width + 'px';
             canvas.style.height = height + 'px';
@@ -8424,7 +8883,7 @@ define(
         };
 
         Painter.prototype._createShapeToImageProcessor = function () {
-            if (vmlCanvasManager) {
+            if (window['G_vmlCanvasManager']) {
                 return doNothing;
             }
 
@@ -8432,206 +8891,10 @@ define(
 
             return function (id, e, width, height) {
                 return me._shapeToImage(
-                    id, e, width, height, devicePixelRatio
+                    id, e, width, height, config.devicePixelRatio
                 );
             };
         };
-
-        /**
-         * 创建dom
-         * 
-         * @inner
-         * @param {string} id dom id 待用
-         * @param {string} type dom type，such as canvas, div etc.
-         * @param {Painter} painter painter instance
-         */
-        function createDom(id, type, painter) {
-            var newDom = document.createElement(type);
-            var width = painter._width;
-            var height = painter._height;
-
-            // 没append呢，请原谅我这样写，清晰~
-            newDom.style.position = 'absolute';
-            newDom.style.left = 0;
-            newDom.style.top = 0;
-            newDom.style.width = width + 'px';
-            newDom.style.height = height + 'px';
-            newDom.setAttribute('width', width * devicePixelRatio);
-            newDom.setAttribute('height', height * devicePixelRatio);
-
-            // id不作为索引用，避免可能造成的重名，定义为私有属性
-            newDom.setAttribute('data-zr-dom-id', id);
-            return newDom;
-        }
-
-        /**
-         * @alias module:zrender/Painter~Layer
-         * @constructor
-         * @extends module:zrender/mixin/Transformable
-         * @param {string} id
-         * @param {module:zrender/Painter} painter
-         */
-        var Layer = function(id, painter) {
-            this.dom = createDom(id, 'canvas', painter);
-            this.dom.onselectstart = returnFalse; // 避免页面选中的尴尬
-            this.dom.style['-webkit-user-select'] = 'none';
-            this.dom.style['user-select'] = 'none';
-            // this.dom.style[' -webkit-touch-callout'] = 'none';
-            vmlCanvasManager && vmlCanvasManager.initElement(this.dom);
-
-            this.domBack = null;
-            this.ctxBack = null;
-
-            this.painter = painter;
-
-            this.unusedCount = 0;
-
-            this.config = null;
-
-            this.dirty = true;
-
-            this.elCount = 0;
-
-            // Configs
-            /**
-             * 每次清空画布的颜色
-             * @type {string}
-             * @default 0
-             */
-            this.clearColor = 0;
-            /**
-             * 是否开启动态模糊
-             * @type {boolean}
-             * @default false
-             */
-            this.motionBlur = false;
-            /**
-             * 在开启动态模糊的时候使用，与上一帧混合的alpha值，值越大尾迹越明显
-             * @type {number}
-             * @default 0.7
-             */
-            this.lastFrameAlpha = 0.7;
-            /**
-             * 层是否支持鼠标平移操作
-             * @type {boolean}
-             * @default false
-             */
-            this.zoomable = false;
-            /**
-             * 层是否支持鼠标缩放操作
-             * @type {boolean}
-             * @default false
-             */
-            this.panable = false;
-
-            this.maxZoom = Infinity;
-            this.minZoom = 0;
-
-            Transformable.call(this);
-        };
-
-        Layer.prototype.initContext = function () {
-            this.ctx = this.dom.getContext('2d');
-            if (devicePixelRatio != 1) { 
-                this.ctx.scale(devicePixelRatio, devicePixelRatio);
-            }
-        };
-
-        Layer.prototype.createBackBuffer = function () {
-            if (vmlCanvasManager) { // IE 8- should not support back buffer
-                return;
-            }
-            this.domBack = createDom('back-' + this.id, 'canvas', this.painter);
-            this.ctxBack = this.domBack.getContext('2d');
-
-            if (devicePixelRatio != 1) { 
-                this.ctxBack.scale(devicePixelRatio, devicePixelRatio);
-            }
-        };
-
-        /**
-         * @param  {number} width
-         * @param  {number} height
-         */
-        Layer.prototype.resize = function (width, height) {
-            this.dom.style.width = width + 'px';
-            this.dom.style.height = height + 'px';
-
-            this.dom.setAttribute('width', width * devicePixelRatio);
-            this.dom.setAttribute('height', height * devicePixelRatio);
-
-            if (devicePixelRatio != 1) { 
-                this.ctx.scale(devicePixelRatio, devicePixelRatio);
-            }
-
-            if (this.domBack) {
-                this.domBack.setAttribute('width', width * devicePixelRatio);
-                this.domBack.setAttribute('height', height * devicePixelRatio);
-
-                if (devicePixelRatio != 1) { 
-                    this.ctxBack.scale(devicePixelRatio, devicePixelRatio);
-                }
-            }
-        };
-
-        /**
-         * 清空该层画布
-         */
-        Layer.prototype.clear = function () {
-            var dom = this.dom;
-            var ctx = this.ctx;
-            var width = dom.width;
-            var height = dom.height;
-
-            var haveClearColor = this.clearColor && !vmlCanvasManager;
-            var haveMotionBLur = this.motionBlur && !vmlCanvasManager;
-            var lastFrameAlpha = this.lastFrameAlpha;
-
-            if (haveMotionBLur) {
-                if (!this.domBack) {
-                    this.createBackBuffer();
-                } 
-
-                this.ctxBack.globalCompositeOperation = 'copy';
-                this.ctxBack.drawImage(
-                    dom, 0, 0,
-                    width / devicePixelRatio,
-                    height / devicePixelRatio
-                );
-            }
-
-            if (haveClearColor) {
-                ctx.save();
-                ctx.fillStyle = this.config.clearColor;
-                ctx.fillRect(
-                    0, 0,
-                    width / devicePixelRatio, 
-                    height / devicePixelRatio
-                );
-                ctx.restore();
-            }
-            else {
-                ctx.clearRect(
-                    0, 0, 
-                    width / devicePixelRatio,
-                    height / devicePixelRatio
-                );
-            }
-
-            if (haveMotionBLur) {
-                var domBack = this.domBack;
-                ctx.save();
-                ctx.globalAlpha = lastFrameAlpha;
-                ctx.drawImage(
-                    domBack, 0, 0,
-                    width / devicePixelRatio,
-                    height / devicePixelRatio
-                );
-                ctx.restore();
-            }
-        };
-
-        util.merge(Layer.prototype, Transformable.prototype);
 
         return Painter;
     }
@@ -8656,7 +8919,7 @@ define(
  *     }));
  *     zr.addGroup(g);
  */
-define('zrender/Group',['require','./tool/guid','./tool/util','./mixin/Transformable','./mixin/Eventful'],function (require) {
+define('zrender/Group',['require','./tool/guid','./tool/util','./mixin/Transformable','./mixin/Eventful'],function(require) {
 
     var guid = require('./tool/guid');
     var util = require('./tool/util');
@@ -8670,7 +8933,7 @@ define('zrender/Group',['require','./tool/guid','./tool/util','./mixin/Transform
      * @extends module:zrender/mixin/Transformable
      * @extends module:zrender/mixin/Eventful
      */
-    var Group = function (options) {
+    var Group = function(options) {
 
         options = options || {};
 
@@ -8719,7 +8982,7 @@ define('zrender/Group',['require','./tool/guid','./tool/util','./mixin/Transform
      * 复制并返回一份新的包含所有儿子节点的数组
      * @return {Array.<module:zrender/Group|module:zrender/shape/Base>}
      */
-    Group.prototype.children = function () {
+    Group.prototype.children = function() {
         return this._children.slice();
     };
 
@@ -8728,7 +8991,7 @@ define('zrender/Group',['require','./tool/guid','./tool/util','./mixin/Transform
      * @param  {number} idx
      * @return {module:zrender/Group|module:zrender/shape/Base}
      */
-    Group.prototype.childAt = function (idx) {
+    Group.prototype.childAt = function(idx) {
         return this._children[idx];
     };
 
@@ -8736,7 +8999,8 @@ define('zrender/Group',['require','./tool/guid','./tool/util','./mixin/Transform
      * 添加子节点，可以是Shape或者Group
      * @param {module:zrender/Group|module:zrender/shape/Base} child
      */
-    Group.prototype.addChild = function (child) {
+    // TODO Type Check
+    Group.prototype.addChild = function(child) {
         if (child == this) {
             return;
         }
@@ -8765,10 +9029,13 @@ define('zrender/Group',['require','./tool/guid','./tool/util','./mixin/Transform
      * 移除子节点
      * @param {module:zrender/Group|module:zrender/shape/Base} child
      */
-    Group.prototype.removeChild = function (child) {
+    // TODO Type Check
+    Group.prototype.removeChild = function(child) {
         var idx = util.indexOf(this._children, child);
 
-        this._children.splice(idx, 1);
+        if (idx >= 0) {
+            this._children.splice(idx, 1);
+        }
         child.parent = null;
 
         if (this._storage) {
@@ -8781,9 +9048,11 @@ define('zrender/Group',['require','./tool/guid','./tool/util','./mixin/Transform
         }
     };
 
-    Group.prototype.removeChildrenAll = function () {
-        var len = this._children.length;
-        for (var i = 0; i < len; i++) {
+    /**
+     * 移除所有子节点
+     */
+    Group.prototype.clearChildren = function () {
+        for (var i = 0; i < this._children.length; i++) {
             var child = this._children[i];
             if (this._storage) {
                 this._storage.delFromMap(child.id);
@@ -8793,14 +9062,14 @@ define('zrender/Group',['require','./tool/guid','./tool/util','./mixin/Transform
             }
         }
         this._children.length = 0;
-    }
+    };
 
     /**
      * 遍历所有子节点
      * @param  {Function} cb
      * @param  {}   context
      */
-    Group.prototype.eachChild = function (cb, context) {
+    Group.prototype.eachChild = function(cb, context) {
         var haveContext = !!context;
         for (var i = 0; i < this._children.length; i++) {
             var child = this._children[i];
@@ -8817,7 +9086,7 @@ define('zrender/Group',['require','./tool/guid','./tool/util','./mixin/Transform
      * @param  {Function} cb
      * @param  {}   context
      */
-    Group.prototype.traverse = function (cb, context) {
+    Group.prototype.traverse = function(cb, context) {
         var haveContext = !!context;
         for (var i = 0; i < this._children.length; i++) {
             var child = this._children[i];
@@ -8833,29 +9102,29 @@ define('zrender/Group',['require','./tool/guid','./tool/util','./mixin/Transform
         }
     };
 
-    Group.prototype.addChildrenToStorage = function (storage) {
+    Group.prototype.addChildrenToStorage = function(storage) {
         for (var i = 0; i < this._children.length; i++) {
             var child = this._children[i];
             storage.addToMap(child);
-            if (child.type === 'group') {
+            if (child instanceof Group) {
                 child.addChildrenToStorage(storage);
             }
         }
     };
 
-    Group.prototype.delChildrenFromStorage = function (storage) {
+    Group.prototype.delChildrenFromStorage = function(storage) {
         for (var i = 0; i < this._children.length; i++) {
             var child = this._children[i];
             storage.delFromMap(child.id);
-            if (child.type === 'group') {
+            if (child instanceof Group) {
                 child.delChildrenFromStorage(storage);
             }
         }
     };
 
-    Group.prototype.modSelf = function () {
+    Group.prototype.modSelf = function() {
         this.__dirty = true;
-    }
+    };
 
     util.merge(Group.prototype, Transformable.prototype, true);
     util.merge(Group.prototype, Eventful.prototype, true);
@@ -8865,7 +9134,7 @@ define('zrender/Group',['require','./tool/guid','./tool/util','./mixin/Transform
 /**
  * Storage内容仓库模块
  * @module zrender/Storage
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  * @author errorrik (errorrik@gmail.com)
  * @author pissang (https://github.com/pissang/)
  */
@@ -8973,12 +9242,29 @@ define(
          * @return {Array.<module:zrender/shape/Base>}
          */
         Storage.prototype.getHoverShapes = function (update) {
-            if (update) {
-                for (var i = 0, l = this._hoverElements.length; i < l; i++) {
-                    this._hoverElements[i].updateTransform();
+            // hoverConnect
+            var hoverElements = [];
+            for (var i = 0, l = this._hoverElements.length; i < l; i++) {
+                hoverElements.push(this._hoverElements[i]);
+                var target = this._hoverElements[i].hoverConnect;
+                if (target) {
+                    var shape;
+                    target = target instanceof Array ? target : [target];
+                    for (var j = 0, k = target.length; j < k; j++) {
+                        shape = target[j].id ? target[j] : this.get(target[j]);
+                        if (shape) {
+                            hoverElements.push(shape);
+                        }
+                    }
                 }
             }
-            return this._hoverElements;
+            hoverElements.sort(shapeCompareFunc);
+            if (update) {
+                for (var i = 0, l = hoverElements.length; i < l; i++) {
+                    hoverElements[i].updateTransform();
+                }
+            }
+            return hoverElements;
         };
 
         /**
@@ -9014,7 +9300,7 @@ define(
             this._shapeList.sort(shapeCompareFunc);
         };
 
-        Storage.prototype._updateAndAddShape = function (el) {
+        Storage.prototype._updateAndAddShape = function (el, clipShapes) {
             
             if (el.ignore) {
                 return;
@@ -9029,9 +9315,12 @@ define(
                     el.clipShape.parent = el;
                     el.clipShape.updateTransform();
 
-                    var startClipShape = el._children[0];
-                    if (startClipShape) {
-                        startClipShape.__startClip = el.clipShape;
+                    // PENDING 效率影响
+                    if (clipShapes) {
+                        clipShapes = clipShapes.slice();
+                        clipShapes.push(el.clipShape);
+                    } else {
+                        clipShapes = [el.clipShape];
                     }
                 }
 
@@ -9041,14 +9330,7 @@ define(
                     // Force to mark as dirty if group is dirty
                     child.__dirty = el.__dirty || child.__dirty;
 
-                    this._updateAndAddShape(child);
-                }
-
-                if (el.clipShape) {
-                    var stopClipShape = this._shapeList[this._shapeListOffset - 1];
-                    if (stopClipShape) {
-                        stopClipShape.__stopClip = true;
-                    }
+                    this._updateAndAddShape(child, clipShapes);
                 }
 
                 // Mark group clean here
@@ -9056,6 +9338,8 @@ define(
                 
             }
             else {
+                el.__clipShapes = clipShapes;
+
                 this._shapeList[this._shapeListOffset++] = el;
             }
         };
@@ -9063,26 +9347,28 @@ define(
         /**
          * 修改图形(Shape)或者组(Group)
          * 
-         * @param {string} elId 唯一标识
+         * @param {string|module:zrender/shape/Base|module:zrender/Group} el
          * @param {Object} [params] 参数
          */
-        Storage.prototype.mod = function (elId, params) {
-            var el = this._elements[elId];
+        Storage.prototype.mod = function (el, params) {
+            if (typeof (el) === 'string') {
+                el = this._elements[el];
+            }
             if (el) {
 
                 el.modSelf();
 
                 if (params) {
                     // 如果第二个参数直接使用 shape
-                    // parent, _storage, __startClip 三个属性会有循环引用
+                    // parent, _storage, __clipShapes 三个属性会有循环引用
                     // 主要为了向 1.x 版本兼容，2.x 版本不建议使用第二个参数
-                    if (params.parent || params._storage || params.__startClip) {
+                    if (params.parent || params._storage || params.__clipShapes) {
                         var target = {};
                         for (var name in params) {
                             if (
-                                name == 'parent'
-                                || name == '_storage'
-                                || name == '__startClip'
+                                name === 'parent'
+                                || name === '_storage'
+                                || name === '__clipShapes'
                             ) {
                                 continue;
                             }
@@ -9111,6 +9397,12 @@ define(
             var shape = this._elements[shapeId];
             if (shape) {
                 shape.needTransform = true;
+                if (shape.draggable === 'horizontal') {
+                    dy = 0;
+                }
+                else if (shape.draggable === 'vertical') {
+                    dx = 0;
+                }
                 if (!shape.ondrift // ondrift
                     // 有onbrush并且调用执行返回false或undefined则继续
                     || (shape.ondrift && !shape.ondrift(dx, dy))
@@ -9154,6 +9446,11 @@ define(
          * @param {module:zrender/shape/Shape|module:zrender/Group} el
          */
         Storage.prototype.addRoot = function (el) {
+            // Element has been added
+            if (this._elements[el.id]) {
+                return;
+            }
+
             if (el instanceof Group) {
                 el.addChildrenToStorage(this);
             }
@@ -9164,7 +9461,7 @@ define(
 
         /**
          * 删除指定的图形(Shape)或者组(Group)
-         * @param  {string|Array.<string>} [elId] 如果为空清空整个Storage
+         * @param {string|Array.<string>} [elId] 如果为空清空整个Storage
          */
         Storage.prototype.delRoot = function (elId) {
             if (typeof(elId) == 'undefined') {
@@ -9179,6 +9476,8 @@ define(
                 this._elements = {};
                 this._hoverElements = [];
                 this._roots = [];
+                this._shapeList = [];
+                this._shapeListOffset = 0;
 
                 return;
             }
@@ -9235,7 +9534,6 @@ define(
 
             return this;
         };
-
 
         /**
          * 清空并且释放Storage
@@ -9675,7 +9973,6 @@ define(
                         // 重新开始周期
                         // 抛出而不是直接调用事件直到 stage.update 后再统一调用这些事件
                         return 'restart';
-
                     }
                     
                     // 动画完成将这个控制器标识为待删除
@@ -9690,6 +9987,8 @@ define(
                 var time = new Date().getTime();
                 var remainder = (time - this._startTime) % this._life;
                 this._startTime = new Date().getTime() - remainder + this.gap;
+
+                this._needsRemove = false;
             },
             fire : function(eventType, arg) {
                 for (var i = 0, len = this._targetPool.length; i < len; i++) {
@@ -9814,9 +10113,6 @@ define(
                         deferredClips.push(clip);
                     }
                 }
-                if (this.stage.update) {
-                    this.stage.update();
-                }
 
                 // Remove the finished clip
                 for (var i = 0; i < len;) {
@@ -9840,6 +10136,10 @@ define(
                 this.onframe(delta);
 
                 this.dispatch('frame', delta);
+
+                if (this.stage.update) {
+                    this.stage.update();
+                }
             },
             /**
              * 开始运行动画
@@ -9851,8 +10151,10 @@ define(
 
                 function step() {
                     if (self._running) {
-                        self._update();
+                        
                         requestAnimationFrame(step);
+
+                        self._update();
                     }
                 }
 
@@ -10077,7 +10379,6 @@ define(
                 var self = this;
                 var setter = this._setter;
                 var getter = this._getter;
-                var onFrameListLen = self._onframeList.length;
                 var useSpline = easing === 'spline';
 
                 var ondestroy = function() {
@@ -10249,7 +10550,7 @@ define(
                             }
                         }
 
-                        for (i = 0; i < onFrameListLen; i++) {
+                        for (i = 0; i < self._onframeList.length; i++) {
                             self._onframeList[i](target, percent);
                         }
                     };
@@ -10301,7 +10602,9 @@ define(
              * @return {module:zrender/animation/Animation~Animator}
              */
             done : function(cb) {
-                this._doneList.push(cb);
+                if (cb) {
+                    this._doneList.push(cb);
+                }
                 return this;
             }
         };
@@ -10348,20 +10651,20 @@ define(
 
         /**
          * @exports zrender
-         * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+         * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
          *         pissang (https://www.github.com/pissang)
          */
         var zrender = {};
         /**
          * @type {string}
          */
-        zrender.version = '2.0.3';
+        zrender.version = '2.0.9';
 
         /**
          * 创建zrender实例
          *
          * @param {HTMLElement} dom 绘图容器
-         * @return {module:zrender~ZRender} ZRender实例
+         * @return {module:zrender/ZRender} ZRender实例
          */
         // 不让外部直接new ZRender实例，为啥？
         // 不为啥，提供全局可控同时减少全局污染和降低命名冲突的风险！
@@ -10373,7 +10676,7 @@ define(
 
         /**
          * zrender实例销毁
-         * @param {module:zrender~ZRender} zr ZRender对象，不传则销毁全部
+         * @param {module:zrender/ZRender} zr ZRender对象，不传则销毁全部
          */
         // 在_instances里的索引也会删除了
         // 管生就得管死，可以通过zrender.dispose(zr)销毁指定ZRender实例
@@ -10395,7 +10698,7 @@ define(
         /**
          * 获取zrender实例
          * @param {string} id ZRender对象索引
-         * @return {module:zrender~ZRender}
+         * @return {module:zrender/ZRender}
          */
         zrender.getInstance = function (id) {
             return _instances[id];
@@ -10417,23 +10720,21 @@ define(
 
         function getFrameCallback(zrInstance) {
             return function () {
-                var animatingElements = zrInstance.animatingElements;
-                for (var i = 0, l = animatingElements.length; i < l; i++) {
-                    zrInstance.storage.mod(animatingElements[i].id);
-                }
-
-                if (animatingElements.length || zrInstance._needsRefreshNextFrame) {
+                if (zrInstance._needsRefreshNextFrame) {
                     zrInstance.refresh();
                 }
             };
         }
 
         /**
+         * @module zrender/ZRender
+         */
+        /**
          * ZRender接口类，对外可用的所有接口都在这里
          * 非get接口统一返回支持链式调用
          *
          * @constructor
-         * @alias module:zrender~ZRender
+         * @alias module:zrender/ZRender
          * @param {string} id 唯一标识
          * @param {HTMLElement} dom dom对象，不帮你做document.getElementById
          * @return {ZRender} ZRender实例
@@ -10450,8 +10751,6 @@ define(
             this.painter = new Painter(dom, this.storage);
             this.handler = new Handler(dom, this.storage, this.painter);
 
-            // 动画控制
-            this.animatingElements = [];
             /**
              * @type {module:zrender/animation/Animation}
              */
@@ -10462,7 +10761,23 @@ define(
             });
             this.animation.start();
 
+            var self = this;
+            this.painter.refreshNextFrame = function () {
+                self.refreshNextFrame();
+            };
+
             this._needsRefreshNextFrame = false;
+
+            // 修改 storage.delFromMap, 每次删除元素之前删除动画
+            // FIXME 有点ugly
+            var self = this;
+            var storage = this.storage;
+            var oldDelFromMap = storage.delFromMap;
+            storage.delFromMap = function (elId) {
+                var el = storage.get(elId);
+                self.stopAnimation(el);
+                oldDelFromMap.call(storage, elId);
+            };
         };
 
         /**
@@ -10475,63 +10790,100 @@ define(
 
         /**
          * 添加图形形状到根节点
-         * 
+         * @deprecated Use {@link module:zrender/ZRender.prototype.addElement} instead
          * @param {module:zrender/shape/Base} shape 形状对象，可用属性全集，详见各shape
          */
         ZRender.prototype.addShape = function (shape) {
-            this.storage.addRoot(shape);
+            this.addElement(shape);
             return this;
         };
 
         /**
          * 添加组到根节点
-         *
+         * @deprecated Use {@link module:zrender/ZRender.prototype.addElement} instead
          * @param {module:zrender/Group} group
          */
         ZRender.prototype.addGroup = function(group) {
-            this.storage.addRoot(group);
+            this.addElement(group);
             return this;
         };
 
         /**
          * 从根节点删除图形形状
-         * 
+         * @deprecated Use {@link module:zrender/ZRender.prototype.delElement} instead
          * @param {string} shapeId 形状对象唯一标识
          */
         ZRender.prototype.delShape = function (shapeId) {
-            this.storage.delRoot(shapeId);
+            this.delElement(shapeId);
             return this;
         };
 
         /**
          * 从根节点删除组
-         * 
+         * @deprecated Use {@link module:zrender/ZRender.prototype.delElement} instead
          * @param {string} groupId
          */
         ZRender.prototype.delGroup = function (groupId) {
-            this.storage.delRoot(groupId);
+            this.delElement(groupId);
             return this;
         };
 
         /**
          * 修改图形形状
-         * 
+         * @deprecated Use {@link module:zrender/ZRender.prototype.modElement} instead
          * @param {string} shapeId 形状对象唯一标识
          * @param {Object} shape 形状对象
          */
         ZRender.prototype.modShape = function (shapeId, shape) {
-            this.storage.mod(shapeId, shape);
+            this.modElement(shapeId, shape);
             return this;
         };
 
         /**
          * 修改组
-         * 
+         * @deprecated Use {@link module:zrender/ZRender.prototype.modElement} instead
          * @param {string} groupId
          * @param {Object} group
          */
         ZRender.prototype.modGroup = function (groupId, group) {
-            this.storage.mod(groupId, group);
+            this.modElement(groupId, group);
+            return this;
+        };
+
+        /**
+         * 添加元素
+         * @param  {string|module:zrender/Group|module:zrender/shape/Base} el
+         */
+        ZRender.prototype.addElement = function (el) {
+            this.storage.addRoot(el);
+            this._needsRefreshNextFrame = true;
+            return this;
+        };
+
+        /**
+         * 删除元素
+         * @param  {string|module:zrender/Group|module:zrender/shape/Base} el
+         */
+        ZRender.prototype.delElement = function (el) {
+            this.storage.delRoot(el);
+            this._needsRefreshNextFrame = true;
+            return this;
+        };
+
+        /**
+         * 修改元素, 主要标记图形或者组需要在下一帧刷新。
+         * 第二个参数为需要覆盖到元素上的参数，不建议使用。
+         *
+         * @example
+         *     el.style.color = 'red';
+         *     el.position = [10, 10];
+         *     zr.modElement(el);
+         * @param  {string|module:zrender/Group|module:zrender/shape/Base} el
+         * @param {Object} [params]
+         */
+        ZRender.prototype.modElement = function (el, params) {
+            this.storage.mod(el, params);
+            this._needsRefreshNextFrame = true;
             return this;
         };
 
@@ -10552,6 +10904,7 @@ define(
          */
         ZRender.prototype.modLayer = function (zLevel, config) {
             this.painter.modLayer(zLevel, config);
+            this._needsRefreshNextFrame = true;
             return this;
         };
 
@@ -10637,6 +10990,8 @@ define(
          *         .start()
          */
         ZRender.prototype.animate = function (el, path, loop) {
+            var self = this;
+
             if (typeof(el) === 'string') {
                 el = this.storage.get(el);
             }
@@ -10669,25 +11024,25 @@ define(
                     return;
                 }
 
-                var animatingElements = this.animatingElements;
-                if (typeof el.__aniCount === 'undefined') {
+                if (el.__animators == null) {
                     // 正在进行的动画记数
-                    el.__aniCount = 0;
+                    el.__animators = [];
                 }
-                if (el.__aniCount === 0) {
-                    animatingElements.push(el);
-                }
-                el.__aniCount++;
+                var animators = el.__animators;
 
-                return this.animation.animate(target, { loop: loop })
+                var animator = this.animation.animate(target, { loop: loop })
+                    .during(function () {
+                        self.modShape(el);
+                    })
                     .done(function () {
-                        el.__aniCount--;
-                        if (el.__aniCount === 0) {
-                            // 从animatingElements里移除
-                            var idx = util.indexOf(animatingElements, el);
-                            animatingElements.splice(idx, 1);
+                        var idx = util.indexOf(el.__animators, animator);
+                        if (idx >= 0) {
+                            animators.splice(idx, 1);
                         }
                     });
+                animators.push(animator);
+
+                return animator;
             }
             else {
                 log('Element not existed');
@@ -10695,10 +11050,27 @@ define(
         };
 
         /**
+         * 停止动画对象的动画
+         * @param  {string|module:zrender/Group|module:zrender/shape/Base} el
+         */
+        ZRender.prototype.stopAnimation = function (el) {
+            if (el.__animators) {
+                var animators = el.__animators;
+                var len = animators.length;
+                for (var i = 0; i < len; i++) {
+                    animators[i].stop();
+                }
+                animators.length = 0;
+            }
+            return this;
+        };
+
+        /**
          * 停止所有动画
          */
         ZRender.prototype.clearAnimation = function () {
             this.animation.clear();
+            return this;
         };
 
         /**
@@ -10759,9 +11131,10 @@ define(
          * 
          * @param {string} eventName 事件名称
          * @param {Function} eventHandler 响应函数
+         * @param {Object} [context] 响应函数
          */
-        ZRender.prototype.on = function(eventName, eventHandler) {
-            this.handler.on(eventName, eventHandler);
+        ZRender.prototype.on = function(eventName, eventHandler, context) {
+            this.handler.on(eventName, eventHandler, context);
             return this;
         };
 
@@ -10809,7 +11182,6 @@ define(
             this.handler.dispose();
 
             this.animation = 
-            this.animatingElements = 
             this.storage = 
             this.painter = 
             this.handler = null;
@@ -10827,7 +11199,7 @@ define('zrender', ['zrender/zrender'], function (main) { return main; });
 /**
  * zrender: 数学辅助类
  *
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  * sin：正弦函数
  * cos：余弦函数
@@ -10883,7 +11255,7 @@ define(
 /**
  * 玫瑰线
  * @module zrender/shape/Rose
- * @author Neil (杨骥, yangji01@baidu.com)
+ * @author Neil (杨骥, 511415343@qq.com)
  * @example
  *     var Rose = require('zrender/shape/Rose');
  *     var shape = new Rose({
@@ -11036,7 +11408,7 @@ define(
 /**
  * 内外旋轮曲线
  * @module zrender/shape/Trochold
- * @author Neil (杨骥, yangji01@baidu.com)
+ * @author Neil (杨骥, 511415343@qq.com)
  * @example
  *     var Trochold = require('zrender/shape/Trochold');
  *     var shape = new Trochold({
@@ -11206,7 +11578,7 @@ define(
 /**
  * 圆形
  * @module zrender/shape/Circle
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  * @example
  *   var Circle = require('zrender/shape/Circle');
  *   var shape = new Circle({
@@ -11282,6 +11654,8 @@ define(
              * @param {module:zrender/shape/Circle~ICircleStyle} style
              */
             buildPath : function (ctx, style) {
+                // Better stroking in ShapeBundle
+                ctx.moveTo(style.x + style.r, style.y);
                 ctx.arc(style.x, style.y, style.r, 0, Math.PI * 2, true);
                 return;
             },
@@ -11320,9 +11694,398 @@ define(
 );
 
 /**
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
+ *         pissang(https://github.com/pissang)
+ *         errorrik (errorrik@gmail.com)
+ */
+define(
+    'zrender/tool/computeBoundingBox',['require','./vector','./curve'],function (require) {
+        var vec2 = require('./vector');
+        var curve = require('./curve');
+
+        /**
+         * 从顶点数组中计算出最小包围盒，写入`min`和`max`中
+         * @module zrender/tool/computeBoundingBox
+         * @param {Array<Object>} points 顶点数组
+         * @param {number} min
+         * @param {number} max
+         */
+        function computeBoundingBox(points, min, max) {
+            if (points.length === 0) {
+                return;
+            }
+            var left = points[0][0];
+            var right = points[0][0];
+            var top = points[0][1];
+            var bottom = points[0][1];
+            
+            for (var i = 1; i < points.length; i++) {
+                var p = points[i];
+                if (p[0] < left) {
+                    left = p[0];
+                }
+                if (p[0] > right) {
+                    right = p[0];
+                }
+                if (p[1] < top) {
+                    top = p[1];
+                }
+                if (p[1] > bottom) {
+                    bottom = p[1];
+                }
+            }
+
+            min[0] = left;
+            min[1] = top;
+            max[0] = right;
+            max[1] = bottom;
+        }
+
+        /**
+         * 从三阶贝塞尔曲线(p0, p1, p2, p3)中计算出最小包围盒，写入`min`和`max`中
+         * @memberOf module:zrender/tool/computeBoundingBox
+         * @param {Array.<number>} p0
+         * @param {Array.<number>} p1
+         * @param {Array.<number>} p2
+         * @param {Array.<number>} p3
+         * @param {Array.<number>} min
+         * @param {Array.<number>} max
+         */
+        function computeCubeBezierBoundingBox(p0, p1, p2, p3, min, max) {
+            var xDim = [];
+            curve.cubicExtrema(p0[0], p1[0], p2[0], p3[0], xDim);
+            for (var i = 0; i < xDim.length; i++) {
+                xDim[i] = curve.cubicAt(p0[0], p1[0], p2[0], p3[0], xDim[i]);
+            }
+            var yDim = [];
+            curve.cubicExtrema(p0[1], p1[1], p2[1], p3[1], yDim);
+            for (var i = 0; i < yDim.length; i++) {
+                yDim[i] = curve.cubicAt(p0[1], p1[1], p2[1], p3[1], yDim[i]);
+            }
+
+            xDim.push(p0[0], p3[0]);
+            yDim.push(p0[1], p3[1]);
+
+            var left = Math.min.apply(null, xDim);
+            var right = Math.max.apply(null, xDim);
+            var top = Math.min.apply(null, yDim);
+            var bottom = Math.max.apply(null, yDim);
+
+            min[0] = left;
+            min[1] = top;
+            max[0] = right;
+            max[1] = bottom;
+        }
+
+        /**
+         * 从二阶贝塞尔曲线(p0, p1, p2)中计算出最小包围盒，写入`min`和`max`中
+         * @memberOf module:zrender/tool/computeBoundingBox
+         * @param {Array.<number>} p0
+         * @param {Array.<number>} p1
+         * @param {Array.<number>} p2
+         * @param {Array.<number>} min
+         * @param {Array.<number>} max
+         */
+        function computeQuadraticBezierBoundingBox(p0, p1, p2, min, max) {
+            // Find extremities, where derivative in x dim or y dim is zero
+            var t1 = curve.quadraticExtremum(p0[0], p1[0], p2[0]);
+            var t2 = curve.quadraticExtremum(p0[1], p1[1], p2[1]);
+
+            t1 = Math.max(Math.min(t1, 1), 0);
+            t2 = Math.max(Math.min(t2, 1), 0);
+
+            var ct1 = 1 - t1;
+            var ct2 = 1 - t2;
+
+            var x1 = ct1 * ct1 * p0[0] 
+                     + 2 * ct1 * t1 * p1[0] 
+                     + t1 * t1 * p2[0];
+            var y1 = ct1 * ct1 * p0[1] 
+                     + 2 * ct1 * t1 * p1[1] 
+                     + t1 * t1 * p2[1];
+
+            var x2 = ct2 * ct2 * p0[0] 
+                     + 2 * ct2 * t2 * p1[0] 
+                     + t2 * t2 * p2[0];
+            var y2 = ct2 * ct2 * p0[1] 
+                     + 2 * ct2 * t2 * p1[1] 
+                     + t2 * t2 * p2[1];
+            min[0] = Math.min(p0[0], p2[0], x1, x2);
+            min[1] = Math.min(p0[1], p2[1], y1, y2);
+            max[0] = Math.max(p0[0], p2[0], x1, x2);
+            max[1] = Math.max(p0[1], p2[1], y1, y2);
+        }
+
+        var start = vec2.create();
+        var end = vec2.create();
+        var extremity = vec2.create();
+        /**
+         * 从圆弧中计算出最小包围盒，写入`min`和`max`中
+         * @method
+         * @memberOf module:zrender/tool/computeBoundingBox
+         * @param {Array.<number>} center 圆弧中心点
+         * @param {number} radius 圆弧半径
+         * @param {number} startAngle 圆弧开始角度
+         * @param {number} endAngle 圆弧结束角度
+         * @param {number} anticlockwise 是否是顺时针
+         * @param {Array.<number>} min
+         * @param {Array.<number>} max
+         */
+        var computeArcBoundingBox = function (
+            x, y, r, startAngle, endAngle, anticlockwise, min, max
+        ) { 
+            if (Math.abs(startAngle - endAngle) >= Math.PI * 2) {
+                // Is a circle
+                min[0] = x - r;
+                min[1] = y - r;
+                max[0] = x + r;
+                max[1] = y + r;
+                return;
+            }
+
+            start[0] = Math.cos(startAngle) * r + x;
+            start[1] = Math.sin(startAngle) * r + y;
+
+            end[0] = Math.cos(endAngle) * r + x;
+            end[1] = Math.sin(endAngle) * r + y;
+
+            vec2.min(min, start, end);
+            vec2.max(max, start, end);
+            
+            // Thresh to [0, Math.PI * 2]
+            startAngle = startAngle % (Math.PI * 2);
+            if (startAngle < 0) {
+                startAngle = startAngle + Math.PI * 2;
+            }
+            endAngle = endAngle % (Math.PI * 2);
+            if (endAngle < 0) {
+                endAngle = endAngle + Math.PI * 2;
+            }
+
+            if (startAngle > endAngle && !anticlockwise) {
+                endAngle += Math.PI * 2;
+            } else if (startAngle < endAngle && anticlockwise) {
+                startAngle += Math.PI * 2;
+            }
+            if (anticlockwise) {
+                var tmp = endAngle;
+                endAngle = startAngle;
+                startAngle = tmp;
+            }
+
+            // var number = 0;
+            // var step = (anticlockwise ? -Math.PI : Math.PI) / 2;
+            for (var angle = 0; angle < endAngle; angle += Math.PI / 2) {
+                if (angle > startAngle) {
+                    extremity[0] = Math.cos(angle) * r + x;
+                    extremity[1] = Math.sin(angle) * r + y;
+
+                    vec2.min(min, extremity, min);
+                    vec2.max(max, extremity, max);
+                }
+            }
+        };
+
+        computeBoundingBox.cubeBezier = computeCubeBezierBoundingBox;
+        computeBoundingBox.quadraticBezier = computeQuadraticBezierBoundingBox;
+        computeBoundingBox.arc = computeArcBoundingBox;
+
+        return computeBoundingBox;
+    }
+);
+
+/**
+ * 扇形
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
+ * @module zrender/shape/Sector
+ * @example
+ *     var Sector = require('zrender/shape/Sector');
+ *     var shape = new Sector({
+ *         style: {
+ *             x: 100,
+ *             y: 100,
+ *             r: 60,
+ *             r0: 30,
+ *             startAngle: 0,
+ *             endEngle: 180
+ *         } 
+ *     });
+ *     zr.addShape(shape);
+ */
+
+/**
+ * @typedef {Object} ISectorStyle
+ * @property {number} x 圆心x坐标
+ * @property {number} y 圆心y坐标
+ * @property {number} r 外圆半径
+ * @property {number} [r0=0] 内圆半径，指定后将出现内弧，同时扇边长度为`r - r0`
+ * @property {number} startAngle 起始角度，`[0, 360)`
+ * @property {number} endAngle 结束角度，`(0, 360]`
+ * @property {boolean} [clockWise=false] 是否是顺时针
+ * @property {string} [brushType='fill']
+ * @property {string} [color='#000000'] 填充颜色
+ * @property {string} [strokeColor='#000000'] 描边颜色
+ * @property {string} [lineCape='butt'] 线帽样式，可以是 butt, round, square
+ * @property {number} [lineWidth=1] 描边宽度
+ * @property {number} [opacity=1] 绘制透明度
+ * @property {number} [shadowBlur=0] 阴影模糊度，大于0有效
+ * @property {string} [shadowColor='#000000'] 阴影颜色
+ * @property {number} [shadowOffsetX=0] 阴影横向偏移
+ * @property {number} [shadowOffsetY=0] 阴影纵向偏移
+ * @property {string} [text] 图形中的附加文本
+ * @property {string} [textColor='#000000'] 文本颜色
+ * @property {string} [textFont] 附加文本样式，eg:'bold 18px verdana'
+ * @property {string} [textPosition='end'] 附加文本位置, 可以是 inside, left, right, top, bottom
+ * @property {string} [textAlign] 默认根据textPosition自动设置，附加文本水平对齐。
+ *                                可以是start, end, left, right, center
+ * @property {string} [textBaseline] 默认根据textPosition自动设置，附加文本垂直对齐。
+ *                                可以是top, bottom, middle, alphabetic, hanging, ideographic
+ */
+
+define(
+    'zrender/shape/Sector',['require','../tool/math','../tool/computeBoundingBox','../tool/vector','./Base','../tool/util'],function (require) {
+
+        var math = require('../tool/math');
+        var computeBoundingBox = require('../tool/computeBoundingBox');
+        var vec2 = require('../tool/vector');
+        var Base = require('./Base');
+        
+        var min0 = vec2.create();
+        var min1 = vec2.create();
+        var max0 = vec2.create();
+        var max1 = vec2.create();
+        /**
+         * @alias module:zrender/shape/Sector
+         * @constructor
+         * @extends module:zrender/shape/Base
+         * @param {Object} options
+         */
+        var Sector = function (options) {
+            Base.call(this, options);
+            /**
+             * 扇形绘制样式
+             * @name module:zrender/shape/Sector#style
+             * @type {module:zrender/shape/Sector~ISectorStyle}
+             */
+            /**
+             * 扇形高亮绘制样式
+             * @name module:zrender/shape/Sector#highlightStyle
+             * @type {module:zrender/shape/Sector~ISectorStyle}
+             */
+        };
+
+        Sector.prototype = {
+            type: 'sector',
+
+            /**
+             * 创建扇形路径
+             * @param {CanvasRenderingContext2D} ctx
+             * @param {module:zrender/shape/Sector~ISectorStyle} style
+             */
+            buildPath : function (ctx, style) {
+                var x = style.x;   // 圆心x
+                var y = style.y;   // 圆心y
+                var r0 = style.r0 || 0;     // 形内半径[0,r)
+                var r = style.r;            // 扇形外半径(0,r]
+                var startAngle = style.startAngle;          // 起始角度[0,360)
+                var endAngle = style.endAngle;              // 结束角度(0,360]
+                var clockWise = style.clockWise || false;
+
+                startAngle = math.degreeToRadian(startAngle);
+                endAngle = math.degreeToRadian(endAngle);
+
+                if (!clockWise) {
+                    // 扇形默认是逆时针方向，Y轴向上
+                    // 这个跟arc的标准不一样，为了兼容echarts
+                    startAngle = -startAngle;
+                    endAngle = -endAngle;
+                }
+
+                var unitX = math.cos(startAngle);
+                var unitY = math.sin(startAngle);
+                ctx.moveTo(
+                    unitX * r0 + x,
+                    unitY * r0 + y
+                );
+
+                ctx.lineTo(
+                    unitX * r + x,
+                    unitY * r + y
+                );
+
+                ctx.arc(x, y, r, startAngle, endAngle, !clockWise);
+
+                ctx.lineTo(
+                    math.cos(endAngle) * r0 + x,
+                    math.sin(endAngle) * r0 + y
+                );
+
+                if (r0 !== 0) {
+                    ctx.arc(x, y, r0, endAngle, startAngle, clockWise);
+                }
+
+                ctx.closePath();
+
+                return;
+            },
+
+            /**
+             * 返回扇形包围盒矩形
+             * @param {module:zrender/shape/Sector~ISectorStyle} style
+             * @return {module:zrender/shape/Base~IBoundingRect}
+             */
+            getRect : function (style) {
+                if (style.__rect) {
+                    return style.__rect;
+                }
+                
+                var x = style.x;   // 圆心x
+                var y = style.y;   // 圆心y
+                var r0 = style.r0 || 0;     // 形内半径[0,r)
+                var r = style.r;            // 扇形外半径(0,r]
+                var startAngle = math.degreeToRadian(style.startAngle);
+                var endAngle = math.degreeToRadian(style.endAngle);
+                var clockWise = style.clockWise;
+
+                if (!clockWise) {
+                    startAngle = -startAngle;
+                    endAngle = -endAngle;
+                }
+
+                if (r0 > 1) {
+                    computeBoundingBox.arc(
+                        x, y, r0, startAngle, endAngle, !clockWise, min0, max0
+                    );   
+                } else {
+                    min0[0] = max0[0] = x;
+                    min0[1] = max0[1] = y;
+                }
+                computeBoundingBox.arc(
+                    x, y, r, startAngle, endAngle, !clockWise, min1, max1
+                );
+
+                vec2.min(min0, min0, min1);
+                vec2.max(max0, max0, max1);
+                style.__rect = {
+                    x: min0[0],
+                    y: min0[1],
+                    width: max0[0] - min0[0],
+                    height: max0[1] - min0[1]
+                };
+                return style.__rect;
+            }
+        };
+
+
+        require('../tool/util').inherits(Sector, Base);
+        return Sector;
+    }
+);
+
+/**
  * 圆环
  * @module zrender/shape/Ring
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  * @example
  *     var Ring = require('zrender/shape/Ring');
@@ -11435,731 +12198,8 @@ define(
 );
 
 /**
- * Catmull-Rom spline 插值折线
- * @module zrender/shape/util/smoothSpline
- * @author pissang (https://www.github.com/pissang) 
- *         Kener (@Kener-林峰, linzhifeng@baidu.com)
- *         errorrik (errorrik@gmail.com)
- */
-define(
-    'zrender/shape/util/smoothSpline',['require','../../tool/vector'],function (require) {
-        var vector = require('../../tool/vector');
-
-        /**
-         * @inner
-         */
-        function interpolate(p0, p1, p2, p3, t, t2, t3) {
-            var v0 = (p2 - p0) * 0.5;
-            var v1 = (p3 - p1) * 0.5;
-            return (2 * (p1 - p2) + v0 + v1) * t3 
-                    + (-3 * (p1 - p2) - 2 * v0 - v1) * t2
-                    + v0 * t + p1;
-        }
-
-        /**
-         * @alias module:zrender/shape/util/smoothSpline
-         * @param {Array} points 线段顶点数组
-         * @param {boolean} isLoop
-         * @param {Array} constraint 
-         * @return {Array}
-         */
-        return function (points, isLoop, constraint) {
-            var len = points.length;
-            var ret = [];
-
-            var distance = 0;
-            for (var i = 1; i < len; i++) {
-                distance += vector.distance(points[i - 1], points[i]);
-            }
-            
-            var segs = distance / 5;
-            segs = segs < len ? len : segs;
-            for (var i = 0; i < segs; i++) {
-                var pos = i / (segs - 1) * (isLoop ? len : len - 1);
-                var idx = Math.floor(pos);
-
-                var w = pos - idx;
-
-                var p0;
-                var p1 = points[idx % len];
-                var p2;
-                var p3;
-                if (!isLoop) {
-                    p0 = points[idx === 0 ? idx : idx - 1];
-                    p2 = points[idx > len - 2 ? len - 1 : idx + 1];
-                    p3 = points[idx > len - 3 ? len - 1 : idx + 2];
-                }
-                else {
-                    p0 = points[(idx - 1 + len) % len];
-                    p2 = points[(idx + 1) % len];
-                    p3 = points[(idx + 2) % len];
-                }
-
-                var w2 = w * w;
-                var w3 = w * w2;
-
-                ret.push([
-                    interpolate(p0[0], p1[0], p2[0], p3[0], w, w2, w3),
-                    interpolate(p0[1], p1[1], p2[1], p3[1], w, w2, w3)
-                ]);
-            }
-            return ret;
-        };
-    }
-);
-
-/**
- * 贝塞尔平滑曲线 
- * @module zrender/shape/util/smoothBezier
- * @author pissang (https://www.github.com/pissang) 
- *         Kener (@Kener-林峰, linzhifeng@baidu.com)
- *         errorrik (errorrik@gmail.com)
- */
-define(
-    'zrender/shape/util/smoothBezier',['require','../../tool/vector'],function (require) {
-        var vector = require('../../tool/vector');
-
-        /**
-         * 贝塞尔平滑曲线
-         * @alias module:zrender/shape/util/smoothBezier
-         * @param {Array} points 线段顶点数组
-         * @param {number} smooth 平滑等级, 0-1
-         * @param {boolean} isLoop
-         * @param {Array} constraint 将计算出来的控制点约束在一个包围盒内
-         *                           比如 [[0, 0], [100, 100]], 这个包围盒会与
-         *                           整个折线的包围盒做一个并集用来约束控制点。
-         * @param {Array} 计算出来的控制点数组
-         */
-        return function (points, smooth, isLoop, constraint) {
-            var cps = [];
-
-            var v = [];
-            var v1 = [];
-            var v2 = [];
-            var prevPoint;
-            var nextPoint;
-
-            var hasConstraint = !!constraint;
-            var min, max;
-            if (hasConstraint) {
-                min = [Infinity, Infinity];
-                max = [-Infinity, -Infinity];
-                for (var i = 0, len = points.length; i < len; i++) {
-                    vector.min(min, min, points[i]);
-                    vector.max(max, max, points[i]);
-                }
-                // 与指定的包围盒做并集
-                vector.min(min, min, constraint[0]);
-                vector.max(max, max, constraint[1]);
-            }
-
-            for (var i = 0, len = points.length; i < len; i++) {
-                var point = points[i];
-                var prevPoint;
-                var nextPoint;
-
-                if (isLoop) {
-                    prevPoint = points[i ? i - 1 : len - 1];
-                    nextPoint = points[(i + 1) % len];
-                } 
-                else {
-                    if (i === 0 || i === len - 1) {
-                        cps.push(points[i]);
-                        continue;
-                    } 
-                    else {
-                        prevPoint = points[i - 1];
-                        nextPoint = points[i + 1];
-                    }
-                }
-
-                vector.sub(v, nextPoint, prevPoint);
-
-                // use degree to scale the handle length
-                vector.scale(v, v, smooth);
-
-                var d0 = vector.distance(point, prevPoint);
-                var d1 = vector.distance(point, nextPoint);
-                var sum = d0 + d1;
-                if (sum !== 0) {
-                    d0 /= sum;
-                    d1 /= sum;
-                }
-
-                vector.scale(v1, v, -d0);
-                vector.scale(v2, v, d1);
-                var cp0 = vector.add([], point, v1);
-                var cp1 = vector.add([], point, v2);
-                if (hasConstraint) {
-                    vector.max(cp0, cp0, min);
-                    vector.min(cp0, cp0, max);
-                    vector.max(cp1, cp1, min);
-                    vector.min(cp1, cp1, max);
-                }
-                cps.push(cp0);
-                cps.push(cp1);
-            }
-            
-            if (isLoop) {
-                cps.push(cps.shift());
-            }
-
-            return cps;
-        };
-    }
-);
-
-/**
- * 虚线lineTo 
- *
- * author:  Kener (@Kener-林峰, linzhifeng@baidu.com)
- *          errorrik (errorrik@gmail.com)
- */
-define(
-    'zrender/shape/util/dashedLineTo',[],function (/* require */) {
-
-        var dashPattern = [ 5, 5 ];
-        /**
-         * 虚线lineTo 
-         */
-        return function (ctx, x1, y1, x2, y2, dashLength) {
-            // http://msdn.microsoft.com/en-us/library/ie/dn265063(v=vs.85).aspx
-            if (ctx.setLineDash) {
-                dashPattern[0] = dashPattern[1] = dashLength;
-                ctx.setLineDash(dashPattern);
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                return;
-            }
-
-            dashLength = typeof dashLength != 'number'
-                            ? 5 
-                            : dashLength;
-
-            var dx = x2 - x1;
-            var dy = y2 - y1;
-            var numDashes = Math.floor(
-                Math.sqrt(dx * dx + dy * dy) / dashLength
-            );
-            dx = dx / numDashes;
-            dy = dy / numDashes;
-            var flag = true;
-            for (var i = 0; i < numDashes; ++i) {
-                if (flag) {
-                    ctx.moveTo(x1, y1);
-                }
-                else {
-                    ctx.lineTo(x1, y1);
-                }
-                flag = !flag;
-                x1 += dx;
-                y1 += dy;
-            }
-            ctx.lineTo(x2, y2);
-        };
-    }
-);
-
-/**
- * 多边形
- * @module zrender/shape/Polygon
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
- * @example
- *     var Polygon = require('zrender/shape/Polygon');
- *     var shape = new Polygon({
- *         style: {
- *             // 100x100的正方形
- *             pointList: [[0, 0], [100, 0], [100, 100], [0, 100]],
- *             color: 'blue'
- *         }
- *     });
- *     zr.addShape(shape);
- */
-
-/**
- * @typedef {Object} IPolygonStyle
- * @property {string} pointList 多边形顶点数组
- * @property {string} [smooth=''] 是否做平滑插值, 平滑算法可以选择 bezier, spline
- * @property {number} [smoothConstraint] 平滑约束
- * @property {string} [brushType='fill']
- * @property {string} [color='#000000'] 填充颜色
- * @property {string} [strokeColor='#000000'] 描边颜色
- * @property {string} [lineCape='butt'] 线帽样式，可以是 butt, round, square
- * @property {number} [lineWidth=1] 描边宽度
- * @property {number} [opacity=1] 绘制透明度
- * @property {number} [shadowBlur=0] 阴影模糊度，大于0有效
- * @property {string} [shadowColor='#000000'] 阴影颜色
- * @property {number} [shadowOffsetX=0] 阴影横向偏移
- * @property {number} [shadowOffsetY=0] 阴影纵向偏移
- * @property {string} [text] 图形中的附加文本
- * @property {string} [textColor='#000000'] 文本颜色
- * @property {string} [textFont] 附加文本样式，eg:'bold 18px verdana'
- * @property {string} [textPosition='end'] 附加文本位置, 可以是 inside, left, right, top, bottom
- * @property {string} [textAlign] 默认根据textPosition自动设置，附加文本水平对齐。
- *                                可以是start, end, left, right, center
- * @property {string} [textBaseline] 默认根据textPosition自动设置，附加文本垂直对齐。
- *                                可以是top, bottom, middle, alphabetic, hanging, ideographic
- */
-define(
-    'zrender/shape/Polygon',['require','./Base','./util/smoothSpline','./util/smoothBezier','./util/dashedLineTo','../tool/util'],function (require) {
-        var Base = require('./Base');
-        var smoothSpline = require('./util/smoothSpline');
-        var smoothBezier = require('./util/smoothBezier');
-        var dashedLineTo = require('./util/dashedLineTo');
-
-        /**
-         * @alias module:zrender/shape/Polygon
-         * @param {Object} options
-         * @constructor
-         * @extends module:zrender/shape/Base
-         */
-        var Polygon = function (options) {
-            Base.call(this, options);
-            /**
-             * 多边形绘制样式
-             * @name module:zrender/shape/Polygon#style
-             * @type {module:zrender/shape/Polygon~IPolygonStyle}
-             */
-            /**
-             * 多边形高亮绘制样式
-             * @name module:zrender/shape/Polygon#highlightStyle
-             * @type {module:zrender/shape/Polygon~IPolygonStyle}
-             */
-        };
-
-        Polygon.prototype = {
-            type: 'polygon',
-
-            brush : function (ctx, isHighlight) {
-                var style = this.style;
-                if (isHighlight) {
-                    // 根据style扩展默认高亮样式
-                    style = this.getHighlightStyle(
-                        style,
-                        this.highlightStyle || {}
-                    );
-                }
-
-                ctx.save();
-                this.setContext(ctx, style);
-    
-                // 设置transform
-                this.setTransform(ctx);
-                
-                // 先fill再stroke
-                var hasPath = false;
-                if (style.brushType == 'fill' 
-                    || style.brushType == 'both'
-                    || typeof style.brushType == 'undefined' // 默认为fill
-                ) {
-                    ctx.beginPath();
-                    if (style.lineType == 'dashed' 
-                        || style.lineType == 'dotted'
-                    ) {
-                        // 特殊处理，虚线围不成path，实线再build一次
-                        this.buildPath(
-                            ctx, 
-                            {
-                                lineType: 'solid',
-                                lineWidth: style.lineWidth,
-                                pointList: style.pointList
-                            }
-                        );
-                        hasPath = false; // 这个path不能用
-                    }
-                    else {
-                        this.buildPath(ctx, style);
-                        hasPath = true; // 这个path能用
-                    }
-                    ctx.closePath();
-                    ctx.fill();
-                }
-
-                if (style.lineWidth > 0 
-                    && (style.brushType == 'stroke' || style.brushType == 'both')
-                ) {
-                    if (!hasPath) {
-                        ctx.beginPath();
-                        this.buildPath(ctx, style);
-                    }
-                    ctx.stroke();
-                }
-    
-                this.drawText(ctx, style, this.style);
-    
-                ctx.restore();
-    
-                return;
-            },
-        
-            /**
-             * 创建多边形路径
-             * @param {CanvasRenderingContext2D} ctx
-             * @param {module:zrender/shape/Polygon~IPolygonStyle} style
-             */
-            buildPath : function (ctx, style) {
-                // 虽然能重用brokenLine，但底层图形基于性能考虑，重复代码减少调用吧
-                var pointList = style.pointList;
-                // 开始点和结束点重复
-                /*
-                var start = pointList[0];
-                var end = pointList[pointList.length-1];
-
-                if (start && end) {
-                    if (start[0] == end[0] &&
-                        start[1] == end[1]) {
-                        // 移除最后一个点
-                        pointList.pop();
-                    }
-                }
-                */
-
-                if (pointList.length < 2) {
-                    // 少于2个点就不画了~
-                    return;
-                }
-
-                if (style.smooth && style.smooth !== 'spline') {
-                    var controlPoints = smoothBezier(
-                        pointList, style.smooth, true, style.smoothConstraint
-                    );
-
-                    ctx.moveTo(pointList[0][0], pointList[0][1]);
-                    var cp1;
-                    var cp2;
-                    var p;
-                    var len = pointList.length;
-                    for (var i = 0; i < len; i++) {
-                        cp1 = controlPoints[i * 2];
-                        cp2 = controlPoints[i * 2 + 1];
-                        p = pointList[(i + 1) % len];
-                        ctx.bezierCurveTo(
-                            cp1[0], cp1[1], cp2[0], cp2[1], p[0], p[1]
-                        );
-                    }
-                } 
-                else {
-                    if (style.smooth === 'spline') {
-                        pointList = smoothSpline(pointList, true);
-                    }
-
-                    if (!style.lineType || style.lineType == 'solid') {
-                        // 默认为实线
-                        ctx.moveTo(pointList[0][0], pointList[0][1]);
-                        for (var i = 1, l = pointList.length; i < l; i++) {
-                            ctx.lineTo(pointList[i][0], pointList[i][1]);
-                        }
-                        ctx.lineTo(pointList[0][0], pointList[0][1]);
-                    }
-                    else if (style.lineType == 'dashed'
-                            || style.lineType == 'dotted'
-                    ) {
-                        var dashLength = 
-                            style._dashLength
-                            || (style.lineWidth || 1) 
-                               * (style.lineType == 'dashed' ? 5 : 1);
-                        style._dashLength = dashLength;
-                        ctx.moveTo(pointList[0][0], pointList[0][1]);
-                        for (var i = 1, l = pointList.length; i < l; i++) {
-                            dashedLineTo(
-                                ctx,
-                                pointList[i - 1][0], pointList[i - 1][1],
-                                pointList[i][0], pointList[i][1],
-                                dashLength
-                            );
-                        }
-                        dashedLineTo(
-                            ctx,
-                            pointList[pointList.length - 1][0], 
-                            pointList[pointList.length - 1][1],
-                            pointList[0][0],
-                            pointList[0][1],
-                            dashLength
-                        );
-                    }
-                }
-                return;
-            },
-
-            /**
-             * 计算返回多边形包围盒矩阵
-             * @param {module:zrender/shape/Polygon~IPolygonStyle} style
-             * @return {module:zrender/shape/Base~IBoundingRect}
-             */
-            getRect : function (style) {
-                if (style.__rect) {
-                    return style.__rect;
-                }
-                
-                var minX =  Number.MAX_VALUE;
-                var maxX =  Number.MIN_VALUE;
-                var minY = Number.MAX_VALUE;
-                var maxY = Number.MIN_VALUE;
-
-                var pointList = style.pointList;
-                for (var i = 0, l = pointList.length; i < l; i++) {
-                    if (pointList[i][0] < minX) {
-                        minX = pointList[i][0];
-                    }
-                    if (pointList[i][0] > maxX) {
-                        maxX = pointList[i][0];
-                    }
-                    if (pointList[i][1] < minY) {
-                        minY = pointList[i][1];
-                    }
-                    if (pointList[i][1] > maxY) {
-                        maxY = pointList[i][1];
-                    }
-                }
-
-                var lineWidth;
-                if (style.brushType == 'stroke' || style.brushType == 'fill') {
-                    lineWidth = style.lineWidth || 1;
-                }
-                else {
-                    lineWidth = 0;
-                }
-                
-                style.__rect = {
-                    x : Math.round(minX - lineWidth / 2),
-                    y : Math.round(minY - lineWidth / 2),
-                    width : maxX - minX + lineWidth,
-                    height : maxY - minY + lineWidth
-                };
-                return style.__rect;
-            }
-        };
-
-        require('../tool/util').inherits(Polygon, Base);
-        return Polygon;
-    }
-);
-
-
-/**
- * 扇形
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
- * @module zrender/shape/Sector
- * @example
- *     var Sector = require('zrender/shape/Sector');
- *     var shape = new Sector({
- *         style: {
- *             x: 100,
- *             y: 100,
- *             r: 60,
- *             r0: 30,
- *             startAngle: 0,
- *             endEngle: 180
- *         } 
- *     });
- *     zr.addShape(shape);
- */
-
-/**
- * @typedef {Object} ISectorStyle
- * @property {number} x 圆心x坐标
- * @property {number} y 圆心y坐标
- * @property {number} r 外圆半径
- * @property {number} [r0=0] 内圆半径，指定后将出现内弧，同时扇边长度为`r - r0`
- * @property {number} startAngle 起始角度，`[0, 360)`
- * @property {number} endAngle 结束角度，`(0, 360]`
- * @property {string} [brushType='fill']
- * @property {string} [color='#000000'] 填充颜色
- * @property {string} [strokeColor='#000000'] 描边颜色
- * @property {string} [lineCape='butt'] 线帽样式，可以是 butt, round, square
- * @property {number} [lineWidth=1] 描边宽度
- * @property {number} [opacity=1] 绘制透明度
- * @property {number} [shadowBlur=0] 阴影模糊度，大于0有效
- * @property {string} [shadowColor='#000000'] 阴影颜色
- * @property {number} [shadowOffsetX=0] 阴影横向偏移
- * @property {number} [shadowOffsetY=0] 阴影纵向偏移
- * @property {string} [text] 图形中的附加文本
- * @property {string} [textColor='#000000'] 文本颜色
- * @property {string} [textFont] 附加文本样式，eg:'bold 18px verdana'
- * @property {string} [textPosition='end'] 附加文本位置, 可以是 inside, left, right, top, bottom
- * @property {string} [textAlign] 默认根据textPosition自动设置，附加文本水平对齐。
- *                                可以是start, end, left, right, center
- * @property {string} [textBaseline] 默认根据textPosition自动设置，附加文本垂直对齐。
- *                                可以是top, bottom, middle, alphabetic, hanging, ideographic
- */
-
-define(
-    'zrender/shape/Sector',['require','../tool/math','./Base','./Ring','./Polygon','../tool/util'],function (require) {
-        var math = require('../tool/math');
-        var Base = require('./Base');
-
-        /**
-         * @alias module:zrender/shape/Sector
-         * @constructor
-         * @extends module:zrender/shape/Base
-         * @param {Object} options
-         */
-        var Sector = function (options) {
-            Base.call(this, options);
-            /**
-             * 扇形绘制样式
-             * @name module:zrender/shape/Sector#style
-             * @type {module:zrender/shape/Sector~ISectorStyle}
-             */
-            /**
-             * 扇形高亮绘制样式
-             * @name module:zrender/shape/Sector#highlightStyle
-             * @type {module:zrender/shape/Sector~ISectorStyle}
-             */
-        };
-
-        Sector.prototype = {
-            type: 'sector',
-
-            /**
-             * 创建扇形路径
-             * @param {CanvasRenderingContext2D} ctx
-             * @param {module:zrender/shape/Sector~ISectorStyle} style
-             */
-            buildPath : function (ctx, style) {
-                var x = style.x;   // 圆心x
-                var y = style.y;   // 圆心y
-                var r0 = typeof style.r0 == 'undefined'     // 形内半径[0,r)
-                         ? 0 : style.r0;
-                var r = style.r;                            // 扇形外半径(0,r]
-                var startAngle = style.startAngle;          // 起始角度[0,360)
-                var endAngle = style.endAngle;              // 结束角度(0,360]
-
-                if (Math.abs(endAngle - startAngle) >= 360) {
-                    // 大于360度的扇形简化为圆环画法
-                    ctx.arc(x, y, r, 0, Math.PI * 2, false);
-                    if (r0 !== 0) {
-                        ctx.moveTo(x + r0, y);
-                        ctx.arc(x, y, r0, 0, Math.PI * 2, true);
-                    }
-                    return;
-                }
-                
-                startAngle = math.degreeToRadian(startAngle);
-                endAngle = math.degreeToRadian(endAngle);
-
-                var PI2 = Math.PI * 2;
-                var cosStartAngle = math.cos(startAngle);
-                var sinStartAngle = math.sin(startAngle);
-                ctx.moveTo(
-                    cosStartAngle * r0 + x,
-                    y - sinStartAngle * r0
-                );
-
-                ctx.lineTo(
-                    cosStartAngle * r + x,
-                    y - sinStartAngle * r
-                );
-
-                ctx.arc(x, y, r, PI2 - startAngle, PI2 - endAngle, true);
-
-                ctx.lineTo(
-                    math.cos(endAngle) * r0 + x,
-                    y - math.sin(endAngle) * r0
-                );
-
-                if (r0 !== 0) {
-                    ctx.arc(x, y, r0, PI2 - endAngle, PI2 - startAngle, false);
-                }
-
-                return;
-            },
-
-            /**
-             * 返回扇形包围盒矩形
-             * @param {module:zrender/shape/Sector~ISectorStyle} style
-             * @return {module:zrender/shape/Base~IBoundingRect}
-             */
-            getRect : function (style) {
-                if (style.__rect) {
-                    return style.__rect;
-                }
-                
-                var x = style.x;   // 圆心x
-                var y = style.y;   // 圆心y
-                var r0 = typeof style.r0 == 'undefined'     // 形内半径[0,r)
-                         ? 0 : style.r0;
-                var r = style.r;                            // 扇形外半径(0,r]
-                var startAngle = style.startAngle;          // 起始角度[0,360)
-                var endAngle = style.endAngle;              // 结束角度(0,360]
-                
-                if (Math.abs(endAngle - startAngle) >= 360) {
-                    // 大于360度的扇形简化为圆环bbox
-                    style.__rect = require('./Ring').prototype.getRect(style);
-                    return style.__rect;
-                }
-                
-                startAngle = (720 + startAngle) % 360;
-                endAngle = (720 + endAngle) % 360;
-                if (endAngle <= startAngle) {
-                    endAngle += 360;
-                }
-                var pointList = [];
-                if (startAngle <= 90 && endAngle >= 90) {
-                    pointList.push([
-                        x, y - r
-                    ]);
-                }
-                if (startAngle <= 180 && endAngle >= 180) {
-                    pointList.push([
-                        x - r, y
-                    ]);
-                }
-                if (startAngle <= 270 && endAngle >= 270) {
-                    pointList.push([
-                        x, y + r
-                    ]);
-                }
-                if (startAngle <= 360 && endAngle >= 360) {
-                    pointList.push([
-                        x + r, y
-                    ]);
-                }
-
-                startAngle = math.degreeToRadian(startAngle);
-                endAngle = math.degreeToRadian(endAngle);
-
-
-                pointList.push([
-                    math.cos(startAngle) * r0 + x,
-                    y - math.sin(startAngle) * r0
-                ]);
-
-                pointList.push([
-                    math.cos(startAngle) * r + x,
-                    y - math.sin(startAngle) * r
-                ]);
-
-                pointList.push([
-                    math.cos(endAngle) * r + x,
-                    y - math.sin(endAngle) * r
-                ]);
-
-                pointList.push([
-                    math.cos(endAngle) * r0 + x,
-                    y - math.sin(endAngle) * r0
-                ]);
-
-                style.__rect = require('./Polygon').prototype.getRect({
-                    brushType : style.brushType,
-                    lineWidth : style.lineWidth,
-                    pointList : pointList
-                });
-                
-                return style.__rect;
-            }
-        };
-
-
-        require('../tool/util').inherits(Sector, Base);
-        return Sector;
-    }
-);
-
-/**
  * 水滴形状
  * @module zrender/shape/Ellipse
- * @author loutongbing@baidu.com
  * @example
  *   var Ellipse = require('zrender/shape/Ellipse');
  *   var shape = new Ellipse({
@@ -12249,6 +12289,7 @@ define(
                 ctx.bezierCurveTo(x + ox, y - b, x + a, y - oy, x + a, y);
                 ctx.bezierCurveTo(x + a, y + oy, x + ox, y + b, x, y + b);
                 ctx.bezierCurveTo(x - ox, y + b, x - a, y + oy, x - a, y);
+                ctx.closePath();
             },
 
             /**
@@ -12286,8 +12327,261 @@ define(
 );
 
 /**
+ * Path 代理，可以在`buildPath`中用于替代`ctx`, 会保存每个path操作的命令到pathCommands属性中
+ * 可以用于 isInsidePath 判断以及获取boundingRect
+ * 
+ * @module zrender/shape/tool/PathProxy
+ * @author pissang (http://www.github.com/pissang)
+ * 
+ * @example
+ *     var SomeShape = function() {
+ *         this._pathProxy = new PathProxy();
+ *         ...
+ *     }
+ *     SomeShape.prototype.buildPath = function(ctx, style) {
+ *         this._pathProxy.begin(ctx);
+ *             .moveTo(style.x, style.y);
+ *             .lineTo(style.x1, style.y1);
+ *         ...
+ *             .closePath();
+ *     },
+ *     SomeShape.prototype.getRect = function(style) {
+ *         if (!style._rect) {
+ *             // 这里必须要在 buildPath 之后才能调用
+ *             style._rect = this._pathProxy.fastBoundingRect();
+ *         }
+ *         return this.style._rect;
+ *     },
+ *     SomeShape.prototype.isCover = function(x, y) {
+ *         var rect = this.getRect(this.style);
+ *         if (x >= rect.x
+ *             && x <= (rect.x + rect.width)
+ *             && y >= rect.y
+ *             && y <= (rect.y + rect.height)
+ *         ) {
+ *             return area.isInsidePath(
+ *                 this._pathProxy.pathCommands, 0, 'fill', x, y
+ *             );
+ *         }
+ *     }
+ */
+define('zrender/shape/util/PathProxy',['require','../../tool/vector'],function (require) {
+    
+    var vector = require('../../tool/vector');
+    // var computeBoundingBox = require('../../tool/computeBoundingBox');
+
+    var PathSegment = function(command, points) {
+        this.command = command;
+        this.points = points || null;
+    };
+
+    /**
+     * @alias module:zrender/shape/tool/PathProxy
+     * @constructor
+     */
+    var PathProxy = function () {
+
+        /**
+         * Path描述的数组，用于`isInsidePath`的判断
+         * @type {Array.<Object>}
+         */
+        this.pathCommands = [];
+
+        this._ctx = null;
+
+        this._min = [];
+        this._max = [];
+    };
+
+    /**
+     * 快速计算Path包围盒（并不是最小包围盒）
+     * @return {Object}
+     */
+    PathProxy.prototype.fastBoundingRect = function () {
+        var min = this._min;
+        var max = this._max;
+        min[0] = min[1] = Infinity;
+        max[0] = max[1] = -Infinity;
+        for (var i = 0; i < this.pathCommands.length; i++) {
+            var seg = this.pathCommands[i];
+            var p = seg.points;
+            switch (seg.command) {
+                case 'M':
+                    vector.min(min, min, p);
+                    vector.max(max, max, p);
+                    break;
+                case 'L':
+                    vector.min(min, min, p);
+                    vector.max(max, max, p);
+                    break;
+                case 'C':
+                    for (var j = 0; j < 6; j += 2) {
+                        min[0] = Math.min(min[0], min[0], p[j]);
+                        min[1] = Math.min(min[1], min[1], p[j + 1]);
+                        max[0] = Math.max(max[0], max[0], p[j]);
+                        max[1] = Math.max(max[1], max[1], p[j + 1]);
+                    }
+                    break;
+                case 'Q':
+                    for (var j = 0; j < 4; j += 2) {
+                        min[0] = Math.min(min[0], min[0], p[j]);
+                        min[1] = Math.min(min[1], min[1], p[j + 1]);
+                        max[0] = Math.max(max[0], max[0], p[j]);
+                        max[1] = Math.max(max[1], max[1], p[j + 1]);
+                    }
+                    break;
+                case 'A':
+                    var cx = p[0];
+                    var cy = p[1];
+                    var rx = p[2];
+                    var ry = p[3];
+                    min[0] = Math.min(min[0], min[0], cx - rx);
+                    min[1] = Math.min(min[1], min[1], cy - ry);
+                    max[0] = Math.max(max[0], max[0], cx + rx);
+                    max[1] = Math.max(max[1], max[1], cy + ry);
+                    break;
+            }
+        }
+
+        return {
+            x: min[0],
+            y: min[1],
+            width: max[0] - min[0],
+            height: max[1] - min[1]
+        };
+    };
+
+    /**
+     * @param  {CanvasRenderingContext2D} ctx
+     * @return {module:zrender/shape/util/PathProxy}
+     */
+    PathProxy.prototype.begin = function (ctx) {
+        this._ctx = ctx || null;
+        // 清空pathCommands
+        this.pathCommands.length = 0;
+
+        return this;
+    };
+
+    /**
+     * @param  {number} x
+     * @param  {number} y
+     * @return {module:zrender/shape/util/PathProxy}
+     */
+    PathProxy.prototype.moveTo = function (x, y) {
+        this.pathCommands.push(new PathSegment('M', [x, y]));
+        if (this._ctx) {
+            this._ctx.moveTo(x, y);
+        }
+        return this;
+    };
+
+    /**
+     * @param  {number} x
+     * @param  {number} y
+     * @return {module:zrender/shape/util/PathProxy}
+     */
+    PathProxy.prototype.lineTo = function (x, y) {
+        this.pathCommands.push(new PathSegment('L', [x, y]));
+        if (this._ctx) {
+            this._ctx.lineTo(x, y);
+        }
+        return this;
+    };
+
+    /**
+     * @param  {number} x1
+     * @param  {number} y1
+     * @param  {number} x2
+     * @param  {number} y2
+     * @param  {number} x3
+     * @param  {number} y3
+     * @return {module:zrender/shape/util/PathProxy}
+     */
+    PathProxy.prototype.bezierCurveTo = function (x1, y1, x2, y2, x3, y3) {
+        this.pathCommands.push(new PathSegment('C', [x1, y1, x2, y2, x3, y3]));
+        if (this._ctx) {
+            this._ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3);
+        }
+        return this;
+    };
+
+    /**
+     * @param  {number} x1
+     * @param  {number} y1
+     * @param  {number} x2
+     * @param  {number} y2
+     * @return {module:zrender/shape/util/PathProxy}
+     */
+    PathProxy.prototype.quadraticCurveTo = function (x1, y1, x2, y2) {
+        this.pathCommands.push(new PathSegment('Q', [x1, y1, x2, y2]));
+        if (this._ctx) {
+            this._ctx.quadraticCurveTo(x1, y1, x2, y2);
+        }
+        return this;
+    };
+
+    /**
+     * @param  {number} cx
+     * @param  {number} cy
+     * @param  {number} r
+     * @param  {number} startAngle
+     * @param  {number} endAngle
+     * @param  {boolean} anticlockwise
+     * @return {module:zrender/shape/util/PathProxy}
+     */
+    PathProxy.prototype.arc = function (cx, cy, r, startAngle, endAngle, anticlockwise) {
+        this.pathCommands.push(new PathSegment(
+            'A', [cx, cy, r, r, startAngle, endAngle - startAngle, 0, anticlockwise ? 0 : 1]
+        ));
+        if (this._ctx) {
+            this._ctx.arc(cx, cy, r, startAngle, endAngle, anticlockwise);
+        }
+        return this;
+    };
+
+    // TODO
+    PathProxy.prototype.arcTo = function (x1, y1, x2, y2, radius) {
+        if (this._ctx) {
+            this._ctx.arcTo(x1, y1, x2, y2, radius);
+        }
+        return this;
+    };
+
+    // TODO
+    PathProxy.prototype.rect = function (x, y, w, h) {
+        if (this._ctx) {
+            this._ctx.rect(x, y, w, h);
+        }
+        return this;
+    };
+
+    /**
+     * @return {module:zrender/shape/util/PathProxy}
+     */
+    PathProxy.prototype.closePath = function () {
+        this.pathCommands.push(new PathSegment('z'));
+        if (this._ctx) {
+            this._ctx.closePath();
+        }
+        return this;
+    };
+
+    /**
+     * 是否没有Path命令
+     * @return {boolean}
+     */
+    PathProxy.prototype.isEmpty = function() {
+        return this.pathCommands.length === 0;
+    };
+
+    PathProxy.PathSegment = PathSegment;
+
+    return PathProxy;
+});
+/**
  * @module zrender/shape/Heart
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  * @example
  *   var Heart = require('zrender/shape/Heart');
  *   var shape = new Heart({
@@ -12332,10 +12626,12 @@ define(
  *                                可以是top, bottom, middle, alphabetic, hanging, ideographic
  */
 define(
-    'zrender/shape/Heart',['require','./Base','../tool/util'],function (require) {
+    'zrender/shape/Heart',['require','./Base','./util/PathProxy','../tool/area','../tool/util'],function (require) {
         
         
         var Base = require('./Base');
+        var PathProxy = require('./util/PathProxy');
+        var area = require('../tool/area');
         
         /**
          * @alias module:zrender/shape/Heart
@@ -12345,6 +12641,8 @@ define(
          */
         var Heart = function (options) {
             Base.call(this, options);
+
+            this._pathProxy = new PathProxy();
             /**
              * 心形绘制样式
              * @name module:zrender/shape/Heart#style
@@ -12366,8 +12664,11 @@ define(
              * @param {module:zrender/shape/Heart~IHeartStyle} style
              */
             buildPath : function (ctx, style) {
-                ctx.moveTo(style.x, style.y);
-                ctx.bezierCurveTo(
+                var path = this._pathProxy || new PathProxy();
+                path.begin(ctx);
+
+                path.moveTo(style.x, style.y);
+                path.bezierCurveTo(
                     style.x + style.a / 2,
                     style.y - style.b * 2 / 3,
                     style.x + style.a * 2,
@@ -12375,7 +12676,7 @@ define(
                     style.x,
                     style.y + style.b
                 );
-                ctx.bezierCurveTo(
+                path.bezierCurveTo(
                     style.x - style.a *  2,
                     style.y + style.b / 3,
                     style.x - style.a / 2,
@@ -12383,6 +12684,7 @@ define(
                     style.x,
                     style.y
                 );
+                path.closePath();
                 return;
             },
 
@@ -12395,22 +12697,22 @@ define(
                 if (style.__rect) {
                     return style.__rect;
                 }
-                
-                var lineWidth;
-                if (style.brushType == 'stroke' || style.brushType == 'fill') {
-                    lineWidth = style.lineWidth || 1;
+                if (!this._pathProxy.isEmpty()) {
+                    this.buildPath(null, style);
                 }
-                else {
-                    lineWidth = 0;
-                }
-                style.__rect = {
-                    x : Math.round(style.x - style.a - lineWidth / 2),
-                    y : Math.round(style.y - style.b / 4 - lineWidth / 2),
-                    width : style.a * 2 + lineWidth,
-                    height : style.b * 5 / 4 + lineWidth
-                };
+                return this._pathProxy.fastBoundingRect();
+            },
+
+            isCover: function (x, y) {
+                var originPos = this.transformCoordToLocal(x, y);
+                x = originPos[0];
+                y = originPos[1];
                 
-                return style.__rect;
+                if (this.isCoverRect(x, y)) {
+                    return area.isInsidePath(
+                        this._pathProxy.pathCommands, this.style.lineWidth, this.style.brushType, x, y
+                    );
+                }
             }
         };
 
@@ -12422,7 +12724,7 @@ define(
 /**
  * 水滴形状
  * @module zrender/shape/Droplet
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  * @example
  *   var Droplet = require('zrender/shape/Droplet');
  *   var shape = new Droplet({
@@ -12467,10 +12769,12 @@ define(
  *                                可以是top, bottom, middle, alphabetic, hanging, ideographic
  */
 define(
-    'zrender/shape/Droplet',['require','./Base','../tool/util'],function (require) {
+    'zrender/shape/Droplet',['require','./Base','./util/PathProxy','../tool/area','../tool/util'],function (require) {
         
 
         var Base = require('./Base');
+        var PathProxy = require('./util/PathProxy');
+        var area = require('../tool/area');
 
         /**
          * @alias module:zrender/shape/Droplet
@@ -12480,6 +12784,7 @@ define(
          */
         var Droplet = function(options) {
             Base.call(this, options);
+            this._pathProxy = new PathProxy();
             /**
              * 水滴绘制样式
              * @name module:zrender/shape/Droplet#style
@@ -12501,8 +12806,11 @@ define(
              * @param {module:zrender/shape/Droplet~IDropletStyle} style
              */
             buildPath : function(ctx, style) {
-                ctx.moveTo(style.x, style.y + style.a);
-                ctx.bezierCurveTo(
+                var path = this._pathProxy || new PathProxy();
+                path.begin(ctx);
+
+                path.moveTo(style.x, style.y + style.a);
+                path.bezierCurveTo(
                     style.x + style.a,
                     style.y + style.a,
                     style.x + style.a * 3 / 2,
@@ -12510,7 +12818,7 @@ define(
                     style.x,
                     style.y - style.b
                 );
-                ctx.bezierCurveTo(
+                path.bezierCurveTo(
                     style.x - style.a * 3 / 2,
                     style.y - style.a / 3,
                     style.x - style.a,
@@ -12518,6 +12826,7 @@ define(
                     style.x,
                     style.y + style.a
                 );
+                path.closePath();
             },
 
             /**
@@ -12525,26 +12834,26 @@ define(
              * @param {module:zrender/shape/Droplet~IDropletStyle} style
              * @return {module:zrender/shape/Base~IBoundingRect}
              */
-            getRect : function(style) {
+            getRect : function (style) {
                 if (style.__rect) {
                     return style.__rect;
                 }
-                
-                var lineWidth;
-                if (style.brushType == 'stroke' || style.brushType == 'fill') {
-                    lineWidth = style.lineWidth || 1;
+                if (!this._pathProxy.isEmpty()) {
+                    this.buildPath(null, style);
                 }
-                else {
-                    lineWidth = 0;
-                }
-                style.__rect = {
-                    x : Math.round(style.x - style.a - lineWidth / 2),
-                    y : Math.round(style.y - style.b - lineWidth / 2),
-                    width : style.a * 2 + lineWidth,
-                    height : style.a + style.b + lineWidth
-                };
+                return this._pathProxy.fastBoundingRect();
+            },
+
+            isCover: function (x, y) {
+                var originPos = this.transformCoordToLocal(x, y);
+                x = originPos[0];
+                y = originPos[1];
                 
-                return style.__rect;
+                if (this.isCoverRect(x, y)) {
+                    return area.isInsidePath(
+                        this._pathProxy.pathCommands, this.style.lineWidth, this.style.brushType, x, y
+                    );
+                }
             }
         };
 
@@ -12554,9 +12863,60 @@ define(
 );
 
 /**
+ * 虚线lineTo 
+ *
+ * author:  Kener (@Kener-林峰, kener.linfeng@gmail.com)
+ *          errorrik (errorrik@gmail.com)
+ */
+define(
+    'zrender/shape/util/dashedLineTo',[],function (/* require */) {
+
+        var dashPattern = [ 5, 5 ];
+        /**
+         * 虚线lineTo 
+         */
+        return function (ctx, x1, y1, x2, y2, dashLength) {
+            // http://msdn.microsoft.com/en-us/library/ie/dn265063(v=vs.85).aspx
+            if (ctx.setLineDash) {
+                dashPattern[0] = dashPattern[1] = dashLength;
+                ctx.setLineDash(dashPattern);
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                return;
+            }
+
+            dashLength = typeof dashLength != 'number'
+                            ? 5 
+                            : dashLength;
+
+            var dx = x2 - x1;
+            var dy = y2 - y1;
+            var numDashes = Math.floor(
+                Math.sqrt(dx * dx + dy * dy) / dashLength
+            );
+            dx = dx / numDashes;
+            dy = dy / numDashes;
+            var flag = true;
+            for (var i = 0; i < numDashes; ++i) {
+                if (flag) {
+                    ctx.moveTo(x1, y1);
+                }
+                else {
+                    ctx.lineTo(x1, y1);
+                }
+                flag = !flag;
+                x1 += dx;
+                y1 += dy;
+            }
+            ctx.lineTo(x2, y2);
+        };
+    }
+);
+
+/**
  * 直线
  * @module zrender/shape/Line
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  * @example
  *   var Line = require('zrender/shape/Line');
  *   var shape = new Line({
@@ -12682,7 +13042,7 @@ define(
 /**
  * n角星（n>3）
  * @module zrender/shape/Star
- * @author sushuang (宿爽, sushuang@baidu.com)
+ * @author sushuang (宿爽, sushuang0322@gmail.com)
  * @example
  *     var Star = require('zrender/shape/Star');
  *     var shape = new Star({
@@ -12805,6 +13165,8 @@ define(
                 for (var i = 0; i < pointList.length; i++) {
                     ctx.lineTo(pointList[i][0], pointList[i][1]);
                 }
+                
+                ctx.closePath();
 
                 return;
             },
@@ -12845,7 +13207,7 @@ define(
 /**
  * 正多边形
  * @module zrender/shape/Isogon
- * @author sushuang (宿爽, sushuang@baidu.com)
+ * @author sushuang (宿爽, sushuang0322@gmail.com)
  */
 
 /**
@@ -12980,7 +13342,7 @@ define(
 /**
  * 贝塞尔曲线
  * @module zrender/shape/BezierCurve
- * @author Neil (杨骥, yangji01@baidu.com)
+ * @author Neil (杨骥, 511415343@qq.com)
  * @example
  *     var BezierCurve = require('zrender/shape/BezierCurve');
  *     var shape = new BezierCurve({
@@ -13127,12 +13489,403 @@ define(
 );
 
 /**
- * 折线
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
- * @module zrender/shape/BrokenLine
+ * Catmull-Rom spline 插值折线
+ * @module zrender/shape/util/smoothSpline
+ * @author pissang (https://www.github.com/pissang) 
+ *         Kener (@Kener-林峰, kener.linfeng@gmail.com)
+ *         errorrik (errorrik@gmail.com)
+ */
+define(
+    'zrender/shape/util/smoothSpline',['require','../../tool/vector'],function (require) {
+        var vector = require('../../tool/vector');
+
+        /**
+         * @inner
+         */
+        function interpolate(p0, p1, p2, p3, t, t2, t3) {
+            var v0 = (p2 - p0) * 0.5;
+            var v1 = (p3 - p1) * 0.5;
+            return (2 * (p1 - p2) + v0 + v1) * t3 
+                    + (-3 * (p1 - p2) - 2 * v0 - v1) * t2
+                    + v0 * t + p1;
+        }
+
+        /**
+         * @alias module:zrender/shape/util/smoothSpline
+         * @param {Array} points 线段顶点数组
+         * @param {boolean} isLoop
+         * @param {Array} constraint 
+         * @return {Array}
+         */
+        return function (points, isLoop, constraint) {
+            var len = points.length;
+            var ret = [];
+
+            var distance = 0;
+            for (var i = 1; i < len; i++) {
+                distance += vector.distance(points[i - 1], points[i]);
+            }
+            
+            var segs = distance / 5;
+            segs = segs < len ? len : segs;
+            for (var i = 0; i < segs; i++) {
+                var pos = i / (segs - 1) * (isLoop ? len : len - 1);
+                var idx = Math.floor(pos);
+
+                var w = pos - idx;
+
+                var p0;
+                var p1 = points[idx % len];
+                var p2;
+                var p3;
+                if (!isLoop) {
+                    p0 = points[idx === 0 ? idx : idx - 1];
+                    p2 = points[idx > len - 2 ? len - 1 : idx + 1];
+                    p3 = points[idx > len - 3 ? len - 1 : idx + 2];
+                }
+                else {
+                    p0 = points[(idx - 1 + len) % len];
+                    p2 = points[(idx + 1) % len];
+                    p3 = points[(idx + 2) % len];
+                }
+
+                var w2 = w * w;
+                var w3 = w * w2;
+
+                ret.push([
+                    interpolate(p0[0], p1[0], p2[0], p3[0], w, w2, w3),
+                    interpolate(p0[1], p1[1], p2[1], p3[1], w, w2, w3)
+                ]);
+            }
+            return ret;
+        };
+    }
+);
+
+/**
+ * 贝塞尔平滑曲线 
+ * @module zrender/shape/util/smoothBezier
+ * @author pissang (https://www.github.com/pissang) 
+ *         Kener (@Kener-林峰, kener.linfeng@gmail.com)
+ *         errorrik (errorrik@gmail.com)
+ */
+define(
+    'zrender/shape/util/smoothBezier',['require','../../tool/vector'],function (require) {
+        var vector = require('../../tool/vector');
+
+        /**
+         * 贝塞尔平滑曲线
+         * @alias module:zrender/shape/util/smoothBezier
+         * @param {Array} points 线段顶点数组
+         * @param {number} smooth 平滑等级, 0-1
+         * @param {boolean} isLoop
+         * @param {Array} constraint 将计算出来的控制点约束在一个包围盒内
+         *                           比如 [[0, 0], [100, 100]], 这个包围盒会与
+         *                           整个折线的包围盒做一个并集用来约束控制点。
+         * @param {Array} 计算出来的控制点数组
+         */
+        return function (points, smooth, isLoop, constraint) {
+            var cps = [];
+
+            var v = [];
+            var v1 = [];
+            var v2 = [];
+            var prevPoint;
+            var nextPoint;
+
+            var hasConstraint = !!constraint;
+            var min, max;
+            if (hasConstraint) {
+                min = [Infinity, Infinity];
+                max = [-Infinity, -Infinity];
+                for (var i = 0, len = points.length; i < len; i++) {
+                    vector.min(min, min, points[i]);
+                    vector.max(max, max, points[i]);
+                }
+                // 与指定的包围盒做并集
+                vector.min(min, min, constraint[0]);
+                vector.max(max, max, constraint[1]);
+            }
+
+            for (var i = 0, len = points.length; i < len; i++) {
+                var point = points[i];
+                var prevPoint;
+                var nextPoint;
+
+                if (isLoop) {
+                    prevPoint = points[i ? i - 1 : len - 1];
+                    nextPoint = points[(i + 1) % len];
+                } 
+                else {
+                    if (i === 0 || i === len - 1) {
+                        cps.push(vector.clone(points[i]));
+                        continue;
+                    } 
+                    else {
+                        prevPoint = points[i - 1];
+                        nextPoint = points[i + 1];
+                    }
+                }
+
+                vector.sub(v, nextPoint, prevPoint);
+
+                // use degree to scale the handle length
+                vector.scale(v, v, smooth);
+
+                var d0 = vector.distance(point, prevPoint);
+                var d1 = vector.distance(point, nextPoint);
+                var sum = d0 + d1;
+                if (sum !== 0) {
+                    d0 /= sum;
+                    d1 /= sum;
+                }
+
+                vector.scale(v1, v, -d0);
+                vector.scale(v2, v, d1);
+                var cp0 = vector.add([], point, v1);
+                var cp1 = vector.add([], point, v2);
+                if (hasConstraint) {
+                    vector.max(cp0, cp0, min);
+                    vector.min(cp0, cp0, max);
+                    vector.max(cp1, cp1, min);
+                    vector.min(cp1, cp1, max);
+                }
+                cps.push(cp0);
+                cps.push(cp1);
+            }
+            
+            if (isLoop) {
+                cps.push(vector.clone(cps.shift()));
+            }
+
+            return cps;
+        };
+    }
+);
+
+/**
+ * 多边形
+ * @module zrender/shape/Polygon
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  * @example
- *     var BrokenLine = require('zrender/shape/BrokenLine');
- *     var shape = new BrokenLine({
+ *     var Polygon = require('zrender/shape/Polygon');
+ *     var shape = new Polygon({
+ *         style: {
+ *             // 100x100的正方形
+ *             pointList: [[0, 0], [100, 0], [100, 100], [0, 100]],
+ *             color: 'blue'
+ *         }
+ *     });
+ *     zr.addShape(shape);
+ */
+
+/**
+ * @typedef {Object} IPolygonStyle
+ * @property {string} pointList 多边形顶点数组
+ * @property {string} [smooth=''] 是否做平滑插值, 平滑算法可以选择 bezier, spline
+ * @property {number} [smoothConstraint] 平滑约束
+ * @property {string} [brushType='fill']
+ * @property {string} [color='#000000'] 填充颜色
+ * @property {string} [strokeColor='#000000'] 描边颜色
+ * @property {string} [lineCape='butt'] 线帽样式，可以是 butt, round, square
+ * @property {number} [lineWidth=1] 描边宽度
+ * @property {number} [opacity=1] 绘制透明度
+ * @property {number} [shadowBlur=0] 阴影模糊度，大于0有效
+ * @property {string} [shadowColor='#000000'] 阴影颜色
+ * @property {number} [shadowOffsetX=0] 阴影横向偏移
+ * @property {number} [shadowOffsetY=0] 阴影纵向偏移
+ * @property {string} [text] 图形中的附加文本
+ * @property {string} [textColor='#000000'] 文本颜色
+ * @property {string} [textFont] 附加文本样式，eg:'bold 18px verdana'
+ * @property {string} [textPosition='end'] 附加文本位置, 可以是 inside, left, right, top, bottom
+ * @property {string} [textAlign] 默认根据textPosition自动设置，附加文本水平对齐。
+ *                                可以是start, end, left, right, center
+ * @property {string} [textBaseline] 默认根据textPosition自动设置，附加文本垂直对齐。
+ *                                可以是top, bottom, middle, alphabetic, hanging, ideographic
+ */
+define(
+    'zrender/shape/Polygon',['require','./Base','./util/smoothSpline','./util/smoothBezier','./util/dashedLineTo','../tool/util'],function (require) {
+        var Base = require('./Base');
+        var smoothSpline = require('./util/smoothSpline');
+        var smoothBezier = require('./util/smoothBezier');
+        var dashedLineTo = require('./util/dashedLineTo');
+
+        /**
+         * @alias module:zrender/shape/Polygon
+         * @param {Object} options
+         * @constructor
+         * @extends module:zrender/shape/Base
+         */
+        var Polygon = function (options) {
+            Base.call(this, options);
+            /**
+             * 多边形绘制样式
+             * @name module:zrender/shape/Polygon#style
+             * @type {module:zrender/shape/Polygon~IPolygonStyle}
+             */
+            /**
+             * 多边形高亮绘制样式
+             * @name module:zrender/shape/Polygon#highlightStyle
+             * @type {module:zrender/shape/Polygon~IPolygonStyle}
+             */
+        };
+
+        Polygon.prototype = {
+            type: 'polygon',
+
+            /**
+             * 创建多边形路径
+             * @param {CanvasRenderingContext2D} ctx
+             * @param {module:zrender/shape/Polygon~IPolygonStyle} style
+             */
+            buildPath : function (ctx, style) {
+                // 虽然能重用brokenLine，但底层图形基于性能考虑，重复代码减少调用吧
+                var pointList = style.pointList;
+                // 开始点和结束点重复
+                /*
+                var start = pointList[0];
+                var end = pointList[pointList.length-1];
+
+                if (start && end) {
+                    if (start[0] == end[0] &&
+                        start[1] == end[1]) {
+                        // 移除最后一个点
+                        pointList.pop();
+                    }
+                }
+                */
+
+                if (pointList.length < 2) {
+                    // 少于2个点就不画了~
+                    return;
+                }
+
+                if (style.smooth && style.smooth !== 'spline') {
+                    var controlPoints = smoothBezier(
+                        pointList, style.smooth, true, style.smoothConstraint
+                    );
+
+                    ctx.moveTo(pointList[0][0], pointList[0][1]);
+                    var cp1;
+                    var cp2;
+                    var p;
+                    var len = pointList.length;
+                    for (var i = 0; i < len; i++) {
+                        cp1 = controlPoints[i * 2];
+                        cp2 = controlPoints[i * 2 + 1];
+                        p = pointList[(i + 1) % len];
+                        ctx.bezierCurveTo(
+                            cp1[0], cp1[1], cp2[0], cp2[1], p[0], p[1]
+                        );
+                    }
+                } 
+                else {
+                    if (style.smooth === 'spline') {
+                        pointList = smoothSpline(pointList, true);
+                    }
+
+                    if (!style.lineType || style.lineType == 'solid') {
+                        // 默认为实线
+                        ctx.moveTo(pointList[0][0], pointList[0][1]);
+                        for (var i = 1, l = pointList.length; i < l; i++) {
+                            ctx.lineTo(pointList[i][0], pointList[i][1]);
+                        }
+                        ctx.lineTo(pointList[0][0], pointList[0][1]);
+                    }
+                    else if (style.lineType == 'dashed'
+                            || style.lineType == 'dotted'
+                    ) {
+                        var dashLength = 
+                            style._dashLength
+                            || (style.lineWidth || 1) 
+                               * (style.lineType == 'dashed' ? 5 : 1);
+                        style._dashLength = dashLength;
+                        ctx.moveTo(pointList[0][0], pointList[0][1]);
+                        for (var i = 1, l = pointList.length; i < l; i++) {
+                            dashedLineTo(
+                                ctx,
+                                pointList[i - 1][0], pointList[i - 1][1],
+                                pointList[i][0], pointList[i][1],
+                                dashLength
+                            );
+                        }
+                        dashedLineTo(
+                            ctx,
+                            pointList[pointList.length - 1][0], 
+                            pointList[pointList.length - 1][1],
+                            pointList[0][0],
+                            pointList[0][1],
+                            dashLength
+                        );
+                    }
+                }
+
+                ctx.closePath();
+                return;
+            },
+
+            /**
+             * 计算返回多边形包围盒矩阵
+             * @param {module:zrender/shape/Polygon~IPolygonStyle} style
+             * @return {module:zrender/shape/Base~IBoundingRect}
+             */
+            getRect : function (style) {
+                if (style.__rect) {
+                    return style.__rect;
+                }
+                
+                var minX =  Number.MAX_VALUE;
+                var maxX =  Number.MIN_VALUE;
+                var minY = Number.MAX_VALUE;
+                var maxY = Number.MIN_VALUE;
+
+                var pointList = style.pointList;
+                for (var i = 0, l = pointList.length; i < l; i++) {
+                    if (pointList[i][0] < minX) {
+                        minX = pointList[i][0];
+                    }
+                    if (pointList[i][0] > maxX) {
+                        maxX = pointList[i][0];
+                    }
+                    if (pointList[i][1] < minY) {
+                        minY = pointList[i][1];
+                    }
+                    if (pointList[i][1] > maxY) {
+                        maxY = pointList[i][1];
+                    }
+                }
+
+                var lineWidth;
+                if (style.brushType == 'stroke' || style.brushType == 'fill') {
+                    lineWidth = style.lineWidth || 1;
+                }
+                else {
+                    lineWidth = 0;
+                }
+                
+                style.__rect = {
+                    x : Math.round(minX - lineWidth / 2),
+                    y : Math.round(minY - lineWidth / 2),
+                    width : maxX - minX + lineWidth,
+                    height : maxY - minY + lineWidth
+                };
+                return style.__rect;
+            }
+        };
+
+        require('../tool/util').inherits(Polygon, Base);
+        return Polygon;
+    }
+);
+
+
+/**
+ * 折线
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
+ * @module zrender/shape/Polyline
+ * @example
+ *     var Polyline = require('zrender/shape/Polyline');
+ *     var shape = new Polyline({
  *         style: {
  *             pointList: [[0, 0], [100, 100], [100, 0]],
  *             smooth: 'bezier',
@@ -13143,9 +13896,9 @@ define(
  */
 
 /**
- * @typedef {Object} IBrokenLineStyle
+ * @typedef {Object} IPolylineStyle
  * @property {Array.<number>} pointList 顶点坐标数组
- * @property {string} [smooth=''] 是否做平滑插值, 平滑算法可以选择 bezier, spline
+ * @property {string|number} [smooth=''] 是否做平滑插值, 平滑算法可以选择 bezier, spline
  * @property {number} [smoothConstraint] 平滑约束
  * @property {string} [strokeColor='#000000'] 描边颜色
  * @property {string} [lineCape='butt'] 线帽样式，可以是 butt, round, square
@@ -13166,41 +13919,41 @@ define(
  *                                可以是top, bottom, middle, alphabetic, hanging, ideographic
  */
 define(
-    'zrender/shape/BrokenLine',['require','./Base','./util/smoothSpline','./util/smoothBezier','./util/dashedLineTo','./Polygon','../tool/util'],function (require) {
+    'zrender/shape/Polyline',['require','./Base','./util/smoothSpline','./util/smoothBezier','./util/dashedLineTo','./Polygon','../tool/util'],function (require) {
         var Base = require('./Base');
         var smoothSpline = require('./util/smoothSpline');
         var smoothBezier = require('./util/smoothBezier');
         var dashedLineTo = require('./util/dashedLineTo');
 
         /**
-         * @alias module:zrender/shape/BrokenLine
+         * @alias module:zrender/shape/Polyline
          * @constructor
          * @extends module:zrender/shape/Base
          * @param {Object} options
          */
-        var BrokenLine = function(options) {
+        var Polyline = function(options) {
             this.brushTypeOnly = 'stroke';  // 线条只能描边，填充后果自负
             this.textPosition = 'end';
             Base.call(this, options);
             /**
              * 贝赛尔曲线绘制样式
-             * @name module:zrender/shape/BrokenLine#style
-             * @type {module:zrender/shape/BrokenLine~IBrokenLineStyle}
+             * @name module:zrender/shape/Polyline#style
+             * @type {module:zrender/shape/Polyline~IPolylineStyle}
              */
             /**
              * 贝赛尔曲线高亮绘制样式
-             * @name module:zrender/shape/BrokenLine#highlightStyle
-             * @type {module:zrender/shape/BrokenLine~IBrokenLineStyle}
+             * @name module:zrender/shape/Polyline#highlightStyle
+             * @type {module:zrender/shape/Polyline~IPolylineStyle}
              */
         };
 
-        BrokenLine.prototype =  {
-            type: 'broken-line',
+        Polyline.prototype =  {
+            type: 'polyline',
 
             /**
              * 创建多边形路径
              * @param {CanvasRenderingContext2D} ctx
-             * @param {module:zrender/shape/BrokenLine~IBrokenLineStyle} style
+             * @param {module:zrender/shape/Polyline~IPolylineStyle} style
              */
             buildPath : function(ctx, style) {
                 var pointList = style.pointList;
@@ -13215,23 +13968,24 @@ define(
                 );
                 
                 if (style.smooth && style.smooth !== 'spline') {
-                    var controlPoints = smoothBezier(
-                        pointList, style.smooth, false, style.smoothConstraint
-                    );
+                    if (! style.controlPointList) {
+                        this.updateControlPoints(style);
+                    }
+                    var controlPointList = style.controlPointList;
 
                     ctx.moveTo(pointList[0][0], pointList[0][1]);
                     var cp1;
                     var cp2;
                     var p;
                     for (var i = 0; i < len - 1; i++) {
-                        cp1 = controlPoints[i * 2];
-                        cp2 = controlPoints[i * 2 + 1];
+                        cp1 = controlPointList[i * 2];
+                        cp2 = controlPointList[i * 2 + 1];
                         p = pointList[i + 1];
                         ctx.bezierCurveTo(
                             cp1[0], cp1[1], cp2[0], cp2[1], p[0], p[1]
                         );
                     }
-                } 
+                }
                 else {
                     if (style.smooth === 'spline') {
                         pointList = smoothSpline(pointList);
@@ -13263,6 +14017,12 @@ define(
                 return;
             },
 
+            updateControlPoints: function (style) {
+                style.controlPointList = smoothBezier(
+                    style.pointList, style.smooth, false, style.smoothConstraint
+                );
+            },
+
             /**
              * 计算返回折线包围盒矩形。
              * @param {IZRenderBezierCurveStyle} style
@@ -13273,460 +14033,16 @@ define(
             }
         };
 
-        require('../tool/util').inherits(BrokenLine, Base);
-        return BrokenLine;
+        require('../tool/util').inherits(Polyline, Base);
+        return Polyline;
     }
 );
 
-/**
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
- *         pissang(https://github.com/pissang)
- *         errorrik (errorrik@gmail.com)
- */
-define(
-    'zrender/tool/computeBoundingBox',['require','./vector','./curve'],function (require) {
-        var vec2 = require('./vector');
-        var curve = require('./curve');
-
-        /**
-         * 从顶点数组中计算出最小包围盒，写入`min`和`max`中
-         * @module zrender/tool/computeBoundingBox
-         * @param {Array<Object>} points 顶点数组
-         * @param {number} min
-         * @param {number} max
-         */
-        function computeBoundingBox(points, min, max) {
-            if (points.length === 0) {
-                return;
-            }
-            var left = points[0][0];
-            var right = points[0][0];
-            var top = points[0][1];
-            var bottom = points[0][1];
-            
-            for (var i = 1; i < points.length; i++) {
-                var p = points[i];
-                if (p[0] < left) {
-                    left = p[0];
-                }
-                if (p[0] > right) {
-                    right = p[0];
-                }
-                if (p[1] < top) {
-                    top = p[1];
-                }
-                if (p[1] > bottom) {
-                    bottom = p[1];
-                }
-            }
-
-            min[0] = left;
-            min[1] = top;
-            max[0] = right;
-            max[1] = bottom;
-        }
-
-        /**
-         * 从三阶贝塞尔曲线(p0, p1, p2, p3)中计算出最小包围盒，写入`min`和`max`中
-         * @memberOf module:zrender/tool/computeBoundingBox
-         * @param {Array.<number>} p0
-         * @param {Array.<number>} p1
-         * @param {Array.<number>} p2
-         * @param {Array.<number>} p3
-         * @param {Array.<number>} min
-         * @param {Array.<number>} max
-         */
-        function computeCubeBezierBoundingBox(p0, p1, p2, p3, min, max) {
-            var xDim = [];
-            curve.cubicExtrema(p0[0], p1[0], p2[0], p3[0], xDim);
-            for (var i = 0; i < xDim.length; i++) {
-                xDim[i] = curve.cubicAt(p0[0], p1[0], p2[0], p3[0], xDim[i]);
-            }
-            var yDim = [];
-            curve.cubicExtrema(p0[1], p1[1], p2[1], p3[1], yDim);
-            for (var i = 0; i < yDim.length; i++) {
-                yDim[i] = curve.cubicAt(p0[1], p1[1], p2[1], p3[1], yDim[i]);
-            }
-
-            xDim.push(p0[0], p3[0]);
-            yDim.push(p0[1], p3[1]);
-
-            var left = Math.min.apply(null, xDim);
-            var right = Math.max.apply(null, xDim);
-            var top = Math.min.apply(null, yDim);
-            var bottom = Math.max.apply(null, yDim);
-
-            min[0] = left;
-            min[1] = top;
-            max[0] = right;
-            max[1] = bottom;
-        }
-
-        /**
-         * 从二阶贝塞尔曲线(p0, p1, p2)中计算出最小包围盒，写入`min`和`max`中
-         * @memberOf module:zrender/tool/computeBoundingBox
-         * @param {Array.<number>} p0
-         * @param {Array.<number>} p1
-         * @param {Array.<number>} p2
-         * @param {Array.<number>} min
-         * @param {Array.<number>} max
-         */
-        function computeQuadraticBezierBoundingBox(p0, p1, p2, min, max) {
-            // Find extremities, where derivative in x dim or y dim is zero
-            var t1 = curve.quadraticExtremum(p0[0], p1[0], p2[0]);
-            var t2 = curve.quadraticExtremum(p0[1], p1[1], p2[1]);
-
-            t1 = Math.max(Math.min(t1, 1), 0);
-            t2 = Math.max(Math.min(t2, 1), 0);
-
-            var ct1 = 1 - t1;
-            var ct2 = 1 - t2;
-
-            var x1 = ct1 * ct1 * p0[0] 
-                     + 2 * ct1 * t1 * p1[0] 
-                     + t1 * t1 * p2[0];
-            var y1 = ct1 * ct1 * p0[1] 
-                     + 2 * ct1 * t1 * p1[1] 
-                     + t1 * t1 * p2[1];
-
-            var x2 = ct2 * ct2 * p0[0] 
-                     + 2 * ct2 * t2 * p1[0] 
-                     + t2 * t2 * p2[0];
-            var y2 = ct2 * ct2 * p0[1] 
-                     + 2 * ct2 * t2 * p1[1] 
-                     + t2 * t2 * p2[1];
-
-            return computeBoundingBox(
-                        [ p0.slice(), p2.slice(), [ x1, y1 ], [ x2, y2 ] ],
-                        min, max
-                    );
-        }
-
-        /**
-         * 从圆弧中计算出最小包围盒，写入`min`和`max`中
-         * @method
-         * @memberOf module:zrender/tool/computeBoundingBox
-         * @param {Array.<number>} center 圆弧中心点
-         * @param {number} radius 圆弧半径
-         * @param {number} startAngle 圆弧开始角度
-         * @param {number} endAngle 圆弧结束角度
-         * @param {number} clockwise 是否是顺时针
-         * @param {Array.<number>} min
-         * @param {Array.<number>} max
-         */
-        var computeArcBoundingBox = (function () {
-            var start = [];
-            var end = [];
-            // At most 4 extremities
-            var extremities = [[], [], [], []];
-            return function (
-                center, radius, startAngle, endAngle, clockwise, min, max
-            ) {
-                clockwise = clockwise ? 1 : -1;
-                start[0] = Math.cos(startAngle);
-                start[1] = Math.sin(startAngle) * clockwise;
-                vec2.scale(start, start, radius);
-                vec2.add(start, start, center);
-
-                end[0] = Math.cos(endAngle);
-                end[1] = Math.sin(endAngle) * clockwise;
-                vec2.scale(end, end, radius);
-                vec2.add(end, end, center);
-                
-                startAngle = startAngle % (Math.PI * 2);
-                if (startAngle < 0) {
-                    startAngle = startAngle + Math.PI * 2;
-                }
-                endAngle = endAngle % (Math.PI * 2);
-                if (endAngle < 0) {
-                    endAngle = endAngle + Math.PI * 2;
-                }
-
-                if (startAngle > endAngle) {
-                    endAngle += Math.PI * 2;
-                }
-                var number = 0;
-                for (var angle = 0; angle < endAngle; angle += Math.PI / 2) {
-                    if (angle > startAngle) {
-                        var extremity = extremities[number++];
-                        extremity[0] = Math.cos(angle);
-                        extremity[1] = Math.sin(angle) * clockwise;
-                        vec2.scale(extremity, extremity, radius);
-                        vec2.add(extremity, extremity, center);
-                    }
-                }
-                var points = extremities.slice(0, number);
-                points.push(start, end);
-                computeBoundingBox(points, min, max);
-            };
-        })();
-
-        computeBoundingBox.cubeBezier = computeCubeBezierBoundingBox;
-        computeBoundingBox.quadraticBezier = computeQuadraticBezierBoundingBox;
-        computeBoundingBox.arc = computeArcBoundingBox;
-
-        return computeBoundingBox;
-    }
-);
-
-/**
- * Path 代理，可以在`buildPath`中用于替代`ctx`, 会保存每个path操作的命令到pathCommands属性中
- * 可以用于 isInsidePath 判断以及获取boundingRect
- * 
- * @module zrender/shape/util/PathProxy
- * @author pissang (http://www.github.com/pissang)
- * 
- * @example
- *     var SomeShape = function() {
- *         this._pathProxy = new PathProxy();
- *         ...
- *     }
- *     SomeShape.prototype.buildPath = function(ctx, style) {
- *         this._pathProxy.begin(ctx);
- *             .moveTo(style.x, style.y);
- *             .lineTo(style.x1, style.y1);
- *         ...
- *             .closePath();
- *     },
- *     SomeShape.prototype.getRect = function(style) {
- *         if (!style._rect) {
- *             // 这里必须要在 buildPath 之后才能调用
- *             style._rect = this._pathProxy.fastBoundingRect();
- *         }
- *         return this.style._rect;
- *     },
- *     SomeShape.prototype.isCover = function(x, y) {
- *         var rect = this.getRect(this.style);
- *         if (x >= rect.x
- *             && x <= (rect.x + rect.width)
- *             && y >= rect.y
- *             && y <= (rect.y + rect.height)
- *         ) {
- *             return area.isInsidePath(
- *                 this._pathProxy.pathCommands, 0, 'fill', x, y
- *             );
- *         }
- *     }
- */
-define('zrender/shape/util/PathProxy',['require','../../tool/vector','../../tool/computeBoundingBox'],function (require) {
-    
-    var vector = require('../../tool/vector');
-    var computeBoundingBox = require('../../tool/computeBoundingBox');
-
-    var PathSegment = function(command, points) {
-        this.command = command;
-        this.points = points || null;
-    }
-
-    /**
-     * @alias module:zrender/shape/tool/PathProxy
-     * @constructor
-     */
-    var PathProxy = function () {
-
-        /**
-         * Path描述的数组，用于`isInsidePath`的判断
-         * @type {Array.<Object>}
-         */
-        this.pathCommands = [];
-
-        this._ctx = null;
-
-        this._min = [];
-        this._max = [];
-    }
-
-    /**
-     * 快速计算Path包围盒（并不是最小包围盒）
-     * @return {Object}
-     */
-    PathProxy.prototype.fastBoundingRect = function () {
-        var min = this._min;
-        var max = this._max;
-        min[0] = min[1] = Infinity;
-        max[0] = max[1] = -Infinity;
-        for (var i = 0; i < this.pathCommands.length; i++) {
-            var seg = this.pathCommands[i];
-            var p = seg.points;
-            switch (seg.command) {
-                case 'M':
-                    vector.min(min, min, p);
-                    vector.max(max, max, p);
-                    break;
-                case 'L':
-                    vector.min(min, min, p);
-                    vector.max(max, max, p);
-                    break;
-                case 'C':
-                    for (var j = 0; j < 6; j += 2) {
-                        min[0] = Math.min(min[0], min[0], p[j]);
-                        min[1] = Math.min(min[1], min[1], p[j + 1]);
-                        max[0] = Math.max(max[0], max[0], p[j]);
-                        max[1] = Math.max(max[1], max[1], p[j + 1]);
-                    };
-                    break;
-                case 'Q':
-                    for (var j = 0; j < 4; j += 2) {
-                        min[0] = Math.min(min[0], min[0], p[j]);
-                        min[1] = Math.min(min[1], min[1], p[j + 1]);
-                        max[0] = Math.max(max[0], max[0], p[j]);
-                        max[1] = Math.max(max[1], max[1], p[j + 1]);
-                    };
-                    break;
-                case "A":
-                    var cx = p[0];
-                    var cy = p[1];
-                    var rx = p[2];
-                    var ry = p[3];
-                    min[0] = Math.min(min[0], min[0], cx - rx);
-                    min[1] = Math.min(min[1], min[1], cy - ry);
-                    max[0] = Math.max(max[0], max[0], cx + rx);
-                    max[1] = Math.max(max[1], max[1], cy + ry);
-                    break;
-            }
-        }
-
-        return {
-            x: min[0],
-            y: min[1],
-            width: max[0] - min[0],
-            height: max[1] - min[1]
-        }
-    };
-
-    /**
-     * @param  {CanvasRenderingContext2D} ctx
-     * @return {PathProxy}
-     */
-    PathProxy.prototype.begin = function (ctx) {
-        this._ctx = ctx || null;
-        // 清空pathCommands
-        this.pathCommands.length = 0;
-
-        return this;
-    };
-
-    /**
-     * @param  {number} x
-     * @param  {number} y
-     * @return {PathProxy}
-     */
-    PathProxy.prototype.moveTo = function (x, y) {
-        this.pathCommands.push(new PathSegment('M', [x, y]));
-        if (this._ctx) {
-            this._ctx.moveTo(x, y);
-        }
-        return this;
-    };
-
-    /**
-     * @param  {number} x
-     * @param  {number} y
-     * @return {PathProxy}
-     */
-    PathProxy.prototype.lineTo = function (x, y) {
-        this.pathCommands.push(new PathSegment('L', [x, y]));
-        if (this._ctx) {
-            this._ctx.lineTo(x, y);
-        }
-        return this;
-    };
-
-    /**
-     * @param  {number} x1
-     * @param  {number} y1
-     * @param  {number} x2
-     * @param  {number} y2
-     * @param  {number} x3
-     * @param  {number} y3
-     * @return {PathProxy}
-     */
-    PathProxy.prototype.bezierCurveTo = function (x1, y1, x2, y2, x3, y3) {
-        this.pathCommands.push(new PathSegment('C', [x1, y1, x2, y2, x3, y3]));
-        if (this._ctx) {
-            this._ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3);
-        }
-        return this;
-    };
-
-    /**
-     * @param  {number} x1
-     * @param  {number} y1
-     * @param  {number} x2
-     * @param  {number} y2
-     * @return {PathProxy}
-     */
-    PathProxy.prototype.quadraticCurveTo = function (x1, y1, x2, y2) {
-        this.pathCommands.push(new PathSegment('A', [x1, y1, x2, y2]));
-        if (this._ctx) {
-            this._ctx.quadraticCurveTo(x1, y1, x2, y2);
-        }
-        return this;
-    };
-
-    /**
-     * @param  {number} cx
-     * @param  {number} cy
-     * @param  {number} r
-     * @param  {number} startAngle
-     * @param  {number} endAngle
-     * @param  {boolean} anticlockwise
-     * @return {PathProxy}
-     */
-    PathProxy.prototype.arc = function (cx, cy, r, startAngle, endAngle, anticlockwise) {
-        this.pathCommands.push(new PathSegment(
-            'A', [cx, cy, r, r, startAngle, endAngle - startAngle, 0, anticlockwise ? 0 : 1]
-        ));
-        if (this._ctx) {
-            this._ctx.arc(cx, cy, r, startAngle, endAngle, anticlockwise);
-        }
-        return this;
-    };
-
-    // TODO
-    PathProxy.prototype.arcTo = function (x1, y1, x2, y2, radius) {
-        if (this._ctx) {
-            this._ctx.arcTo(x1, y1, x2, y2, radius);
-        }
-        return this;
-    };
-
-    // TODO
-    PathProxy.prototype.rect = function (x, y, w, h) {
-        if (this._ctx) {
-            this._ctx.rect(x, y, w, h);
-        }
-        return this;
-    };
-
-    /**
-     * @return {PathProxy}
-     */
-    PathProxy.prototype.closePath = function () {
-        this.pathCommands.push(new PathSegment('z'));
-        if (this._ctx) {
-            this._ctx.closePath();
-        }
-        return this;
-    };
-
-    /**
-     * 是否没有Path命令
-     * @return {boolean}
-     */
-    PathProxy.prototype.isEmpty = function() {
-        return this.pathCommands.length === 0;
-    }
-
-    PathProxy.PathSegment = PathSegment;
-
-    return PathProxy;
-});
 /**
  * SVG Path
  * @module zrender/shape/Path
  * @see http://www.w3.org/TR/2011/REC-SVG11-20110816/paths.html#PathData
- * @author: CrossDo (chenhuaimu@baidu.com)
+ * @author: Pissang (shenyi.914@gmail.com)
  */
 
 /**
@@ -13792,11 +14108,14 @@ define('zrender/shape/Path',['require','./Base','./util/PathProxy','../tool/util
     Path.prototype = {
         type: 'path',
 
-        buildPathArray : function (data) {
+        buildPathArray : function (data, x, y) {
             if (!data) {
                 return [];
             }
 
+            // 平移
+            x = x || 0;
+            y = y || 0;
             // command string
             var cs = data;
 
@@ -13811,7 +14130,6 @@ define('zrender/shape/Path',['require','./Base','./util/PathProxy','../tool/util
             cs = cs.replace(/ /g, ',');
             cs = cs.replace(/,,/g, ',');
             
-
             var n;
             // create pipes so that we can split the data
             for (n = 0; n < cc.length; n++) {
@@ -14020,22 +14338,22 @@ define('zrender/shape/Path',['require','./Base','./util/PathProxy','../tool/util
                             break;
                     }
 
+                    // 平移变换
+                    for (var j = 0, l = points.length; j < l; j += 2) {
+                        points[j] += x;
+                        points[j + 1] += y;
+                    }
                     ca.push(new PathSegment(
                         cmd || c, points
                     ));
                 }
 
                 if (c === 'z' || c === 'Z') {
-                    ca.push({
-                        command : 'z',
-                        points : []
-                    });
+                    ca.push(new PathSegment('z', []));
                 }
             }
 
-
             return ca;
-
         },
 
         _convertPoint : function (x1, y1, x2, y2, fa, fs, rx, ry, psiDeg) {
@@ -14103,13 +14421,13 @@ define('zrender/shape/Path',['require','./Base','./util/PathProxy','../tool/util
         buildPath : function (ctx, style) {
             var path = style.path;
 
-            style.pathArray = style.pathArray || this.buildPathArray(path);
-            var pathArray = style.pathArray;
             // 平移坐标
             var x = style.x || 0;
             var y = style.y || 0;
 
-            var p;
+            style.pathArray = style.pathArray || this.buildPathArray(path, x, y);
+            var pathArray = style.pathArray;
+
             // 记录边界点，用于判断inside
             var pointList = style.pointList = [];
             var singlePointList = [];
@@ -14119,26 +14437,16 @@ define('zrender/shape/Path',['require','./Base','./util/PathProxy','../tool/util
                     && pointList.push(singlePointList);
                     singlePointList = [];
                 }
-                p = pathArray[i].points;
+                var p = pathArray[i].points;
                 for (var j = 0, k = p.length; j < k; j += 2) {
-                    singlePointList.push([ p[j] + x, p[j + 1] + y ]);
+                    singlePointList.push([p[j], p[j + 1]]);
                 }
             }
             singlePointList.length > 0 && pointList.push(singlePointList);
             
-            var c;
             for (var i = 0, l = pathArray.length; i < l; i++) {
-                c = pathArray[i].command;
-                p = pathArray[i].points;
-                // 平移变换
-                for (var j = 0, k = p.length; j < k; j++) {
-                    if (j % 2 === 0) {
-                        p[j] += x;
-                    }
-                    else {
-                        p[j] += y;
-                    }
-                }
+                var c = pathArray[i].command;
+                var p = pathArray[i].points;
                 switch (c) {
                     case 'L':
                         ctx.lineTo(p[0], p[1]);
@@ -14217,18 +14525,18 @@ define('zrender/shape/Path',['require','./Base','./util/PathProxy','../tool/util
                 for (var j = 0; j < p.length; j++) {
                     if (j % 2 === 0) {
                         if (p[j] + x < minX) {
-                            minX = p[j] + x;
+                            minX = p[j];
                         }
                         if (p[j] + x > maxX) {
-                            maxX = p[j] + x;
+                            maxX = p[j];
                         }
                     } 
                     else {
                         if (p[j] + y < minY) {
-                            minY = p[j] + y;
+                            minY = p[j];
                         }
                         if (p[j] + y > maxY) {
-                            maxY = p[j] + y;
+                            maxY = p[j];
                         }
                     }
                 }
@@ -14976,59 +15284,3 @@ define(
         return Whirling;
     }
 );
-
-/**
- * @module zrender/tool/http
- */
-define('zrender/tool/http',['require'],function(require) {
-    /**
-     * @typedef {Object} IHTTPGetOption
-     * @property {string} url
-     * @property {Function} onsuccess
-     * @property {Function} [onerror]
-     */
-
-    /**
-     * HTTP Get
-     * @param {string|IHTTPGetOption} url
-     * @param {Function} onsuccess
-     * @param {Function} [onerror]
-     * @param {Object} [opts] 额外参数
-     */
-    function get(url, onsuccess, onerror, opts) {
-        if (typeof(url) === 'object') {
-            var obj = url;
-            url = obj.url;
-            onsuccess = obj.onsuccess;
-            onerror = obj.onerror;
-            opts = obj;
-        } else {
-            if (typeof(onerror) === 'object') {
-                opts = onerror;
-            }
-        }
-        /* jshint ignore:start */
-        var xhr = window.XMLHttpRequest
-            ? new XMLHttpRequest()
-            : new ActiveXObject('Microsoft.XMLHTTP');
-        xhr.open('GET', url, true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4) {
-                if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304) {
-                    onsuccess && onsuccess(xhr.responseText);
-                } else {
-                    onerror && onerror();
-                }
-                xhr.onreadystatechange = new Function();
-                xhr = null;
-            }
-        };
-
-        xhr.send(null);
-        /* jshint ignore:end */
-    }
-
-    return {
-        get: get
-    };
-});

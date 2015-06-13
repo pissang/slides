@@ -13,14 +13,13 @@
                 <h2>About Me</h2>
                 
                 <!-- tip:
-                大家好，我叫沈毅，是百度EFE团队的一名前端工程师，接下来我会用大约半小时的时间来介绍我们团队在可视化方向的产品ECharts，在开始之前我们看一下ppt右上角这张图，
-                这张图是我用ECharts的仪表盘制作的，图上可以看到一些简单的可视化元素比如颜色表现我在演讲的不同阶段内心的紧张程度，比如这个指针现在就指向演讲开始这个红色的位置
+                大家好，我叫沈毅，是百度MMS团队的一名前端工程师，接下来我会用大约半小时的时间来介绍我们团队在可视化方向的产品ECharts，在开始之前我们看一下ppt右上角这张图，这张图是我用ECharts的仪表盘制作的，这个图放着是想提示自己已经过去的时间，也可以在图上可以看到一些简单的可视化元素比如颜色表现我在演讲的不同阶段内心的紧张程度，比如这个指针现在就指向演讲开始这个红色的位置
                 -->
                 <div id="about-me">
                     <img src="img/avatar_2.png" id="avatar" alt="">
                     <div id="description">
                         <h3>沈 毅</h3>
-                        <p>百度 EFE 团队前端工程师</p>
+                        <p>百度 MMS 前端工程师</p>
                     </div>
                 </div>
             </article>
@@ -96,6 +95,7 @@
                 <h2>动态类型切换</h2>
                 <!-- tip: 
                 这是另外一个和弦图和力导向图动态切换的例子，数据是世界杯德国队球员分别效力的俱乐部。
+                两者都是关系图，但是力导向还有一个聚类的特性。能够把一些关系比较强的节点聚在一起。
                 -->
                 <div class="item" style="height:500px;" data-action="showMagicType2"></div>
             </article>
@@ -122,11 +122,14 @@
             </article>
             <article data-action="disposeWeiboCheckin">
                 <h2>地图特效（微博签到）</h2>
-                <!--tip: 同样的还有之前 ThinkGIS 做的一个微博签到的示例, 这里面大概展现了 11.85w个签到数据 -->
+                <!--tip: 
+                    同样的还有之前 ThinkGIS 做的一个微博签到的示例, 这里面大概展现了 11.85w个签到数据 
+                    这个例子里我们也能看出来 ECharts 对于数据特别是大量数据的展现能力。
+                -->
 
                 <div class="item" style="height:600px;margin-top:-100px;" data-action="showWeiboCheckin"></div>
                 <a href="http://www.thinkgis.cn/public/sina/" target="_blank" style="position:absolute;right:10px;bottom:50px;">
-                    <img data-src="http://tp2.sinaimg.cn/1707284737/50/5705927796/1" alt="">
+                    <img data-src="img/thinkgis.jpg" alt="">
                 </a>
 
                 <div class="item" style="margin-top:-300px;font-size:22px;">11.8w 数据</div>
@@ -144,7 +147,7 @@
                 <h2>Even Better</h2>
                 <!-- tip:
                 这是一个我觉得更有意思的使用时间轴的例子。是去年世界杯的时候有同学用 ECharts 做的一个专题，它使用地图上的标注和标线
-                配合时间轴做了一个球队单次进攻的演示，我们可以通过动画直观的看到进攻和防守球员的移动和传球路线。
+                配合时间轴做了一个球队单次进攻的演示，我们可以通过动画直观的看到不同时间球员的位置，进攻和防守球员的移动和传球路线。
                  -->
                 <div class="item" style="height:500px;margin:0 100px;" data-action="showSoccerTimeline"></div>
             </article>
@@ -158,8 +161,8 @@
              <!-- tip: 由于时间关系其它更多的特性不在这一一介绍了，大家有兴趣的话可以去 echarts 的官网详细了解-->
                 <h1>图说</h1>
                 <!-- tip: 
-                    接下来我们要介绍的是图说。
-                    可能有些没有编程基础的用户还是觉得 ECharts 非常困难，图说就是面向这些用户开发的。通过图说我们只需要导入数据然后点点鼠标编辑一些参数，就能够制作出美观的报表，信息图。不过我猜大家大部分都是能写程序的开发人员。所以图说这个产品我就在这里大概提一下。
+                    接下来我们介绍一下开头提到过的图说。
+                    可能有些没有编程基础的用户还是觉得 ECharts 非常困难，图说就是面向这些用户开发的一个平台。在图说上我们可以导入数据然后点点鼠标编辑一些参数，就能够制作出美观的报表，信息图。不过我猜大家大部分都是能写程序的开发人员。所以图说这个产品我就在这里大概提一下。
                 -->
             </article>
             <article style="text-align:center">
@@ -187,7 +190,7 @@
                 <!-- tip: 
                     很多人问过是否能做图中这样的 3D 图表，我们也一直有做3D的想法，但是我们希望能够做得更有意思一些，能够通过 3D 展现使用 echarts 无法展现的东西
                 -->
-                <img class="item" src="http://docs.fusioncharts.com/charts/contents/ChartSS/Images/Col_3D.jpg" alt="">
+                <img class="item" src="img/Col_3D.jpg" alt="">
             </article>
 
             <article>
@@ -208,7 +211,7 @@
             </article>
             <article>
                 <!-- tip: 
-                    这是使用 ECharts 绘制的一个基础的地球仪，在这上面有跟ECharts地图一样的不同国家的轮廓线，还有当前时间的日照效果，如果仔细看的话还可以看出地球上的阴影所呈现的地势变化。
+                    这是使用 ECharts 绘制的一个基础的地球仪，在这上面有跟ECharts地图一样的不同国家的轮廓线，还有当前时间的日照效果，可以看到哪些国家现在是晚上，哪些国家现在是白天，如果仔细看的话还可以看出地球上的阴影所呈现的地势变化。
                 -->
                 <h2>3D 地图（Globe）</h2>
                 <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobe"></div>
@@ -232,8 +235,9 @@
                 <!-- tip: 
                     接下来向量场的可视化，关于向量场可视化 NASA 在 2012 年有一个经典的例子，Perpetual Ocean, 它把洋流的向量场用粒子动画非常直观的展现出来，它的艺术效果有点像梵高的名画“星夜”
                 -->
-                <img class="item" src="img/maxresdefault.jpg" alt="">
-                <img class="item" src="img/1920px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" style="margin-top:-300px;height:300px;" alt="">
+                <img class="item" src="img/vector_field.png" style="position:absolute;left:100px;top:200px;width:500px;" alt="">
+                <img class="item" src="img/maxresdefault.jpg" alt="" style="position:relative;z-index:1;">
+                <img class="item" src="img/1920px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" style="margin-top:-300px;height:300px;position:relative;z-index:1" alt="">
 
                 <!-- tip: 
                     这个案例是我们在刚开始开发 ECharts-X 的时候就想模仿的， 
@@ -249,7 +253,7 @@
             <!-- TODO 风场 -->
             <article>
                 <!-- tip: 
-                这是另外一个风场的可视化例子
+                这是另外一个风场的可视化例子，出来效果有点像是天气预报
                 -->
                 <h2>风场</h2>
                 <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobeWind"></div>
@@ -260,15 +264,13 @@
                 -->
                 <h1>更常用的 3D 图？</h1>
             </article>
-            <!--TODO 贴公式 -->
             <article>
                 <h2>曲面图（Surface）</h2>
                 <img src="img/surface-eq.svg" style="position:absolute;left:50px;top:200px;width:300px;" alt="">
                 <canvas class="item" style="margin:-50px 0;height:600px;" data-action="showSurface"></canvas>
             </article>
-            <!--TODO 贴公式 -->
             <article style="text-align:center">
-                <!--tip: 以及更复杂的参数曲面 -->
+                <!--tip: 以及更复杂的参数曲面，参数曲面是对三维的参数方程的绘制 -->
                 <h2>参数曲面（Parametric Surface）</h2>
                 <img src="img/parametric-eq.svg" style="position:absolute;left:50px;top:200px;width:400px;" alt="">
                 <canvas class="item" style="margin:-50px 0;height:600px;" data-action="showParametricSurface"></canvas>

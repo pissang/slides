@@ -1,4 +1,4 @@
-/*@import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic);*/
+@import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic);
 
 @font-face{
     font-family:"FZLanTingHeiS-UL-GB";
@@ -192,4 +192,17 @@ article .slide-tip {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 
     text-align: left;
+}
+
+.row>*{
+    float: left;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.row>.left {
+    width: 50%;
+}
+.row>.right {
+    width: 50%;
 }
