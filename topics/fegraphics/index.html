@@ -72,8 +72,11 @@ var ctx = canvas.getContext('2d');
             Canvas 的图形可以分为三类，路径 Path, 图片 Image 和文字 Text
             严格来讲文字也应该算路径，但是 Canvas 的接口文字和路径还是不太一样，所以这里分为两类
             -->
-                <ul class="content">
-                    <li>Path</li>
+                <ul class="content list">
+                    <li>
+                        Path
+                        <p>Line, Bezier, Arc</p>
+                    </li>
                     <li>Image</li>
                     <li>Text</li>
                 </ul>
@@ -227,7 +230,7 @@ ctx.strokeText('蛤蛤蛤蛤', 30, 30);
 
             <article>
                 <h2>Particle Effect</h2>
-                <ul style="font-size:28px;line-height:50px;">
+                <ul class="list">
                 <!--tip: 可以模拟生活中的一些现象 -->
                     <li>Fire</li>
                     <li>Fireworks</li>
@@ -314,6 +317,7 @@ function drawParticle() {
 
             <article>
                 <h2>Effector - Force Field</h2>
+                <!-- TODO -->
             </article>
 
             <article class="center">
@@ -370,7 +374,12 @@ var pixels = ctx.getImageData(x, y, width, height).data;
                 <h2>Gray - Luminance</h2>
                 <div class="row">
 <pre class="prettyprint item left">
+var r = pixels[i * 4];
+var g = pixels[i * 4 + 1];
+var b = pixels[i * 4 + 2];
+
 var lum = r * 0.21 + g * 0.72 + b * 0.07;
+
 pixels[i * 4] = lum;
 pixels[i * 4 + 1] = lum;
 pixels[i * 4 + 2] = lum;
@@ -380,10 +389,8 @@ pixels[i * 4 + 2] = lum;
             <article>
                 <h2>Gaussian Filter</h2>
 <pre class="prettyprint item left">
-pixels[i * 4] = lum;
-pixels[i * 4 + 1] = lum;
-pixels[i * 4 + 2] = lum;
 </pre>
+                <!-- TODO -->
             </article>
             <article>
                 <h2>Sobel Edge Filter</h2>
@@ -436,19 +443,214 @@ pixels[i * 4 + 2] = lum;
                 </ul>
             </article>
             <article>
-                <h2>Draw a Triangle</h2>
+                <h2>Browser Support</h2>
+                <!-- TODO -->
+            </article>
+            <article class="center">
+                <!--tip: 先来介绍一些 WebGL 可以应用的地方 -->
+                <h2>Use Cases</h2>
+                <ul class="content list">
+                    <!-- TODO 措辞 -->
+                    <li>Online Game</li>
+                    <li>3D model viewer</li>
+                    <li>Procedure, interactive film</li>
+                    <li>Visualization</li>
+                    <li>Realtime image filter</li>
+                    <li>2D Acceralation</li>
+                    <li>...</li>
+                </ul>
+            </article>
+            <article class="center">
+                <!-- tip: 这是个比较老牌的，也是现在做的最好的一个3D模型的网站 -->
+                <!-- tip: 可能大家都知道 dribbble, behance 这些设计师的网站，设计师可以把自己的作品截图或概念传上去分享给大家，sketchfab 也是做的类似的事情，只不过媒体资源从图片换成了 3D 模型，最近那届 GDC sketchfab 还加入了 PBR，最后的展现效果很好，但是带来的问题是需要加载很大的纹理图片去表现材质的细节，这个问题也是现在网站上呈现 3D 资源的最大的一个问题，而且跟视频不一样，3D 的模型并怎么不适合做流加载 -->
+                <h2>3D Model Viewer - Sketchfab</h2>
+                <img src="img/sketchfab.png" alt="">
+            </article>
+            <article class="center">
+                <h2>3D Model Viewer - dota2hero</h2>
+                <img class="item" src="img/dota2hero1.png" alt="">
+                <img class="item" style="margin-top:-550px;margin-left:50px;" data-src="img/dota2hero2.png" alt="">
             </article>
             <article>
-                <h2>Shading</h2>
+                <h2>Game Platform</h2>
+                <ul class="list">
+                    <li>Unreal Engine 4</li>
+                    <li>Unity 5</li>
+                    <li>Goo Engine</li>
+                    <li>PlayCanvas</li>
+                </ul>
+                <!-- TODO 图片 -->
+                <div id="game-platform-images">
+                    <img class="item" data-src="img/epic-citadel.jpg" alt="">
+                    <img class="item" data-src="img/Unity-5_WebGl.jpg" alt="">
+                    <img class="item" data-src="img/epic-citadel.jpg" alt="">
+                    <img class="item" data-src="img/playcanvas_designer2.png" alt="">
+                </div>
+            </article>
+            <article class="center">
+                <h2>Interactive Film - Ro.me</h2>
+                <img data-src="img/rome.jpg" alt="">
+            </article>
+            <article class="center">
+                <h2>Interactive Film - Worldcup</h2>
+                <img data-src="img/wordcup.png" alt="">
+            </article>
+            <!-- TODO Worldcup 示例 -->
+            <article class="center">
+                <h2>Visualization</h2>
+                <img class="item" data-src="img/map3d_population3.png" alt="">
+                <img class="item" style="margin-top:-550px;margin-left:50px;" data-src="img/map3d_flights.png" alt="">
+                <img class="item" style="margin-top:-550px;margin-left:100px;" data-src="img/map3d_wind.png" alt="">
+            </article>
+            <article class="center">
+                <h2>Learning WebGL - Lesson 1</h2>
+                <img data-src="img/simple.png" alt="">
+            </article>
+            <article class="center">
+<pre class="prettyprint" style="height:500px;text-align:left;font-size:12px;overflow-y:scroll;line-height:18px;width:1000px;margin:0 auto;">
+var gl;
+function initGL(canvas) {
+    try {
+        gl = canvas.getContext("experimental-webgl");
+        gl.viewportWidth = canvas.width;
+        gl.viewportHeight = canvas.height;
+    } catch (e) {
+    }
+    if (!gl) {
+        alert("Could not initialise WebGL, sorry :-(");
+    }
+}
+function getShader(gl, id) {
+    var shaderScript = document.getElementById(id);
+    if (!shaderScript) {
+        return null;
+    }
+    var str = "";
+    var k = shaderScript.firstChild;
+    while (k) {
+        if (k.nodeType == 3) {
+            str += k.textContent;
+        }
+        k = k.nextSibling;
+    }
+    var shader;
+    if (shaderScript.type == "x-shader/x-fragment") {
+        shader = gl.createShader(gl.FRAGMENT_SHADER);
+    } else if (shaderScript.type == "x-shader/x-vertex") {
+        shader = gl.createShader(gl.VERTEX_SHADER);
+    } else {
+        return null;
+    }
+    gl.shaderSource(shader, str);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        alert(gl.getShaderInfoLog(shader));
+        return null;
+    }
+    return shader;
+}
+var shaderProgram;
+function initShaders() {
+    var fragmentShader = getShader(gl, "shader-fs");
+    var vertexShader = getShader(gl, "shader-vs");
+    shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+        alert("Could not initialise shaders");
+    }
+    gl.useProgram(shaderProgram);
+    shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+    shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
+    shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+}
+var mvMatrix = mat4.create();
+var pMatrix = mat4.create();
+function setMatrixUniforms() {
+    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+}
+var triangleVertexPositionBuffer;
+var squareVertexPositionBuffer;
+function initBuffers() {
+    triangleVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
+    var vertices = [
+         0.0,  1.0,  0.0,
+        -1.0, -1.0,  0.0,
+         1.0, -1.0,  0.0
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    triangleVertexPositionBuffer.itemSize = 3;
+    triangleVertexPositionBuffer.numItems = 3;
+    squareVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+    vertices = [
+         1.0,  1.0,  0.0,
+        -1.0,  1.0,  0.0,
+         1.0, -1.0,  0.0,
+        -1.0, -1.0,  0.0
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    squareVertexPositionBuffer.itemSize = 3;
+    squareVertexPositionBuffer.numItems = 4;
+}
+function drawScene() {
+    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+    mat4.identity(mvMatrix);
+    mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
+    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    setMatrixUniforms();
+    gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
+    mat4.translate(mvMatrix, [3.0, 0.0, 0.0]);
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    setMatrixUniforms();
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
+}
+function webGLStart() {
+    var canvas = document.getElementById("lesson01-canvas");
+    initGL(canvas);
+    initShaders();
+    initBuffers();
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.enable(gl.DEPTH_TEST);
+    drawScene();
+}
+</pre>
+                <!-- TODO -->
+            </article>
+            <article class="center">
+                <h2 style="position:relative;z-index:1;">Graphics Pipeline</h2>
+                <!-- TODO: Primitive 的中文和发音 -->
+                <!-- tip: Convert vertices to pixels -->
+                <img data-src="img/pipeline2.png" style="width:600px;" alt="">
+            </article>
+            <article class="center" style="background-color:#06b3db;">
+                <img data-src="img/pipeline.png" style="max-width:1000px;" alt="">
+            </article>
+            <!-- 
+            刚才这些概念是比较基础的，可能从知道这些概念到做出刚才那些demo中间还有很多东西，比如光照等，但是做一个 WebGL 的图片处理已经可以了。
+            -->
+            <article>
+                <h1>Image Processing with WebGL</h1>
+                <!-- TODO 像素处理的示例图片 -->
+                <!-- http://docs.gimp.org/en/plug-in-convmatrix.html -->
+                <!-- tip 因为 fragment shader 里各个像素的处理是并行的，没有前后顺序关系的，所以我们不能在处理当前像素的时候去获取其它已经处理完的像素。-->
             </article>
             <article>
-                <h2>Shading Pipeline</h2>
-                <p>Convert vertices to pixels</p>
+                <h2>Realtime Lowpolify</h2>
+                <!-- TODO -->
             </article>
             <article class="center">
                 <h2>WebGL Libraries</h2>
                 <!--
-                tip: 刚才的描述可能会有一点晦涩，有一些 WebGL 库会封装底层的图形接口，抽象出更高层的概念，
+                tip:如果要做一些其它事情，有一些 WebGL 库会封装底层的图形接口，抽象出更高层的概念，
                 比如场景，摄像机，材质，灯光等等，这些概念更接近现实生活。
                 -->
                 <div class="row content">
@@ -468,30 +670,20 @@ pixels[i * 4 + 2] = lum;
                     </ul>
                 </div>
             </article>
+            <article class="center" style="background:#06b3db">
+                <h2>Web3D App Pipeline</h2>
+                <img data-src="img/web3d-flow.jpg" alt="">
+            </article>
+            <article>
+                <h2>Integrate WebGL with Canvas</h2>
+            </article>
+            <article>
+                <h1>不要有了锤子就看什么都是钉子</h1>
+            </article>
             <article class="center">
-                <h2>Assets</h2>
-                <ul class="item list content">
-                    <li>Model</li>
-                    <li>Shader</li>
-                    <li>Texture</li>
-                </ul>
-            </article>
-            <article class="center">
-                <h2>Web3D Pipeline</h2>
-                <img src="img/web3d-flow.jpg" alt="">
-            </article>
-            <article>
-                <h2>WebGL Particle Effects</h2>
-            </article>
-            <article>
-                <h1>Image Processing with WebGL</h1>
-            </article>
-            <article>
-                <h2>Realtime Lowpolify</h2>
-            </article>
-            <article></article>
-            <article>
-                <h1>Show Cases</h1>
+                <h2>Show Case</h2>
+                <img data-src="img/man.png" alt="">
+                <!-- TODO 兄贵 -->
             </article>
             <article>
                 <!-- 广告时间 -->

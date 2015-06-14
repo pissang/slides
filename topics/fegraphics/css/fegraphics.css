@@ -124,12 +124,14 @@ article h2 {
     padding: 0;
 }
 
-#particle-images {
+#particle-images,
+#game-platform-images{
     position: absolute;
     top: 130px;
     left: 350px;
 }
 
-#particle-images img {
+#particle-images img,
+#game-platform-images img {
     position: absolute;
 }
