@@ -30,6 +30,20 @@ define(function (require) {
         }
     }
 
+    function RepulsiveField(center, k) {
+        this.center = center;
+        this.k = k;
+    }
+
+    var v = new Vector2();
+    RepulsiveField.prototype.applyTo = function (velocity, position, weight, deltaTime) {
+        Vector2.sub(v, position, this.center);
+        var l = Vector2.len(v);
+        var k = this.k;
+        var f = k / l;
+        Vector2.scaleAndAdd(velocity, velocity, v, f / l);
+    } 
+
     function Particle() {
         this.position = new Vector2();
         
@@ -182,6 +196,7 @@ define(function (require) {
     ParticleEffect.Emitter = Emitter;
     ParticleEffect.ForceField = ForceField;
     ParticleEffect.BoxCollision = BoxCollision;
+    ParticleEffect.RepulsiveField = RepulsiveField;
 
     return ParticleEffect;
 });

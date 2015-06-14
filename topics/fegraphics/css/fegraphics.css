@@ -135,3 +135,14 @@ article h2 {
 #game-platform-images img {
     position: absolute;
 }
+
+#graphics {
+    width: 850px;
+    margin-top: 50px;
+}
+
+#graphics li {
+    float: left;
+    list-style: none;
+    margin: 50px;
+}

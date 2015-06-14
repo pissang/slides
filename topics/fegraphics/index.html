@@ -26,7 +26,7 @@ TODO
 -->
             <article class="center">
                 <h2>Contents</h2>
-                <ul class="content">
+                <ul class="content list">
 <!--
     介绍一些基本的 Canvas 的命令
 -->
@@ -47,7 +47,7 @@ TODO
             </article>
 
             <article class="center">
-                <ul class="content">
+                <ul class="content list" style="margin-top:100px;">
                     <li>Immediate mode API
                     <p>Call rendering commands to draw the entire scene</p></li>
                     <li>Currently 1.0</li>
@@ -57,7 +57,8 @@ TODO
             </article>
 
             <article class="center">
-                <h2>Create Context</h2>
+            <!--tip: 在画图形之前我们首先要创建一个 Context -->
+                <h2>Create 2D Context</h2>
 <pre class="prettyprint large content">
 var canvas = document.createElement('canvas');
 canvas.width = 500;
@@ -65,28 +66,34 @@ canvas.height = 500;
 var ctx = canvas.getContext('2d');
 </pre>
             </article>
-            
+
             <article class="center">
             <!-- tip:
             创建完 Context 我们就可以开始在这个画布上画图形了
             Canvas 的图形可以分为三类，路径 Path, 图片 Image 和文字 Text
             严格来讲文字也应该算路径，但是 Canvas 的接口文字和路径还是不太一样，所以这里分为两类
             -->
-                <ul class="content list">
+                <ul class="content list" id="graphics" style="margin-top:100px;">
                     <li>
+                        <img src="img/icon-path.png" />
                         Path
-                        <p>Line, Bezier, Arc</p>
                     </li>
-                    <li>Image</li>
-                    <li>Text</li>
+                    <li>
+                        <img src="img/icon-image.png" />
+                        Image
+                    </li>
+                    <li>
+                        <img src="img/icon-text.png" />
+                        Text
+                    </li>
                 </ul>
             </article>
 
             <article class="center">
-                <h2>Path</h2>
+                <h2><img src="img/icon-path.png" width="40" style="margin-right:20px;" alt="">Path</h2>
                 <ul class="content list" style="margin-top:100px;">
                     <li>Line</li>
-                    <li>Bezier Curve(Cubic, Quadratic)</li>
+                    <li>Bezier Curve(Quadratic, Cubic)</li>
                     <li>Arc</li>
                 </ul>
             </article>
@@ -158,6 +165,11 @@ ctx.stroke();
                 </div>
             </article>
 
+            <article>
+                <h2>Fill</h2>
+                <!-- TODO Fill rule -->
+            </article>
+
             <article id="styling-path" class="list" data-action="initPathStyleAnimation">
                 <h2>Styling Path</h2>
                 <div class="row">
@@ -188,8 +200,8 @@ ctx.stroke();
                     <div class="item" data-action="pathStyleAnimation" data-step="fillStyle"></div>
                     <div class="item" data-action="pathStyleAnimation" data-step="strokeStyle"></div>
                     <div class="item" data-action="pathStyleAnimation" data-step="lineWidth"></div>
-                    <div class="item" data-action="pathStyleAnimation" data-step="shadow"></div>
                     <div class="item" data-action="pathStyleAnimation" data-step="lineJoin"></div>
+                    <div class="item" data-action="pathStyleAnimation" data-step="shadow"></div>
                 </div>
             </article>
 
@@ -315,9 +327,9 @@ function drawParticle() {
                 <div class="item content" data-action="showParticleEffect" data-random="1" data-collision="1" style="height:450px;"></div>
             </article>
 
-            <article>
+            <article class="center">
                 <h2>Effector - Force Field</h2>
-                <!-- TODO -->
+                <div class="item content" data-action="showParticleEffect" data-random="1" data-collision="1" data-force-field="1" style="height:450px;"></div>
             </article>
 
             <article class="center">
@@ -332,7 +344,7 @@ ctx.drawImage(backCanvas, 0, 0, width, height);
 ctx.globalAlpha = 1;
 ....
 </pre>
-                <div class="item content" data-action="showParticleEffect" data-random="1" data-collision="1" data-motion-blur="1" style="height:450px;"></div>
+                <div class="item content" data-action="showParticleEffect" data-random="1" data-collision="1" data-force-field="1" data-motion-blur="1" style="height:450px;"></div>
             </article>
 
             <article class="center">
@@ -483,7 +495,7 @@ pixels[i * 4 + 2] = lum;
                 <div id="game-platform-images">
                     <img class="item" data-src="img/epic-citadel.jpg" alt="">
                     <img class="item" data-src="img/Unity-5_WebGl.jpg" alt="">
-                    <img class="item" data-src="img/epic-citadel.jpg" alt="">
+                    <img class="item" data-src="img/goo.png" alt="">
                     <img class="item" data-src="img/playcanvas_designer2.png" alt="">
                 </div>
             </article>
@@ -493,9 +505,9 @@ pixels[i * 4 + 2] = lum;
             </article>
             <article class="center">
                 <h2>Interactive Film - Worldcup</h2>
-                <img data-src="img/wordcup.png" alt="">
+                <a href="http://pissang.github.io/worldcup-intro" target="_blank">
+                <img data-src="img/wordcup.png" alt=""></a>
             </article>
-            <!-- TODO Worldcup 示例 -->
             <article class="center">
                 <h2>Visualization</h2>
                 <img class="item" data-src="img/map3d_population3.png" alt="">
@@ -626,6 +638,17 @@ function webGLStart() {
                 <!-- TODO -->
             </article>
             <article class="center">
+                <ul class="content list" style="width:400px;margin-top:50px;">
+                    <li class="item">Create context</li>
+                    <li class="item">Create vertex buffer</li>
+                    <li class="item">Bind vertex buffer</li>
+                    <li class="item">Create shader</li>
+                    <li class="item">Bind shader</li>
+                    <li class="item">Set uniform</li>
+                    <li class="item">Draw</li>
+                </ul>
+            </article>
+            <article class="center">
                 <h2 style="position:relative;z-index:1;">Graphics Pipeline</h2>
                 <!-- TODO: Primitive 的中文和发音 -->
                 <!-- tip: Convert vertices to pixels -->
@@ -686,7 +709,7 @@ function webGLStart() {
                 <!-- TODO 兄贵 -->
             </article>
             <article>
-                <!-- 广告时间 -->
+                <h2>广告时间</h2>
             </article>
             <article>
                 <h1>Thanks</h1>
@@ -721,7 +744,8 @@ function webGLStart() {
         <script>
             require.config({
                 paths: {
-                    echarts: '../../js/lib/echarts'
+                    echarts: '../../js/lib/echarts',
+                    'worldcup-high': 'js/worldcup-high'
                 }
             });
             require(['js/main']);

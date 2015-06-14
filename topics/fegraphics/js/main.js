@@ -111,7 +111,8 @@ define(function (require) {
                     require('./showParticleEffect').init(dom, {
                         random: dom.getAttribute('data-random'),
                         collision: dom.getAttribute('data-collision'),
-                        motionBlur: dom.getAttribute('data-motion-blur')
+                        motionBlur: dom.getAttribute('data-motion-blur'),
+                        forceField: dom.getAttribute('data-force-field')
                     });
                 })
             },
