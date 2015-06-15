@@ -23,10 +23,10 @@ define(function (require) {
         position = position._array;
         velocity = velocity._array;
         if (position[0] < min[0] || position[0] > max[0]) {
-            velocity[0] = -velocity[0] * 0.8;
+            velocity[0] = -velocity[0] * 0.6;
         }
         if (position[1] < min[1] || position[1] > max[1]) {
-            velocity[1] = -velocity[1] * 0.8;
+            velocity[1] = -velocity[1] * 0.6;
         }
     }
 

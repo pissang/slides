@@ -5,7 +5,11 @@ define(function (require) {
     var Line = require('zrender/shape/Line');
     var BezierCurve = require('zrender/shape/BezierCurve');
     var Circle = require('zrender/shape/Circle');
+    var Rectangle = require('zrender/shape/Rectangle');
     var Arc = require('./Arc');
+
+    var PathProxy = require('zrender/shape/util/PathProxy');
+    var Path = require('zrender/shape/Path');
 
     var curveTool = require('zrender/tool/curve');
 
@@ -14,17 +18,27 @@ define(function (require) {
         this.zr = zrender.init(dom);
 
         this._steps = [];
+
+        this._pathProxy = new PathProxy();
+
+        this._fillShape = new Path({
+            style: {
+                color: 'rgba(255, 255, 255, 0.5)'
+            }
+        });
     }
 
     AnimationPathContext.prototype = {
         
         constructor: AnimationPathContext,
 
-        beginPath: function () {
+        beginPath: function (ctx) {
             this.zr.clear();
 
             this._x = null;
             this._y = null;
+
+            this._pathProxy.begin();
         },
 
         _pointCircle: function (x, y, cb) {
@@ -34,10 +48,6 @@ define(function (require) {
                     x: x,
                     y: y,
                     r: 0
-                    // shadowOffsetX: 0,
-                    // shadowOffsetY: 0,
-                    // shadowBlur: 20,
-                    // shadowColor: 'black'
                 },
                 z: 1
             });
@@ -96,6 +106,8 @@ define(function (require) {
             this._steps.push(function (cb) {
                 self._pointCircle(x, y, cb);
             });
+
+            this._pathProxy.moveTo(x, y);
         },
 
         lineTo: function (x, y) {
@@ -138,6 +150,8 @@ define(function (require) {
 
             this._x = x;
             this._y = y;
+
+            this._pathProxy.lineTo(x, y);
         },
 
         quadraticCurveTo: function (x1, y1, x2, y2) {
@@ -209,6 +223,8 @@ define(function (require) {
 
             this._x = x2;
             this._y = y2;
+
+            this._pathProxy.quadraticCurveTo(x1, y1, x2, y2);
         },
 
         bezierCurveTo: function (x1, y1, x2, y2, x3, y3) {
@@ -293,6 +309,8 @@ define(function (require) {
 
             this._x = x3;
             this._y = y3;
+
+            this._pathProxy.quadraticCurveTo(x1, y1, x2, y2, x3, y3);
         },
 
         arc: function (cx, cy, r, startAngle, endAngle, anticlockwise) {
@@ -338,12 +356,34 @@ define(function (require) {
 
             this._x = x1;
             this._y = y1;
+
+            this._pathProxy.arc(cx, cy, r, startAngle, endAngle, anticlockwise);
         },
 
         stroke: function () {},
 
         fill: function () {
-
+            var fillShape = this._fillShape;
+            var zr = this.zr;
+            fillShape.style.pathArray = this._pathProxy.pathCommands;
+            var rect = this._pathProxy.fastBoundingRect();
+            var height = rect.height;
+            rect.height = 0;
+            this._steps.push(function (cb) {
+                zr.addShape(fillShape);
+                fillShape.clipShape = new Rectangle({
+                    style: rect
+                });
+                zr.animation.animate(fillShape.clipShape.style)
+                    .when(2000, {
+                        height: height
+                    })
+                    .during(function () {
+                        zr.modShape(fillShape)
+                    })
+                    .done(cb)
+                    .start();
+            });
         },
 
         run: function () {

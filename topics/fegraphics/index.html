@@ -7,19 +7,25 @@
         <link rel=stylesheet type=text/css href="../../css/desert.css" />
         <link rel=stylesheet type=text/css href="css/fegraphics.css" />
     </head>
-<!--
-TODO 
-- Particle Effects
-- Canvas Fill Animation
-- WebGL
--->
-
     <body id="fegraphics">
         <div id="articles">
             <article>
                 <h1 class="title">Graphics in Front End Developing</h1>
             </article>
-
+            <article data-action="showIframe" data-src="http://cq01-rdqa-dev076.cq01.baidu.com:8848/baixiaodu/index.html">
+                <div style="position:absolute; left: 0; top: 0; right: 0; bottom: 0;">
+                    <iframe width="100%" height="100%" frameborder="0"></iframe>
+                </div>
+                <div style="position:absolute; left: 100px; top: 100px;">
+                    <img src="img/baixiaodu.png" alt="">
+                </div>
+                <div style="position:absolute; right: 50px; top: 10px;">
+                <div style="font-size:60px;">
+                    EFE
+                </div>
+                <a href="http://efe.baidu.com" target="_blank" style="text-decoration:none;font-size: 20px;">http://efe.baidu.com</a>
+                </div>
+            </article>
 <!-- tip:
 之前要表达一个图形，可能最多只是贴图片，
 挣脱 dom 的束缚, 来看看前端还能有哪些更高级，更有意思的图形绘制方式
@@ -36,7 +42,7 @@ TODO
                     <li>Writing particle effect with Canvas</li>
                     <li>Image processing with Canvas</li>
                     <li>SVG and Canvas</li>
-                    <li>WebGL Basic</li>
+                    <li>WebGL</li>
                     <li>Image processing with WebGL</li>
                     <li>Show cases</li>
                 </ul>
@@ -51,8 +57,8 @@ TODO
                     <li>Immediate mode API
                     <p>Call rendering commands to draw the entire scene</p></li>
                     <li>Currently 1.0</li>
-                    <li>IE9+, Chrome, Firefox, Safari...</li>
                     <li>Coming 2.0</li>
+                    <li>IE9+, Chrome, Firefox, Safari...</li>
                 </ul>
             </article>
 
@@ -75,37 +81,44 @@ var ctx = canvas.getContext('2d');
             -->
                 <ul class="content list" id="graphics" style="margin-top:100px;">
                     <li>
-                        <img src="img/icon-path.png" />
+                        <img data-src="img/icon-path.png" />
                         Path
                     </li>
                     <li>
-                        <img src="img/icon-image.png" />
+                        <img data-src="img/icon-image.png" />
                         Image
                     </li>
                     <li>
-                        <img src="img/icon-text.png" />
+                        <img data-src="img/icon-text.png" />
                         Text
                     </li>
                 </ul>
             </article>
 
             <article class="center">
-                <h2><img src="img/icon-path.png" width="40" style="margin-right:20px;" alt="">Path</h2>
+                <h2><img data-src="img/icon-path.png" width="40" style="margin-right:20px;" alt="">Path</h2>
                 <ul class="content list" style="margin-top:100px;">
+                <!-- Canvas 的路径包括线段，贝塞尔曲线，包括二次和三次的，还有圆弧 -->
                     <li>Line</li>
                     <li>Bezier Curve(Quadratic, Cubic)</li>
                     <li>Arc</li>
+
+                    <!-- 所有其它复杂的图形基本上都可以使用这三个基本图形进行绘制组合 -->
                 </ul>
             </article>
 
-<!-- 先举几个简单的例子介绍 Canvas Path 的绘制 -->
+                <!-- 首先来看线段的绘制 -->
             <article>
-                <h2>Draw a line</h2>
+                <h2>Draw lines</h2>
                 <div class="row canvas-demo">
+                <!-- 所有的路径绘制都是以 beginPath 开始，通过 beginPath 方法创建一个新的路径，然后 moveTo 移到线段的起点，然后再调用 lineTo 命令画一条线段到点500, 100-->
 <pre class="prettyprint item left" id="draw-line">
 ctx.beginPath();
 ctx.moveTo(100, 100);
 ctx.lineTo(500, 100);
+ctx.lineTo(500, 300);
+ctx.lineTo(100, 300);
+ctx.lineTo(100, 100);
 ctx.stroke();
 </pre>
                     <div class="right item" data-action="pathDrawAnimation" data-code="draw-line"></div>
@@ -158,7 +171,6 @@ ctx.stroke();
 <pre class="prettyprint item left" id="draw-arc">
 ctx.beginPath();
 ctx.arc(300, 180, 100, 0.2, 3, false);
-<!-- ctx.arc(300, 200, 150, 0, Math.PI * 2, false); -->
 ctx.stroke();
 </pre>
                     <div class="right item" data-action="pathDrawAnimation" data-code="draw-arc"></div>
@@ -166,10 +178,38 @@ ctx.stroke();
             </article>
 
             <article>
-                <h2>Fill</h2>
-                <!-- TODO Fill rule -->
+                <h2>Fill - None Zero</h2>
+                <div class="row canvas-demo">
+                <!-- 不知道大家画五角星的顺序是怎么样的，反正我是按照这个顺序画的 -->
+<pre class="prettyprint item left" id="draw-star">
+ctx.beginPath();
+ctx.moveTo(300, 350);
+ctx.lineTo(400, 50);
+ctx.lineTo(500, 350);
+ctx.lineTo(250, 150);
+ctx.lineTo(550, 150);
+ctx.lineTo(300, 350);
+ctx.stroke();
+ctx.fill();
+</pre>
+                    <div class="right item" data-action="pathDrawAnimation" data-code="draw-star"></div>
             </article>
 
+            <article>
+                <h2>Fill - None Zero</h2>
+                <div class="row canvas-demo">
+                <!-- 不知道大家画五角星的顺序是怎么样的，反正我是按照这个顺序画的 -->
+<pre class="prettyprint item left" id="draw-ring">
+ctx.beginPath();
+ctx.moveTo(400, 200);
+ctx.arc(300, 200, 100, 0, Math.PI * 2, true);
+ctx.moveTo(500, 200);
+ctx.arc(300, 200, 200, 0, Math.PI * 2, false);
+ctx.stroke();
+ctx.fill();
+</pre>
+                    <div class="right item" data-action="pathDrawAnimation" data-code="draw-ring"></div>
+            </article>
             <article id="styling-path" class="list" data-action="initPathStyleAnimation">
                 <h2>Styling Path</h2>
                 <div class="row">
@@ -336,6 +376,7 @@ function drawParticle() {
                 <!-- 保存上一帧的图片作为残影 -->
                 <!-- https://www.chromeexperiments.com/experiment/noise-field -->
                 <h2>With Motion Blur</h2>
+                <!-- 加入动态模糊之后粒子的运动轨迹会更清晰 -->
 <pre class="prettyprint item" style="position:absolute;left: 0;top:50px;text-align:left;">
 backCtx.drawImage(canvas, 0, 0, width, height);
 ctx.clearRect(0, 0, width, height);
@@ -362,54 +403,79 @@ ctx.globalAlpha = 1;
                 </ul>
             </article>
     
-            <article>
+            <article class="center">
                 <h2>Particle Texture</h2>
-                <!-- http://29a.ch/sandbox/2011/neonflames/ -->
+                <!-- 我们也可以利用粒子效果制作漂亮的纹理，比如这张很像星云的图片。
+                我们如果每个粒子加点随机的颜色，每一帧不清除上一帧的画面，然后在粒子运动的过程中加点噪声比如柏林噪声去改变速度。哦对还要设置颜色混合为叠加模式。这样画的粒子很多的区域就会变得很亮。
+                -->
+                <a href="http://29a.ch/sandbox/2011/neonflames/" target="_blank">
+                    <img style="max-width:800px;" data-src="img/particle_texture.png" alt="">
+                </a>
+                <ul class="content item list" style="position:absolute;left:100px;top:200px;">
+                    <li>Random color</li>
+                    <li>Keep last frame</li>
+                    <li>Perlin noise</li>
+                    <li>globalCompositeOperation = 'lighter'</li>
+                </ul>
             </article>
 
             <article>
                 <h1>Image Processing with Canvas</h1>
             </article>
             <article class="center">
-                <h2>getImageData()</h2>
+                <h2>Pixel Manipulation</h2>
                 <div class="content">
 <pre class="prettyprint item">
 var pixels = ctx.getImageData(x, y, width, height).data;
+...
+ctx.putImageData(pixels, x, y);
 </pre>
                 </div>
                 <div class="item">
-                    <h3>Pixel Layout - Uint8ClampedArray</h3>
-                    <img src="img/pixellayout.png" alt="">
+                    <!--  一个行优先的 TypedArray -->
+                    <h3 style="margin-top:-30px;">Pixel Layout - Uint8ClampedArray</h3>
+                    <img data-src="img/pixellayout.png" alt="">
                 </div>
             </article>
             <article>
                 <h2>Gray - Luminance</h2>
-                <div class="row">
+                <div class="row canvas-demo">
 <pre class="prettyprint item left">
-var r = pixels[i * 4];
-var g = pixels[i * 4 + 1];
-var b = pixels[i * 4 + 2];
+var r = pixels[i];
+var g = pixels[i + 1];
+var b = pixels[i + 2];
 
 var lum = r * 0.21 + g * 0.72 + b * 0.07;
 
-pixels[i * 4] = lum;
-pixels[i * 4 + 1] = lum;
-pixels[i * 4 + 2] = lum;
+pixels[i] = lum;
+pixels[i + 1] = lum;
+pixels[i + 2] = lum;
 </pre>
+                    <div class="item right" data-action="imageFilter" data-filter="gray"></div>
                 </div>
             </article>
             <article>
-                <h2>Gaussian Filter</h2>
-<pre class="prettyprint item left">
-</pre>
-                <!-- TODO -->
+                <h2>Gaussian Blur</h2>
+                <div class="row canvas-demo">
+                    <!-- tip: 记得处理边界情况 -->
+                    <!-- tip: 这个卷积核的大小就是高斯模糊的半径，也可以对同一张图片处理多次 -->
+                    <!-- tip: 这里有个简单有效的优化技巧，有些卷积核，像这个高斯模糊的，是可分离的，它可以在两个方向上分别做一维的卷积，效果跟二维卷积相同，但是时间复杂度从 k2 变成 2k, 如果卷积核的大小为 k x k 的话-->
+
+                    <div class="left" style="margin-top:-50px;">
+                        <h4>Convolution</h4>
+                        <img data-src="img/convolution-calculate.png" alt="">
+                        <h4>Gaussian Kernel</h4>
+                        <img data-src="img/gaussian_kernel.jpg" alt="">
+                    </div>
+                    <!-- TODO 动画 -->
+                    <img class="item" src="img/gaussian_seperable.gif" style="position:absolute;right:20px;top:130px;" alt="">
+                    <div class="item right" data-action="imageFilter" data-filter="gaussian"></div>
             </article>
+            <!--
             <article>
-                <h2>Sobel Edge Filter</h2>
+                <h2>Sobel Edge</h2>
             </article>
-            <article>
-                <h2>putImageData()</h2>
-            </article>
+            -->
 <!--
             <article>
                 <h2>Canvas in Game</h2>
@@ -443,7 +509,7 @@ pixels[i * 4 + 2] = lum;
                 </ul>
             </article>
             <article>
-                <h1>WebGL Basic</h1>
+                <h1>WebGL</h1>
             </article>
             <article class="center">
                 <h2>WebGL Introduction</h2>
@@ -454,17 +520,29 @@ pixels[i * 4 + 2] = lum;
                     <li>Coming 2.0</li>
                 </ul>
             </article>
-            <article>
+            <article class="center">
                 <h2>Browser Support</h2>
-                <!-- TODO -->
+                <div class="content">
+                    <h3>PC</h3>
+                    <ul>
+                        <li>IE 11</li>
+                        <li>Chrome</li>
+                        <li>Firefox</li>
+                        <li>Safari</li>
+                    </ul>
+                    <h3>Mobile</h3>
+                    <ul>
+                        <li>iOS 8 safari</li>
+                        <li>腾讯 X5</li>
+                    </ul>
+                </div>
             </article>
             <article class="center">
-                <!--tip: 先来介绍一些 WebGL 可以应用的地方 -->
-                <h2>Use Cases</h2>
+                <!--tip: 然后看一下 WebGL 的一些应用场景 -->
                 <ul class="content list">
-                    <!-- TODO 措辞 -->
-                    <li>Online Game</li>
+                    <!-- 在线的 3D 模型浏览，跟图片或视频相比，它有一定的交互能力，用户可以从各个角度去查看这个模型的细节， 比如这节课开头的百小度 -->
                     <li>3D model viewer</li>
+                    <li>Web Game</li>
                     <li>Procedure, interactive film</li>
                     <li>Visualization</li>
                     <li>Realtime image filter</li>
@@ -474,14 +552,35 @@ pixels[i * 4 + 2] = lum;
             </article>
             <article class="center">
                 <!-- tip: 这是个比较老牌的，也是现在做的最好的一个3D模型的网站 -->
-                <!-- tip: 可能大家都知道 dribbble, behance 这些设计师的网站，设计师可以把自己的作品截图或概念传上去分享给大家，sketchfab 也是做的类似的事情，只不过媒体资源从图片换成了 3D 模型，最近那届 GDC sketchfab 还加入了 PBR，最后的展现效果很好，但是带来的问题是需要加载很大的纹理图片去表现材质的细节，这个问题也是现在网站上呈现 3D 资源的最大的一个问题，而且跟视频不一样，3D 的模型并怎么不适合做流加载 -->
+                <!-- tip: 最近 sketchfab 还加入了 PBR，最后的展现效果很好，但是带来的问题是需要加载很大的纹理图片去表现材质的细节，这个问题也是现在网站上呈现 3D 资源的最大的一个问题，而且跟视频不一样，3D 的模型并怎么不适合做流加载 -->
                 <h2>3D Model Viewer - Sketchfab</h2>
-                <img src="img/sketchfab.png" alt="">
+                <img data-src="img/sketchfab.png" alt="">
+            </article>
+            <article class="center" data-action="showIframe" data-src="https://sketchfab.com/models/fa9e1c3c662e45498420eed278ba2794/embed">
+                <!-- tip: 在这里模型资源就跟图片等媒体资源一样，设计师或者其他用户可以上传，编辑，管理自己的模型，并且分享给其他人或者使用 iframe 嵌入到自己的页面里面 -->
+                <iframe width="800" height="480" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" onmousewheel=""></iframe>
+                <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;">
+                    <a href="https://sketchfab.com/models/fa9e1c3c662e45498420eed278ba2794?utm_source=oembed&utm_medium=embed&utm_campaign=fa9e1c3c662e45498420eed278ba2794" target="_blank" style="font-weight: bold; color: #1CAAD9;">Speero Wip</a>
+                    by <a href="https://sketchfab.com/nikohard?utm_source=oembed&utm_medium=embed&utm_campaign=fa9e1c3c662e45498420eed278ba2794" target="_blank" style="font-weight: bold; color: #1CAAD9;">nikohard</a>
+                    on <a href="https://sketchfab.com?utm_source=oembed&utm_medium=embed&utm_campaign=fa9e1c3c662e45498420eed278ba2794" target="_blank" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a>
+                </p>
+            </article>
+            <article class='center' data-action="showIframe" data-src="https://sketchfab.com/models/97339581ac194457a08051c89e7d8e38/embed">
+                <!--tip: 或者做一些产品的展现和介绍 -->
+                <iframe width="800" height="480" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" onmousewheel=""></iframe>
+                <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;">
+                    <a href="https://sketchfab.com/models/97339581ac194457a08051c89e7d8e38?utm_source=oembed&utm_medium=embed&utm_campaign=97339581ac194457a08051c89e7d8e38" target="_blank" style="font-weight: bold; color: #1CAAD9;">Microsoft Hololens</a>
+                    by <a href="https://sketchfab.com/sketchfab?utm_source=oembed&utm_medium=embed&utm_campaign=97339581ac194457a08051c89e7d8e38" target="_blank" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a>
+                    on <a href="https://sketchfab.com?utm_source=oembed&utm_medium=embed&utm_campaign=97339581ac194457a08051c89e7d8e38" target="_blank" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a>
+                </p>
             </article>
             <article class="center">
                 <h2>3D Model Viewer - dota2hero</h2>
                 <img class="item" src="img/dota2hero1.png" alt="">
                 <img class="item" style="margin-top:-550px;margin-left:50px;" data-src="img/dota2hero2.png" alt="">
+            </article>
+            <article class="center" data-action="showIframe" data-src='http://pissang.github.io/dota2hero/'>
+                <iframe width="100%" height="100%" frameborder="0"></iframe>
             </article>
             <article>
                 <h2>Game Platform</h2>
@@ -491,7 +590,6 @@ pixels[i * 4 + 2] = lum;
                     <li>Goo Engine</li>
                     <li>PlayCanvas</li>
                 </ul>
-                <!-- TODO 图片 -->
                 <div id="game-platform-images">
                     <img class="item" data-src="img/epic-citadel.jpg" alt="">
                     <img class="item" data-src="img/Unity-5_WebGl.jpg" alt="">
@@ -504,17 +602,22 @@ pixels[i * 4 + 2] = lum;
                 <img data-src="img/rome.jpg" alt="">
             </article>
             <article class="center">
+                <h2>Interactive Film - Lights</h2>
+                <img data-src="img/rome.jpg" alt="">
+            </article>
+            <article class="center">
                 <h2>Interactive Film - Worldcup</h2>
                 <a href="http://pissang.github.io/worldcup-intro" target="_blank">
                 <img data-src="img/wordcup.png" alt=""></a>
             </article>
             <article class="center">
-                <h2>Visualization</h2>
+                <h2>Visualization - ECharts-X</h2>
                 <img class="item" data-src="img/map3d_population3.png" alt="">
                 <img class="item" style="margin-top:-550px;margin-left:50px;" data-src="img/map3d_flights.png" alt="">
                 <img class="item" style="margin-top:-550px;margin-left:100px;" data-src="img/map3d_wind.png" alt="">
             </article>
             <article class="center">
+                <!-- 介绍了这么多 case，我们来看看怎么使用 WebGL 绘制图形 -->
                 <h2>Learning WebGL - Lesson 1</h2>
                 <img data-src="img/simple.png" alt="">
             </article>
@@ -635,26 +738,60 @@ function webGLStart() {
     drawScene();
 }
 </pre>
-                <!-- TODO -->
             </article>
             <article class="center">
                 <ul class="content list" style="width:400px;margin-top:50px;">
-                    <li class="item">Create context</li>
-                    <li class="item">Create vertex buffer</li>
-                    <li class="item">Bind vertex buffer</li>
-                    <li class="item">Create shader</li>
-                    <li class="item">Bind shader</li>
-                    <li class="item">Set uniform</li>
-                    <li class="item">Draw</li>
+                    <li>Create context</li>
+                    <!--tip: 传输要绘制的顶点数据到 GPU，顶点数据包括顶点的位置，比如刚才三角形的三个顶点的位置，顶点的颜色等等 -->
+                    <li>Create vertex buffer</li>
+                    <li>Bind vertex buffer</li>
+                    <!--tip: 创建绑定 shader 着色器，shader 是跑在 GPU 里的代码，用来处理顶点和像素，这个后面会提到 -->
+                    <li>Create shader</li>
+                    <li>Bind shader</li>
+                    <!--tip: 给 shader 传参数 -->
+                    <li>Set uniform</li>
+                    <!--tip: 最后都设置传输完之后就可以调用 drawArray 或者 drawElements 把这些顶点绘制到屏幕上 -->
+                    <li>Draw<p>drawArrays, drawElements</p></li>
+                    <!-- tip
+                    不像 canvas 或者 svg 3，5行代码屏幕上就能出东西了，写 WebGL 常常会写了一堆代码屏幕上什么都没有，非常打击自尊心,
+                    而且可能会有很多原因，比如哪里漏了一步，shader 代码写错了，甚至摄像机的位置没放对
+                    -->
                 </ul>
             </article>
             <article class="center">
                 <h2 style="position:relative;z-index:1;">Graphics Pipeline</h2>
-                <!-- TODO: Primitive 的中文和发音 -->
-                <!-- tip: Convert vertices to pixels -->
                 <img data-src="img/pipeline2.png" style="width:600px;" alt="">
+
             </article>
             <article class="center" style="background-color:#06b3db;">
+                <!-- tip: 然后看看在调用 drawArrays 或者 drawElements 后顶点数据是怎么最后变成屏幕上的像素的 -->
+                <!-- 
+                    tip: 首先顶点会进入 vertex shader （顶点着色器), 顶点着色器的输入是每个顶点的顶点数据，包括位置，颜色等等
+                    输出是经过变换后的新的顶点位置，这个位置会被映射到屏幕空间的坐标系。顶点的颜色等会在后面的fragment shader也就是像素着色器
+                    中使用。这个可以作为变量传到像素着色器里。
+                -->
+                <!--
+                    然后输出的顶点会被组装成图元，图元可以是一个三角面，一条线段，或者一个点，这些都是在调用绘制命令前设置的，
+                    这里画三角形的话就是一个三角面 
+                -->
+                <!--
+                    然后输出的顶点会被组装成图元，图元可以是一个三角面，一条线段，或者一个点，这些都是在调用绘制命令前设置的，
+                    这里画三角形的话就是一个三角面
+                -->
+                <!--
+                    组装成图元后，接下去就是可见性判断了，这个分为 culling 和 clipping，culling 是剔除背面的三角面， clipping
+                    是裁剪屏幕外的三角面。这一步是为了减少接下去要处理的像素数据从而提升性能。
+                -->
+                <!--
+                    然后存活下来的图元进入光栅化阶段，插值成一个个像素，每个像素会进入像素着色器，Fragment Shader
+                    在 Fragment Shader 里要做的事情会比较多，里面需要获取纹理数据，计算光照等等，最后输出屏幕上面显示的颜色。
+                -->
+                <!--
+                    但是一个像素在计算完之后还不一定能够显示到屏幕上，因为它还要经过一个深度测试和模板测试，深度测试是为了保证最后显示到屏幕的像素是最靠近摄像机的，而不会产生一些错误的遮挡，现代 GPU 为了提升性能会把这一步提前到像素着色器前
+                -->
+                <!--
+                    通过这些测试后，这个经历了诸多磨难的像素才会成功的写入 FrameBuffer，然后再从 FrameBuffer flush到屏幕或者一张纹理上。
+                -->
                 <img data-src="img/pipeline.png" style="max-width:1000px;" alt="">
             </article>
             <!-- 

@@ -119,6 +119,24 @@ define(function (require) {
             leave: function (dom) {
                 require('./showParticleEffect').dispose(dom);  
             }
+        },
+
+        imageFilter: {
+            enter: function (dom) {
+                require('./imageFilter').init(dom, dom.getAttribute('data-filter'));
+            },
+            leave: function (dom) {
+                require('./imageFilter').dispose(dom);
+            }
+        },
+
+        showIframe: {
+            enter: function (dom) {
+                $(dom).find('iframe').attr('src', dom.getAttribute('data-src'));
+            },
+            leave: function (dom) {
+                $(dom).find('iframe').attr('src', '');
+            }
         }
     };
 
