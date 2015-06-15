@@ -178,7 +178,7 @@ ctx.stroke();
             </article>
 
             <article>
-                <h2>Fill - None Zero</h2>
+                <h2>Fill - Ring</h2>
                 <div class="row canvas-demo">
                 <!-- 不知道大家画五角星的顺序是怎么样的，反正我是按照这个顺序画的 -->
 <pre class="prettyprint item left" id="draw-star">
@@ -603,7 +603,9 @@ pixels[i + 2] = lum;
             </article>
             <article class="center">
                 <h2>Interactive Film - Lights</h2>
-                <img data-src="img/rome.jpg" alt="">
+                <a href="http://lights.helloenjoy.com" target="_blank">
+                    <img data-src="img/lights-webgl-3.png" alt="">
+                </a>
             </article>
             <article class="center">
                 <h2>Interactive Film - Worldcup</h2>
@@ -612,6 +614,7 @@ pixels[i + 2] = lum;
             </article>
             <article class="center">
                 <h2>Visualization - ECharts-X</h2>
+                <!-- TODO 示例 -->
                 <img class="item" data-src="img/map3d_population3.png" alt="">
                 <img class="item" style="margin-top:-550px;margin-left:50px;" data-src="img/map3d_flights.png" alt="">
                 <img class="item" style="margin-top:-550px;margin-left:100px;" data-src="img/map3d_wind.png" alt="">
@@ -803,9 +806,9 @@ function webGLStart() {
                 <!-- http://docs.gimp.org/en/plug-in-convmatrix.html -->
                 <!-- tip 因为 fragment shader 里各个像素的处理是并行的，没有前后顺序关系的，所以我们不能在处理当前像素的时候去获取其它已经处理完的像素。-->
             </article>
-            <article>
+            <article class="center">
                 <h2>Realtime Lowpolify</h2>
-                <!-- TODO -->
+                <img src="img/lowpoly.jpg" class="item" alt="">
             </article>
             <article class="center">
                 <h2>WebGL Libraries</h2>
@@ -821,7 +824,7 @@ function webGLStart() {
                         <li>qtek</li>
                         <li>...</li>
                     </ul>
-                    <ul class="item left list">
+                    <ul class="item right list">
                         <li>Scene</li>
                         <li>Camera</li>
                         <li>Light</li>
@@ -831,12 +834,15 @@ function webGLStart() {
                 </div>
             </article>
             <article class="center" style="background:#06b3db">
+                <!-- tip: 在有了 WebGL 库的情况下一般开发一个 3D App 的流程大概是这样的 -->
                 <h2>Web3D App Pipeline</h2>
                 <img data-src="img/web3d-flow.jpg" alt="">
             </article>
+            <!--
             <article>
                 <h2>Integrate WebGL with Canvas</h2>
             </article>
+            -->
             <article>
                 <h1>不要有了锤子就看什么都是钉子</h1>
             </article>
@@ -844,9 +850,6 @@ function webGLStart() {
                 <h2>Show Case</h2>
                 <img data-src="img/man.png" alt="">
                 <!-- TODO 兄贵 -->
-            </article>
-            <article>
-                <h2>广告时间</h2>
             </article>
             <article>
                 <h1>Thanks</h1>
