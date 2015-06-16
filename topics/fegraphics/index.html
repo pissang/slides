@@ -17,7 +17,7 @@
                     <iframe width="100%" height="100%" frameborder="0"></iframe>
                 </div>
                 <div style="position:absolute; left: 100px; top: 100px;">
-                    <img src="img/baixiaodu.png" alt="">
+                    <img data-src="img/baixiaodu.png" alt="">
                 </div>
                 <div style="position:absolute; right: 50px; top: 10px;">
                 <div style="font-size:60px;">
@@ -196,7 +196,7 @@ ctx.fill();
             </article>
 
             <article>
-                <h2>Fill - None Zero</h2>
+                <h2>Fill - None Zero Winding Rule</h2>
                 <div class="row canvas-demo">
                 <!-- 不知道大家画五角星的顺序是怎么样的，反正我是按照这个顺序画的 -->
 <pre class="prettyprint item left" id="draw-ring">
@@ -454,6 +454,7 @@ pixels[i + 2] = lum;
                     <div class="item right" data-action="imageFilter" data-filter="gray"></div>
                 </div>
             </article>
+
             <article>
                 <h2>Gaussian Blur</h2>
                 <div class="row canvas-demo">
@@ -468,19 +469,10 @@ pixels[i + 2] = lum;
                         <img data-src="img/gaussian_kernel.jpg" alt="">
                     </div>
                     <!-- TODO 动画 -->
-                    <img class="item" src="img/gaussian_seperable.gif" style="position:absolute;right:20px;top:130px;" alt="">
+                    <img class="item" data-src="img/gaussian_seperable.gif" style="position:absolute;right:20px;top:130px;" alt="">
                     <div class="item right" data-action="imageFilter" data-filter="gaussian"></div>
             </article>
-            <!--
-            <article>
-                <h2>Sobel Edge</h2>
-            </article>
-            -->
-<!--
-            <article>
-                <h2>Canvas in Game</h2>
-            </article>
--->
+
             <article>
                 <h1>SVG and Canvas</h1>
             </article>
@@ -576,7 +568,7 @@ pixels[i + 2] = lum;
             </article>
             <article class="center">
                 <h2>3D Model Viewer - dota2hero</h2>
-                <img class="item" src="img/dota2hero1.png" alt="">
+                <img class="item" data-src="img/dota2hero1.png" alt="">
                 <img class="item" style="margin-top:-550px;margin-left:50px;" data-src="img/dota2hero2.png" alt="">
             </article>
             <article class="center" data-action="showIframe" data-src='http://pissang.github.io/dota2hero/'>
@@ -615,7 +607,6 @@ pixels[i + 2] = lum;
             </article>
             <article class="center">
                 <h2>Visualization - ECharts-X</h2>
-                <!-- TODO 示例 -->
                 <img class="item" data-src="img/map3d_population3.png" alt="">
                 <img class="item" style="margin-top:-550px;margin-left:50px;" data-src="img/map3d_flights.png" alt="">
                 <img class="item" style="margin-top:-550px;margin-left:100px;" data-src="img/map3d_wind.png" alt="">
@@ -818,15 +809,19 @@ function webGLStart() {
             <!-- 
             刚才这些概念是比较基础的，可能从知道这些概念到做出刚才那些demo中间还有很多东西，比如光照等，但是做一个 WebGL 的图片处理已经可以了。
             -->
-            <article>
-                <h1>Image Processing with WebGL</h1>
-                <!-- TODO 像素处理的示例图片 -->
-                <!-- http://docs.gimp.org/en/plug-in-convmatrix.html -->
+            <article class="center">
+                <h2>Image Processing with WebGL</h2>
+                <a href="http://pissang.github.io/emage/example/#/" target="_blank">
+                    <img data-src="img/emage.png" alt="">
+                </a>
                 <!-- tip 因为 fragment shader 里各个像素的处理是并行的，没有前后顺序关系的，所以我们不能在处理当前像素的时候去获取其它已经处理完的像素。-->
             </article>
             <article class="center">
                 <h2>Realtime Lowpolify</h2>
-                <img src="img/lowpoly.jpg" class="item" alt="">
+                <img data-src="img/lowpoly.jpg" class="item" alt="">
+            </article>
+            <article class="center" style="font-size:60px;">
+                <a href="http://pissang.github.io/lowpoly/" target="_blank" style="text-decoration:none; margin-top:100px; display:inline-block;">http://pissang.github.io/lowpoly/</a>
             </article>
             <article class="center">
                 <h2>WebGL Libraries</h2>
