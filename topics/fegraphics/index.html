@@ -43,7 +43,6 @@
                     <li>Image processing with Canvas</li>
                     <li>SVG and Canvas</li>
                     <li>WebGL</li>
-                    <li>Image processing with WebGL</li>
                     <li>Show cases</li>
                 </ul>
             </article>
@@ -95,19 +94,7 @@ var ctx = canvas.getContext('2d');
                 </ul>
             </article>
 
-            <article class="center">
-                <h2><img data-src="img/icon-path.png" width="40" style="margin-right:20px;" alt="">Path</h2>
-                <ul class="content list" style="margin-top:100px;">
-                <!-- Canvas 的路径包括线段，贝塞尔曲线，包括二次和三次的，还有圆弧 -->
-                    <li>Line</li>
-                    <li>Bezier Curve(Quadratic, Cubic)</li>
-                    <li>Arc</li>
-
-                    <!-- 所有其它复杂的图形基本上都可以使用这三个基本图形进行绘制组合 -->
-                </ul>
-            </article>
-
-                <!-- 首先来看线段的绘制 -->
+            <!-- 首先来看线段的绘制 -->
             <article>
                 <h2>Draw lines</h2>
                 <div class="row canvas-demo">
@@ -123,6 +110,18 @@ ctx.stroke();
 </pre>
                     <div class="right item" data-action="pathDrawAnimation" data-code="draw-line"></div>
                 </div>
+            </article>
+
+            <article class="center">
+                <h2><img data-src="img/icon-path.png" width="40" style="margin-right:20px;" alt="">Path</h2>
+                <ul class="content list" style="margin-top:100px;">
+                <!-- Canvas 的路径包括线段，贝塞尔曲线，包括二次和三次的，还有圆弧 -->
+                    <li>Line</li>
+                    <li>Bezier Curve(Quadratic, Cubic)</li>
+                    <li>Arc</li>
+
+                    <!-- 所有其它复杂的图形基本上都可以使用这三个基本图形进行绘制组合 -->
+                </ul>
             </article>
 
             <article>
@@ -178,9 +177,10 @@ ctx.stroke();
             </article>
 
             <article>
-                <h2>Fill - Ring</h2>
+                <h2>Fill - Star</h2>
                 <div class="row canvas-demo">
                 <!-- 不知道大家画五角星的顺序是怎么样的，反正我是按照这个顺序画的 -->
+                <!-- Winding Rule -->
 <pre class="prettyprint item left" id="draw-star">
 ctx.beginPath();
 ctx.moveTo(300, 350);
@@ -608,6 +608,7 @@ pixels[i + 2] = lum;
                 </a>
             </article>
             <article class="center">
+                <!-- 19 届世界杯 -->
                 <h2>Interactive Film - Worldcup</h2>
                 <a href="http://pissang.github.io/worldcup-intro" target="_blank">
                 <img data-src="img/wordcup.png" alt=""></a>
@@ -619,6 +620,23 @@ pixels[i + 2] = lum;
                 <img class="item" style="margin-top:-550px;margin-left:50px;" data-src="img/map3d_flights.png" alt="">
                 <img class="item" style="margin-top:-550px;margin-left:100px;" data-src="img/map3d_wind.png" alt="">
             </article>
+            <article>
+                <h2>ECharts-X - Globe</h2>
+                <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobe"></div>
+            </article>
+            <article>
+                <h2>ECharts-X - Globe Population</h2>
+                <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobePopulation"></div>
+            </article>
+            <article>
+                <h2>ECharts-X - Flights</h2>
+                <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobeFlights"></div>
+            </article>
+            <article>
+                <h2>ECharts-X - Wave</h2>
+                <div class="item" style="position:absolute;left:0;right:0;top:0;bottom:0" data-action="showGlobeWave"></div>
+            </article>
+
             <article class="center">
                 <!-- 介绍了这么多 case，我们来看看怎么使用 WebGL 绘制图形 -->
                 <h2>Learning WebGL - Lesson 1</h2>
@@ -877,14 +895,17 @@ function webGLStart() {
         <script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
         <script type="text/javascript" src="../../js/lib/esl.js"></script>
         <script type="text/javascript" src="../../js/lib/prettify.js"></script>
+        <script type="text/javascript" src="../../js/lib/echarts/echarts.js"></script>
         <script type="text/javascript" src="../../js/lib/zrender.js"></script>
         <script type="text/javascript" src="../../js/lib/qtek.amd.min.js"></script>
+        <script type="text/javascript" src="../../js/lib/echarts-x/echarts-x.js"></script>
         <script type="text/javascript" src="../../js/slides.js"></script>
 
         <script>
             require.config({
                 paths: {
                     echarts: '../../js/lib/echarts',
+                    'echarts-x': '../../js/lib/echarts-x',
                     'worldcup-high': 'js/worldcup-high'
                 }
             });

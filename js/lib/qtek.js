@@ -11457,6 +11457,7 @@ define('qtek/TextureCube',['require','./Texture','./core/glinfo','./core/glenum'
 
     function isImageRenderable(image) {
         return image.nodeName === 'CANVAS' ||
+                image.nodeName === 'VIDEO' ||
                 image.complete;
     }
 
@@ -16666,6 +16667,7 @@ define('qtek/Texture2D',['require','./Texture','./core/glinfo','./core/glenum'],
         isRenderable: function() {
             if (this.image) {
                 return this.image.nodeName === 'CANVAS'
+                    || this.image.nodeName === 'VIDEO'
                     || this.image.complete;
             } else {
                 return this.width && this.height;
@@ -23118,7 +23120,7 @@ define('qtek/shader/source/compositor/lut.essl',[],function () { return '\n// ht
 
 define('qtek/shader/source/compositor/output.essl',[],function () { return '@export buildin.compositor.output\n\n#define OUTPUT_ALPHA;\n\nvarying vec2 v_Texcoord;\n\nuniform sampler2D texture;\n\nvoid main()\n{\n    vec4 tex = texture2D(texture, v_Texcoord);\n\n    gl_FragColor.rgb = tex.rgb;\n\n#ifdef OUTPUT_ALPHA\n    gl_FragColor.a = tex.a;\n#else\n    gl_FragColor.a = 1.0;\n#endif\n\n}\n\n@end';});
 
-define('qtek/shader/source/compositor/hdr.essl',[],function () { return '// HDR Pipeline\n@export buildin.compositor.hdr.bright\n\nuniform sampler2D texture;\nuniform float threshold : 1;\nuniform float scale : 1.0;\n\nvarying vec2 v_Texcoord;\n\nconst vec3 lumWeight = vec3(0.2125, 0.7154, 0.0721);\n\n@import buildin.util.rgbm_decode\n@import buildin.util.rgbm_encode\n\nvoid main()\n{\n#ifdef TEXTURE_ENABLED\n#ifdef RGBM_DECODE\n    vec3 tex = RGBMDecode(texture2D(texture, v_Texcoord));\n#else\n    vec3 tex = texture2D(texture, v_Texcoord).rgb;\n#endif\n#else\n    vec3 tex = vec3(0.0);\n#endif\n\n    float lum = dot(tex, lumWeight);\n    if (lum > threshold)\n    {\n        gl_FragColor.rgb = tex * scale;\n    }\n    else\n    {\n        gl_FragColor.rgb = vec3(0.0);\n    }\n    gl_FragColor.a = 1.0;\n\n#ifdef RGBM_ENCODE\n    gl_FragColor.rgba = RGBMEncode(gl_FragColor.rgb);\n#endif\n}\n@end\n\n@export buildin.compositor.hdr.log_lum\n\nvarying vec2 v_Texcoord;\n\nuniform sampler2D texture;\n\nconst vec3 w = vec3(0.2125, 0.7154, 0.0721);\n\nvoid main()\n{\n    vec4 tex = texture2D(texture, v_Texcoord);\n    float luminance = dot(tex.rgb, w);\n    luminance = log(luminance + 0.001);\n\n    gl_FragColor = vec4(vec3(luminance), 1.0);\n}\n\n@end\n\n@export buildin.compositor.hdr.lum_adaption\nvarying vec2 v_Texcoord;\n\nuniform sampler2D adaptedLum;\nuniform sampler2D currentLum;\n\nuniform float frameTime : 0.02;\n\nvoid main()\n{\n    float fAdaptedLum = texture2D(adaptedLum, vec2(0.5, 0.5)).r;\n    float fCurrentLum = exp(texture2D(currentLum, vec2(0.5, 0.5)).r);\n\n    fAdaptedLum += (fCurrentLum - fAdaptedLum) * (1.0 - pow(0.98, 30.0 * frameTime));\n    gl_FragColor.rgb = vec3(fAdaptedLum);\n    gl_FragColor.a = 1.0;\n}\n@end\n\n// Tone mapping with gamma correction\n// http://filmicgames.com/archives/75\n@export buildin.compositor.hdr.tonemapping\n\nuniform sampler2D texture;\nuniform sampler2D bloom;\nuniform sampler2D lensflare;\nuniform sampler2D lum;\n\nuniform float exposure : 1.0;\n\nvarying vec2 v_Texcoord;\n\nconst float A = 0.22;   // Shoulder Strength\nconst float B = 0.30;   // Linear Strength\nconst float C = 0.10;   // Linear Angle\nconst float D = 0.20;   // Toe Strength\nconst float E = 0.01;   // Toe Numerator\nconst float F = 0.30;   // Toe Denominator\nconst vec3 whiteScale = vec3(11.2);\n\nvec3 uncharted2ToneMap(vec3 x)\n{\n    return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;\n}\n\nvec3 filmicToneMap(vec3 color)\n{\n    vec3 x = max(vec3(0.0), color - 0.004);\n    return (x*(6.2*x+0.5))/(x*(6.2*x+1.7)+0.06);\n}\n\nfloat eyeAdaption(float fLum)\n{\n    return mix(0.2, fLum, 0.5);\n}\n\nvoid main()\n{\n    vec3 tex = vec3(0.0);\n    float a = 1.0;\n#ifdef TEXTURE_ENABLED\n    vec4 res = texture2D(texture, v_Texcoord);\n    a = res.a;\n    tex = res.rgb;\n#endif\n\n#ifdef BLOOM_ENABLED\n    tex += texture2D(bloom, v_Texcoord).rgb * 0.25;\n#endif\n\n#ifdef LENSFLARE_ENABLED\n    tex += texture2D(lensflare, v_Texcoord).rgb;\n#endif\n\n// Adjust exposure\n// From KlayGE\n#ifdef LUM_ENABLED\n    float fLum = texture2D(lum, vec2(0.5, 0.5)).r;\n    float adaptedLumDest = 3.0 / (max(0.1, 1.0 + 10.0*eyeAdaption(fLum)));\n    float exposureBias = adaptedLumDest * exposure;\n#else\n    float exposureBias = exposure;\n#endif\n    tex *= exposureBias;\n\n    // Do tone mapping\n    vec3 color = uncharted2ToneMap(tex) / uncharted2ToneMap(whiteScale);\n    color = pow(color, vec3(1.0/2.2));\n    // vec3 color = filmicToneMap(tex);\n\n#ifdef RGBM_ENCODE\n    gl_FragColor.rgba = RGBMEncode(color);\n#else\n    gl_FragColor = vec4(color, a);\n#endif\n}\n\n@end';});
+define('qtek/shader/source/compositor/hdr.essl',[],function () { return '// HDR Pipeline\n@export buildin.compositor.hdr.bright\n\nuniform sampler2D texture;\nuniform float threshold : 1;\nuniform float scale : 1.0;\n\nvarying vec2 v_Texcoord;\n\nconst vec3 lumWeight = vec3(0.2125, 0.7154, 0.0721);\n\n@import buildin.util.rgbm_decode\n@import buildin.util.rgbm_encode\n\nvoid main()\n{\n#ifdef TEXTURE_ENABLED\n#ifdef RGBM_DECODE\n    vec3 tex = RGBMDecode(texture2D(texture, v_Texcoord));\n#else\n    vec3 tex = texture2D(texture, v_Texcoord).rgb;\n#endif\n#else\n    vec3 tex = vec3(0.0);\n#endif\n\n    float lum = dot(tex, lumWeight);\n    if (lum > threshold)\n    {\n        gl_FragColor.rgb = tex * scale;\n    }\n    else\n    {\n        gl_FragColor.rgb = vec3(0.0);\n    }\n    gl_FragColor.a = 1.0;\n\n#ifdef RGBM_ENCODE\n    gl_FragColor.rgba = RGBMEncode(gl_FragColor.rgb);\n#endif\n}\n@end\n\n@export buildin.compositor.hdr.log_lum\n\nvarying vec2 v_Texcoord;\n\nuniform sampler2D texture;\n\nconst vec3 w = vec3(0.2125, 0.7154, 0.0721);\n\nvoid main()\n{\n    vec4 tex = texture2D(texture, v_Texcoord);\n    float luminance = dot(tex.rgb, w);\n    luminance = log(luminance + 0.001);\n\n    gl_FragColor = vec4(vec3(luminance), 1.0);\n}\n\n@end\n\n@export buildin.compositor.hdr.lum_adaption\nvarying vec2 v_Texcoord;\n\nuniform sampler2D adaptedLum;\nuniform sampler2D currentLum;\n\nuniform float frameTime : 0.02;\n\nvoid main()\n{\n    float fAdaptedLum = texture2D(adaptedLum, vec2(0.5, 0.5)).r;\n    float fCurrentLum = exp(texture2D(currentLum, vec2(0.5, 0.5)).r);\n\n    fAdaptedLum += (fCurrentLum - fAdaptedLum) * (1.0 - pow(0.98, 30.0 * frameTime));\n    gl_FragColor.rgb = vec3(fAdaptedLum);\n    gl_FragColor.a = 1.0;\n}\n@end\n\n// Tone mapping with gamma correction\n// http://filmicgames.com/archives/75\n@export buildin.compositor.hdr.tonemapping\n\nuniform sampler2D texture;\nuniform sampler2D bloom;\nuniform sampler2D lensflare;\nuniform sampler2D lum;\n\nuniform float exposure : 1.0;\n\nvarying vec2 v_Texcoord;\n\nconst float A = 0.22;   // Shoulder Strength\nconst float B = 0.30;   // Linear Strength\nconst float C = 0.10;   // Linear Angle\nconst float D = 0.20;   // Toe Strength\nconst float E = 0.01;   // Toe Numerator\nconst float F = 0.30;   // Toe Denominator\nconst vec3 whiteScale = vec3(11.2);\n\nvec3 uncharted2ToneMap(vec3 x)\n{\n    return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;\n}\n\nvec3 filmicToneMap(vec3 color)\n{\n    vec3 x = max(vec3(0.0), color - 0.004);\n    return (x*(6.2*x+0.5))/(x*(6.2*x+1.7)+0.06);\n}\n\nfloat eyeAdaption(float fLum)\n{\n    return mix(0.2, fLum, 0.5);\n}\n\nvoid main()\n{\n    vec3 tex = vec3(0.0);\n    float a = 1.0;\n#ifdef TEXTURE_ENABLED\n    vec4 res = texture2D(texture, v_Texcoord);\n    a = res.a;\n    tex = res.rgb;\n#endif\n\n#ifdef BLOOM_ENABLED\n    tex += texture2D(bloom, v_Texcoord).rgb * 0.25;\n#endif\n\n#ifdef LENSFLARE_ENABLED\n    tex += texture2D(lensflare, v_Texcoord).rgb;\n#endif\n\n// Adjust exposure\n// From KlayGE\n#ifdef LUM_ENABLED\n    float fLum = texture2D(lum, vec2(0.5, 0.5)).r;\n    float adaptedLumDest = 3.0 / (max(0.1, 1.0 + 10.0*eyeAdaption(fLum)));\n    float exposureBias = adaptedLumDest * exposure;\n#else\n    float exposureBias = exposure;\n#endif\n    tex *= exposureBias;\n\n    // Do tone mapping\n    // vec3 color = uncharted2ToneMap(tex) / uncharted2ToneMap(whiteScale);\n    // color = pow(color, vec3(1.0/2.2));\n    vec3 color = filmicToneMap(tex);\n\n#ifdef RGBM_ENCODE\n    gl_FragColor.rgba = RGBMEncode(color);\n#else\n    gl_FragColor = vec4(color, a);\n#endif\n}\n\n@end';});
 
 define('qtek/shader/source/compositor/lensflare.essl',[],function () { return '// john-chapman-graphics.blogspot.co.uk/2013/02/pseudo-lens-flare.html\n@export buildin.compositor.lensflare\n\n#define SAMPLE_NUMBER 8\n\nuniform sampler2D texture;\nuniform sampler2D lensColor;\n\nuniform vec2 textureSize : [512, 512];\n\nuniform float dispersal : 0.3;\nuniform float haloWidth : 0.4;\nuniform float distortion : 1.0;\n\nvarying vec2 v_Texcoord;\n\nvec4 textureDistorted(\n    in vec2 texcoord,\n    in vec2 direction,\n    in vec3 distortion\n) {\n    return vec4(\n        texture2D(texture, texcoord + direction * distortion.r).r,\n        texture2D(texture, texcoord + direction * distortion.g).g,\n        texture2D(texture, texcoord + direction * distortion.b).b,\n        1.0\n    );\n}\n\nvoid main()\n{\n    vec2 texcoord = -v_Texcoord + vec2(1.0); // Flip texcoords\n    vec2 textureOffset = 1.0 / textureSize;\n\n    vec2 ghostVec = (vec2(0.5) - texcoord) * dispersal;\n    vec2 haloVec = normalize(ghostVec) * haloWidth;\n\n    vec3 distortion = vec3(-textureOffset.x * distortion, 0.0, textureOffset.x * distortion);\n    //Sample ghost\n    vec4 result = vec4(0.0);\n    for (int i = 0; i < SAMPLE_NUMBER; i++)\n    {\n        vec2 offset = fract(texcoord + ghostVec * float(i));\n\n        float weight = length(vec2(0.5) - offset) / length(vec2(0.5));\n        weight = pow(1.0 - weight, 10.0);\n\n        result += textureDistorted(offset, normalize(ghostVec), distortion) * weight;\n    }\n\n    result *= texture2D(lensColor, vec2(length(vec2(0.5) - texcoord)) / length(vec2(0.5)));\n    //Sample halo\n    float weight = length(vec2(0.5) - fract(texcoord + haloVec)) / length(vec2(0.5));\n    weight = pow(1.0 - weight, 10.0);\n    vec2 offset = fract(texcoord + haloVec);\n    result += textureDistorted(offset, normalize(ghostVec), distortion) * weight;\n\n    gl_FragColor = result;\n}\n@end';});
 
@@ -26565,7 +26567,6 @@ define('qtek/particleSystem/Emitter',['require','../core/Base','../math/Vector3'
                 particle.angularVelocity = new Vector3();
             }
         }
-
     },
     /** @lends qtek.particleSystem.Emitter.prototype */
     {
@@ -27808,6 +27809,13 @@ define('qtek/plugin/OrbitControl',['require','../core/Base','../math/Vector3','.
     var Vector3 = require('../math/Vector3');
     var Matrix4 = require('../math/Matrix4');
 
+    function addEvent(dom, eveType, handler) {
+        dom.addEventListener(eveType, handler);
+    }
+    function removeEvent(dom, eveType, handler) {
+        dom.removeEventListener(eveType, handler);
+    }
+
     /**
      * @constructor qtek.plugin.OrbitControl
      *
@@ -27915,23 +27923,28 @@ define('qtek/plugin/OrbitControl',['require','../core/Base','../math/Vector3','.
          */
         enable: function() {
             var domElement = this.domElement;
-            domElement.addEventListener('mousedown', this._mouseDown);
-            domElement.addEventListener('mousewheel', this._mouseWheel);
-            domElement.addEventListener('DOMMouseScroll', this._mouseWheel);
+            addEvent(domElement, 'mousedown', this._mouseDown);
+            addEvent(domElement, 'touchstart', this._mouseDown);
 
-            domElement.addEventListener('touchstart', this._mouseDown);
-
+            addEvent(domElement, 'mousewheel', this._mouseWheel);
+            addEvent(domElement, 'DOMMouseScroll', this._mouseWheel);
         },
 
         /**
          * Disable control
          */
         disable: function() {
-            this.domElement.removeEventListener('mousedown', this._mouseDown);
-            this.domElement.removeEventListener('mousewheel', this._mouseWheel);
-            this.domElement.removeEventListener('DOMMouseScroll', this._mouseWheel);
+            var domElement = this.domElement;
+            removeEvent(domElement, 'mousedown', this._mouseDown);
+            removeEvent(domElement, 'mousemove', this._mouseMove);
+            removeEvent(domElement, 'mouseup', this._mouseUp);
 
-            this.domElement.removeEventListener('touchstart', this._mouseDown);
+            removeEvent(domElement, 'touchstart', this._mouseDown);
+            removeEvent(domElement, 'touchmove', this._mouseMove);
+            removeEvent(domElement, 'touchend', this._mouseUp);
+
+            removeEvent(domElement, 'mousewheel', this._mouseWheel);
+            removeEvent(domElement, 'DOMMouseScroll', this._mouseWheel);
 
             this._mouseUp();
         },
@@ -27945,15 +27958,27 @@ define('qtek/plugin/OrbitControl',['require','../core/Base','../math/Vector3','.
         },
 
         _mouseDown: function(e) {
-            document.addEventListener('mousemove', this._mouseMove);
-            document.addEventListener('mouseup', this._mouseUp);
-            document.addEventListener('mouseout', this._mouseOut);
+            var domElement = this.domElement;
+            addEvent(domElement, 'mousemove', this._mouseMove);
+            addEvent(domElement, 'mouseup', this._mouseUp);
+            addEvent(domElement, 'mouseout', this._mouseOut);
 
-            document.addEventListener('touchend', this._mouseUp);
-            document.addEventListener('touchmove', this._mouseMove);
+            addEvent(domElement, 'touchend', this._mouseUp);
+            addEvent(domElement, 'touchmove', this._mouseMove);
 
-            this._offsetX = e.pageX;
-            this._offsetY = e.pageY;
+            var x = e.pageX;
+            var y = e.pageY;
+            // Touch
+            if (e.targetTouches) {
+                var touch = e.targetTouches[0];
+                x = touch.clientX;
+                y = touch.clientY;
+
+                this._op = 0;
+            }
+
+            this._offsetX = x;
+            this._offsetY = y;
 
             // Rotate
             if (e.button === 0) {
@@ -27964,8 +27989,19 @@ define('qtek/plugin/OrbitControl',['require','../core/Base','../math/Vector3','.
         },
 
         _mouseMove: function(e) {
-            var dx = e.pageX - this._offsetX;
-            var dy = e.pageY - this._offsetY;
+            var x = e.pageX;
+            var y = e.pageY;
+            // Touch
+            if (e.targetTouches) {
+                var touch = e.targetTouches[0];
+                x = touch.clientX;
+                y = touch.clientY;
+                // PENDING
+                e.preventDefault();
+            }
+
+            var dx = x - this._offsetX;
+            var dy = y - this._offsetY;
 
             if (this._op === 0) {
                 this._offsetPitch += dx * this.sensitivity / 100;
@@ -27982,18 +28018,18 @@ define('qtek/plugin/OrbitControl',['require','../core/Base','../math/Vector3','.
                 this._panY += dy * this.sensitivity * len * divider;
             }
 
-            this._offsetX = e.pageX;
-            this._offsetY = e.pageY;
+            this._offsetX = x;
+            this._offsetY = y;
         },
 
         _mouseUp: function() {
+            var domElement = this.domElement;
+            removeEvent(domElement, 'mousemove', this._mouseMove);
+            removeEvent(domElement, 'mouseup', this._mouseUp);
+            removeEvent(domElement, 'mouseout', this._mouseOut);
 
-            document.removeEventListener('mousemove', this._mouseMove);
-            document.removeEventListener('mouseup', this._mouseUp);
-            document.removeEventListener('mouseout', this._mouseOut);
-
-            document.removeEventListener('touchend', this._mouseUp);
-            document.removeEventListener('touchmove', this._mouseMove);
+            removeEvent(domElement, 'touchend', this._mouseUp);
+            removeEvent(domElement, 'touchmove', this._mouseMove);
 
             this._op = -1;
         },

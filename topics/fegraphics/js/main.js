@@ -2,6 +2,8 @@ define(function (require) {
 
     var AnimationPathContext = require('./AnimationPathContext');
 
+    require('qtek/shader/buildin');
+
     var codes = {};
 
     $('pre.prettyprint').each(function () {
@@ -137,7 +139,43 @@ define(function (require) {
             leave: function (dom) {
                 $(dom).find('iframe').attr('src', '');
             }
-        }
+        },
+
+        showGlobe: {
+            enter: function (dom) {
+                require('./showGlobe').init(dom);
+            },
+            leave: function () {
+                require('./showGlobe').dispose();
+            }  
+        },
+
+        showGlobePopulation: {
+            enter: function (dom) {
+                require('./showGlobePopulation').init(dom);
+            },
+            leave: function () {
+                require('./showGlobePopulation').dispose();
+            }  
+        },
+
+        showGlobeFlights: {
+            enter: function (dom) {
+                require('./showGlobeFlights').init(dom);
+            },
+            leave: function () {
+                require('./showGlobeFlights').dispose();
+            }  
+        },
+
+        showGlobeWave: {
+            enter: function (dom) {
+                require('./showGlobeWave').init(dom);
+            },
+            leave: function () {
+                require('./showGlobeWave').dispose();
+            }
+        },
     };
 
     slides.init('articles', {
