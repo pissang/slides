@@ -37,7 +37,6 @@
     介绍一些基本的 Canvas 的命令
 -->
                     <li>Canvas Basic</li>
-<!-- tip: 
 <!-- tip: 可能用 svg 或者 dom 也可以做粒子效果，但是在粒子数量比较大的时候还是用 canvas 是最合适的 -->
                     <li>Writing particle effect with Canvas</li>
                     <li>Image processing with Canvas</li>
@@ -52,11 +51,14 @@
             </article>
 
             <article class="center">
+                <!-- canvas 是 html5 里面新加入的一个标准，我们可以用 javassript 在 canvas 上绘制自己想要的 2D 图形 -->
                 <ul class="content list" style="margin-top:100px;">
-                    <li>Immediate mode API
+                    <li>2D Graphics API
+                        <p>Added in HTML5, used to draw graphics via scripting in JavaScript</p>
+                    </li>
+                    <li>Immediate mode
                     <p>Call rendering commands to draw the entire scene</p></li>
-                    <li>Currently 1.0</li>
-                    <li>Coming 2.0</li>
+                    <li>Currently 1.0, coming 2.0</li>
                     <li>IE9+, Chrome, Firefox, Safari...</li>
                 </ul>
             </article>
@@ -276,6 +278,8 @@ ctx.strokeText('蛤蛤蛤蛤', 30, 30);
                 </div>
             </article>
 
+            <!-- 总结 -->
+
             <article>
                 <h1>Writing Particle Effect with Canvas</h1>
             </article>
@@ -391,6 +395,8 @@ ctx.globalAlpha = 1;
             <article class="center">
                 <h2>Optimization</h2>
                 <ul class="content list" style="margin-top:100px;">
+                    <!-- tip: 子路径，在调用 moveTo 命令的时候开始一个子路径，closePath 的时候结束一个子路径 -->
+                    <!-- stroke，fill 的开销比较大，不管路径大小，这两个方法都有一个常数的开 -->
                     <li>
                         Use subpath instead of path
                         <p>Less stroke(), fill()</p>
@@ -418,6 +424,8 @@ ctx.globalAlpha = 1;
                     <li>globalCompositeOperation = 'lighter'</li>
                 </ul>
             </article>
+
+            <!-- 总结 -->
 
             <article>
                 <h1>Image Processing with Canvas</h1>
@@ -473,6 +481,8 @@ pixels[i + 2] = lum;
                     <div class="item right" data-action="imageFilter" data-filter="gaussian"></div>
             </article>
 
+            <!-- 总结 -->
+
             <article>
                 <h1>SVG and Canvas</h1>
             </article>
@@ -500,9 +510,13 @@ pixels[i + 2] = lum;
                     <li>Performance</li>
                 </ul>
             </article>
+
+            <!-- 总结 -->
+
             <article>
                 <h1>WebGL</h1>
             </article>
+
             <article class="center">
                 <h2>WebGL Introduction</h2>
                 <ul class="content list">
