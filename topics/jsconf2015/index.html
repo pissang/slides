@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta charset="utf-8" />
+        <link rel=stylesheet type=text/css href="../../css/slide.css" />
+        <link rel=stylesheet type=text/css href="../../css/desert.css" />
+        <link rel=stylesheet type=text/css href="css/jsconf2015.css" />
+    </head>
+    <body id="jsconf2015">
+        <div id="articles">
+            <article>
+                <h1 class="title">前端技术与可视化</h1>
+                <!--
+                <h2 class="subtitle">WebGL 与 Canvas 在 ECharts 中的应用</h2>
+                -->
+                <!-- tip: 这次分享侧重于如何使用一些前端的技术诸如 Canvas 和 WebGL 去做可视化的绘制，展现与交互部分 -->
+            </article>
+            <article>
+                <h2>About Me</h2>
+                <!-- 作品 -->
+            </article>
+            <article>
+                <h2>About Baidu EFE</h2>
+                <!-- tip: 我们在前端的各个方向造了很多轮子 -->
+            </article>
+            <article class="center">
+                <h2>Agenda</h2>
+                <ul class="content list">
+                    <li>前端的可视化手段</li>
+                    <li>数据场的可视化<p>标量场和向量场</p>
+                    </li>
+                    <li>线数据的可视化<p>迁徙，航班路线</p></li>
+                    <li>网络数据的可视化<p>社交关系，依赖关系</p></li>
+                </ul>
+            </article>
+            <article class="center">
+                <h2>前端的可视化手段</h2>
+                <div class="content row" style="width:700px;">
+                    <div class="left">
+                        <h3>可视化库</h3>
+                        <ul class="list">
+                            <!-- 从底层到高层 -->
+                            <li>Processing</li>
+                            <li>D3.js</li>
+                            <li>
+                                ECharts
+                                <p>ECharts-X, 图说</p>
+                            </li>
+                            <li>Highcharts</li>
+                            <li>...</li>
+                        </ul>
+                    </div>
+                    <div class="right">
+                        <h3>图形接口</h3>
+                        <ul class="list">
+                            <li>SVG</li>
+                            <li>Canvas</li>
+                            <li>WebGL</li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+
+            <article>
+                <p>可视化示例图</p>
+            </article>
+
+            <article>
+                <!-- 然后来看一个使用 ECharts 可视化微博签到分布的图 -->
+                <h2>微博签到分布</h2>
+                <div class="item"></div>
+            </article>
+
+            <article>
+                <!-- 我们可以把微博签到的分布密度看做一个二维标量场 -->
+                <h1>二维标量场的可视化</h1>
+            </article>
+            <article class="center" id="scalar-field">
+                <h2>标量场（Scalar Field）</h2>
+                <!-- 
+                    tip: 标量场介绍
+                    物理概念的引申
+                    有空间维度的标量数据，
+                    空间维度可以是物理空间，地理空间位置，屏幕空间，
+                    数据可以是物理意义上的温度，势能，高度等，也可以是分布密度，页面的点击数。
+                    最右边是一些展现的手段
+                -->
+                <div class="row content">
+                    <div style="width:33.3%">
+                        <ul class="list">
+                            <li>物理空间</li>
+                            <li>地理空间</li>
+                            <li>屏幕空间</li>
+                            <li>…</li>
+                        </ul>
+                    </div>
+                    <div style="width:33.3%">
+                        <ul class="list">
+                            <!-- 可以是物理属性 -->
+                            <li>温度</li>
+                            <li>势能</li>
+                            <li>高度</li>
+                            <!-- 也可以是 -->
+                            <li>分布密度</li>
+                            <li>点击数</li>
+                            <li>…</li>
+                        </ul>
+                    </div>
+                    <div style="width:33.3%">
+                        <ul class="list">
+                            <li>大小</li>
+                            <li>颜色</li>
+                            <li>高度</li>
+                            <li>…</li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+            <article>
+                <h2>全国 GDP 分布 - 颜色</h2>
+                <!-- 示例图 -->
+            </article>
+            <article>
+                <h2>Canvas 颜色填充</h2>
+                <div class="row">
+                    <div class="left" style="width:35%;margin-top:-50px;">
+                        <ul class="list">
+                            <!-- tip: 可以像前面微博签到数据中那样画路径 -->
+                            <li>画路径(方块，圆)
+<pre class="prettyprint">
+ctx.fillStyle = i % 2 ? 'black' : 'red';
+ctx.beginPath();
+ctx.rect(i, j, 1, 1);
+ctx.fill();
+</pre>
+                            </li>
+                            <li>方块填充</li>
+<pre class="prettyprint">
+ctx.fillStyle = '#ccc';
+ctx.fillRect(x, y, 2, 2);
+</pre>
+                            <!-- tip: 最高效的方法是直接在 Canvas 里写入像素数据 -->
+                            <li>
+                                写入像素
+<pre>
+var imageData = ctx.createImageData(width, height);
+...
+ctx.putImageData(imageData, 0, 0);
+</pre>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="right" style="width:65%">
+                        <!-- 示例 -->
+                    </div>
+                </div>
+            </article>
+
+            <article class="center">
+                <h2 style="position:relative;z-index:1">亮度</h2>
+                <img data-src="data/cngdp2010.png" style="margin-top:-100px;">
+            </article>
+            <article class="center">
+                <h2 style="position:relative;z-index:1">亮度 - 曝光调整</h2>
+                <img data-src="data/cngdp2010-exp.png" style="margin-top:-100px;">
+            </article>
+            <article>
+                <h2>渐变 - 一维颜色查找表</h2>
+            </article>
+            <article>
+                <h2>页面点击热力图</h2>
+            </article>
+            <article>
+                <h2>三维直方图</h2>
+            </article>
+            <article>
+                <h2>优化</h2>
+            </article>
+            <article>
+                <h2>明暗面 - Lambert Shading</h2>
+            </article>
+
+            <article>
+                <h1>二维向量场的可视化</h1>
+                <!-- 流场 -->
+                <!-- 流场可视化的核心目标有效的描绘流动信息 -->
+            </article>
+            <article>
+                <h2>向量场（Vector Field）</h2>
+            </article>
+            <article class="center">
+                <h2>使用颜色表示向量</h2>
+                <div class="content" style="width:300px;">
+                    <div class="xyz-rgb">
+                        <div class="r">X</div>
+                        <div class="g">Y</div>
+                        <div class="b">Z</div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <ul class="list content">
+                        <li>
+                            24bit
+                            <p>R 8, G 8, B 8</p>
+                        </li>
+                        <!-- 
+                            可以对数据预处理归一
+                        -->
+                        <li>向量归一
+                            <p>x*x + y*y + z*z = 1</p>
+                        </li>
+                    </ul>
+                </div>
+            </article>
+            <article>
+                <h2>写入 Canvas</h2>
+            </article>
+            <article>
+                <h2>使用图形表示向量</h2>
+            </article>
+    
+            <article>
+                <h2>向量场的迹线</h2>
+            </article>
+            <article>
+                <h2>生成噪点图</h2>
+            </article>
+            <article>
+                <h2>在向量方向上做卷积</h2>
+            </article>
+            <article>
+                <h2>使用 WebGL 做卷积</h2>
+            </article>
+
+            <article>
+                <h2>使用粒子效果</h2>
+            </article>
+            <article>
+                <h2></h2>
+                <div class="content" style="width:300px;">
+                    <div class="xyz-rgb xy">
+                        <div class="r">X</div>
+                        <div class="b"></div>
+                        <div class="g">Y</div>
+                        <div class="b"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <ul class="list">
+                        <li>24bit
+                            <p>RG 12, BA 12</p>
+                        </li>
+                        <li>Z
+                            <p>z = sqrt(1 - x*x - y*y)</p>
+                        </li>
+                        <li>
+                            Alpha ?
+                            <p>向量大小，或者 RG 16, BA 16</p>
+                        </li>
+                    </ul>
+                </div>
+            </article>
+            <article>
+                <h2>残影</h2>
+            </article>
+<!--
+            <article>
+                <h1>线数据的可视化</h1>
+            </article>
+            <article>
+                <h2>百度迁徙</h2>
+            </article>
+            <article>
+                <h2></h2>
+            </article>
+-->
+            <article>
+                <h1>关系数据的可视化</h1>
+            </article>
+        </div>
+    
+        <div id="timer"></div>
+        <div id="slide-info">
+            <h1 id="title">前端技术与可视化</h1>
+            <ul class="aboutme">
+                <li id="author">沈毅</li>
+                <li id="date">2015-06-07</li>
+                <li id="github">
+                    github : 
+                    <a href="https://github.com/pissang" target="_blank">pissang</a>
+                </li>
+                <li id="weibo">
+                    @
+                    <a href="http://weibo.com/pissang" target="_blank">pissang</a>
+                </li>
+            </ul>
+        </div>
+
+        <link rel=stylesheet type=text/css href="../../css/desert.css" />
+        <script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
+        <script type="text/javascript" src="../../js/lib/esl.js"></script>
+        <script type="text/javascript" src="../../js/lib/prettify.js"></script>
+        <script type="text/javascript" src="../../js/lib/zrender.js"></script>
+        <script type="text/javascript" src="../../js/lib/echarts/echarts.js"></script>
+        <script type="text/javascript" src="../../js/lib/echarts-x/echarts-x.js"></script>
+        <script type="text/javascript" src="../../js/lib/qtek.amd.min.js"></script>
+        <script type="text/javascript" src="../../js/slides.js"></script>
+
+        <script>
+            require.config({
+                paths: {
+                    echarts: '../../js/lib/echarts',
+                    'echarts-x': '../../js/lib/echarts-x',
+                    'worldcup-high': 'js/worldcup-high'
+                }
+            });
+            require(['js/main']);
+        </script>
+    </body>
+</html>

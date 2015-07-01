@@ -100,6 +100,22 @@ var slides = (function() {
         }
 
         initKeyEvent();
+
+
+        if (window.location.search.match('pdf')) {
+            appearQueue.forEach(function (items) {
+                items.forEach(function (item) {
+                    var functionName = item.getAttribute('data-action');
+                    if (functionName) { 
+                        if (enterActions[functionName]) {
+                            setTimeout(function () {
+                                enterActions[functionName](item);
+                            });
+                        }
+                    }
+                })
+            })
+        }
     };
 
     function findAppearList(itemClass) {
