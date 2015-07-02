@@ -118,7 +118,7 @@
                 </div>
             </article>
             <article>
-                <h2>全国 GDP 分布 - 颜色</h2>
+                <h2>颜色 - 热力图</h2>
                 <!-- 示例图 -->
             </article>
             <article>
@@ -152,33 +152,54 @@ ctx.putImageData(imageData, 0, 0);
                         </ul>
                     </div>
                     <div class="right" style="width:65%">
-                        <!-- 示例 -->
+                        <!-- TODO 示例 -->
                     </div>
                 </div>
             </article>
 
             <article class="center">
-                <h2 style="position:relative;z-index:1">亮度</h2>
+                <h2 style="position:relative;z-index:1">亮度 - 全国 GDP 分布</h2>
+                <!--tip: 在写入数据的时候，数据太大就会超出颜色的显示范围，这些超出范围的都会变成白色。因此很多细节都看不到了，可以调整曝光度使那些太大的数据也能在颜色的显示范围内。
+                -->
                 <img data-src="data/cngdp2010.png" style="margin-top:-100px;">
             </article>
             <article class="center">
+                <!--tip: 
+                当然曝光调小后也有弊端就是数据比较小的那一片，比如中心部那一片都肉眼看不到了
+                -->
                 <h2 style="position:relative;z-index:1">亮度 - 曝光调整</h2>
                 <img data-src="data/cngdp2010-exp.png" style="margin-top:-100px;">
+                <!-- TODO 曝光调整示例 -->
             </article>
-            <article>
+            <article class="center">
                 <h2>渐变 - 一维颜色查找表</h2>
+                <img data-src="img/gradient.png" height="20" alt="">
+                <!-- ECharts data range -->
+                <!-- tip:
+                    可以使用一个一维的数组做查找表。从这张表里找到不同的亮度对应的应该显示什么颜色。
+
+                    一般会存储在一张宽 256, 高度为 1 的图片里，或者使用 canvas 生成一个渐变色然后使用 getImageData() 获取这个数组
+                -->
             </article>
-            <article>
+            <article class="center">
                 <h2>页面点击热力图</h2>
+                <img data-src="img/analysis-of-heatmap-overview.png" alt="">
             </article>
             <article>
-                <h2>三维直方图</h2>
+                <h2>高度 - 三维直方图</h2>
+                <!--tip: 颜色可以用来表示另外信息，比如给数据分类, 或者高于某个标准线的 -->
+                <div class="item fullscreen" data-action="showHistogram3d"></div>
+                <!-- TODO 全国 2005 - 2010 GDP 动画图 -->
             </article>
             <article>
                 <h2>优化</h2>
             </article>
             <article>
                 <h2>明暗面 - Lambert Shading</h2>
+                <div class="item fullscreen" data-action="showHistogram3d" data-light="1"></div>
+            </article>
+            <article>
+                <h2>Gridded Population of the World by ECharts-X</h2>
             </article>
 
             <article>
@@ -217,6 +238,7 @@ ctx.putImageData(imageData, 0, 0);
             </article>
             <article>
                 <h2>使用图形表示向量</h2>
+                <!-- 比较密集的时候无法看清 -->
             </article>
     
             <article>
@@ -226,7 +248,15 @@ ctx.putImageData(imageData, 0, 0);
                 <h2>生成噪点图</h2>
             </article>
             <article>
+                <h2>高斯模糊</h2>
+                <!-- 横竖方向上的模糊 -->
+            </article>
+            <article>
+                <h2>横向的高斯模糊 - 金属拉丝</h2>
+            </article>
+            <article>
                 <h2>在向量方向上做卷积</h2>
+                <!-- 可以清晰的看出这个向量场的形状 -->
             </article>
             <article>
                 <h2>使用 WebGL 做卷积</h2>
@@ -234,7 +264,9 @@ ctx.putImageData(imageData, 0, 0);
 
             <article>
                 <h2>使用粒子效果</h2>
+                <!-- 放入一个粒子，记录下运动的轨迹 -->
             </article>
+
             <article>
                 <h2></h2>
                 <div class="content" style="width:300px;">
@@ -259,10 +291,7 @@ ctx.putImageData(imageData, 0, 0);
                     </ul>
                 </div>
             </article>
-            <article>
-                <h2>残影</h2>
-            </article>
-<!--
+
             <article>
                 <h1>线数据的可视化</h1>
             </article>
@@ -272,7 +301,7 @@ ctx.putImageData(imageData, 0, 0);
             <article>
                 <h2></h2>
             </article>
--->
+
             <article>
                 <h1>关系数据的可视化</h1>
             </article>
@@ -300,9 +329,9 @@ ctx.putImageData(imageData, 0, 0);
         <script type="text/javascript" src="../../js/lib/esl.js"></script>
         <script type="text/javascript" src="../../js/lib/prettify.js"></script>
         <script type="text/javascript" src="../../js/lib/zrender.js"></script>
+        <script type="text/javascript" src="../../js/lib/qtek.amd.min.js"></script>
         <script type="text/javascript" src="../../js/lib/echarts/echarts.js"></script>
         <script type="text/javascript" src="../../js/lib/echarts-x/echarts-x.js"></script>
-        <script type="text/javascript" src="../../js/lib/qtek.amd.min.js"></script>
         <script type="text/javascript" src="../../js/slides.js"></script>
 
         <script>

@@ -1,8 +1,7 @@
 define(function (require) {
-    
+
     require('qtek/shader/buildin');
 
-    
     var codes = {};
 
     $('pre.prettyprint').each(function () {
@@ -13,7 +12,16 @@ define(function (require) {
     prettyPrint();
 
     var actions = {
-
+        showHistogram3d: {
+            enter: function (dom) {
+                require('./showHistogram3d').init(dom, {
+                    light: dom.getAttribute('data-light')
+                });
+            },
+            leave: function (dom) {
+                require('./showHistogram3d').dispose(dom);  
+            }
+        }
     }
 
     slides.init('articles', {

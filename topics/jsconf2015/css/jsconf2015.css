@@ -120,3 +120,11 @@ article h2 {
 .xyz-rgb.xy .b {
     width: 50px;
 }
+
+.fullscreen {
+    position:absolute;
+    left:0;
+    top:0;
+    right:0;
+    bottom:0
+}

@@ -1,0 +1,122 @@
+/**
+ * http://en.wikipedia.org/wiki/Lambertian_reflectance
+ */
+
+@export histogram3d.lambert.vertex
+
+uniform mat4 worldViewProjection : WORLDVIEWPROJECTION;
+uniform mat4 worldInverseTranspose : WORLDINVERSETRANSPOSE;
+uniform mat4 world : WORLD;
+
+attribute vec3 position: POSITION;
+
+#ifdef MORTHING
+attribute vec3 position0;
+#endif
+
+attribute vec4 vertexColor: COLOR;
+attribute vec3 normal: NORMAL;
+
+attribute vec3 barycentric;
+
+#ifdef SKINNING
+attribute vec3 weight : WEIGHT;
+attribute vec4 joint : JOINT;
+
+uniform mat4 skinMatrix[JOINT_NUMBER] : SKIN_MATRIX;
+#endif
+
+varying vec3 v_Normal;
+varying vec3 v_WorldPosition;
+varying vec3 v_Barycentric;
+varying vec4 v_Color;
+
+#ifdef MORTHING
+uniform float percent: 1;
+#endif
+
+void main()
+{
+#ifdef MORTHING
+    vec3 blendPosition = lerp(position0, position, percent);
+#else
+    vec3 blendPosition = position;
+#endif
+
+    gl_Position = worldViewProjection * vec4(blendPosition, 1.0);
+
+    v_Normal = normalize((worldInverseTranspose * vec4(normal, 0.0)).xyz);
+    v_WorldPosition = (world * vec4(blendPosition, 1.0)).xyz;
+
+    v_Barycentric = barycentric;
+    v_Color = vertexColor;
+}
+
+@end
+
+
+@export histogram3d.lambert.fragment
+
+uniform vec3 color : [1.0, 1.0, 1.0];
+uniform float alpha : 1.0;
+
+// Uniforms for wireframe
+uniform float lineWidth : 0.0;
+uniform vec3 lineColor : [0.0, 0.0, 0.0];
+
+varying vec3 v_Normal;
+varying vec3 v_WorldPosition;
+varying vec3 v_Barycentric;
+varying vec4 v_Color;
+
+#ifdef AMBIENT_LIGHT_NUMBER
+@import buildin.header.ambient_light
+#endif
+
+#ifdef DIRECTIONAL_LIGHT_NUMBER
+@import buildin.header.directional_light
+#endif
+
+#extension GL_OES_standard_derivatives: enable
+
+@import buildin.util.edge_factor
+
+void main()
+{
+    gl_FragColor = vec4(color, alpha);
+    gl_FragColor *= v_Color;
+
+    vec3 diffuseColor = vec3(0.0, 0.0, 0.0);
+    
+#ifdef AMBIENT_LIGHT_NUMBER
+    for(int i = 0; i < AMBIENT_LIGHT_NUMBER; i++)
+    {
+        diffuseColor += ambientLightColor[i];
+    }
+#endif
+
+#ifdef DIRECTIONAL_LIGHT_NUMBER
+    for(int i = 0; i < DIRECTIONAL_LIGHT_NUMBER; i++)
+    {
+        vec3 lightDirection = -directionalLightDirection[i];
+        vec3 lightColor = directionalLightColor[i];
+        
+        float ndl = dot(v_Normal, normalize(lightDirection));
+
+        float shadowContrib = 1.0;
+
+        diffuseColor += lightColor * clamp(ndl, 0.0, 1.0) * shadowContrib;
+    }
+#endif
+
+#if defined(AMBIENT_LIGHT_NUMBER) || defined(DIRECTIONAL_LIGHT_NUMBER)
+    gl_FragColor.rgb *= diffuseColor;
+#endif
+
+    if(lineWidth > 0.01)
+    {
+        gl_FragColor.rgb = gl_FragColor.rgb * mix(lineColor, vec3(1.0), edgeFactor(lineWidth));
+    }
+}
+
+@end
