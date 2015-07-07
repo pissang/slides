@@ -56,6 +56,9 @@ define(function (require) {
         camera.lookAt(scene.position);
 
         getData(function (data, color) {
+            if (! renderer) {
+                return;
+            }
             var control = new OrbitControl({
                 domElement: renderer.canvas,
                 target: camera
