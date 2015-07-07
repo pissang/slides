@@ -128,3 +128,15 @@ article h2 {
     right:0;
     bottom:0
 }
+
+.side {
+    position: absolute;
+    left: 10px;
+    top: 100px;
+    text-align: left;
+}
+
+.side pre,
+pre.side {
+    margin: 0;
+}

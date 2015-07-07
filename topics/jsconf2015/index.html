@@ -14,7 +14,7 @@
                 <!--
                 <h2 class="subtitle">WebGL 与 Canvas 在 ECharts 中的应用</h2>
                 -->
-                <!-- tip: 这次分享侧重于如何使用一些前端的技术诸如 Canvas 和 WebGL 去做可视化的绘制，展现与交互部分 -->
+                <!-- tip: 这次分享侧重于如何使用一些前端的技术诸如 Canvas 和 WebGL 去做可视化的绘制和展现 -->
             </article>
             <article>
                 <h2>About Me</h2>
@@ -65,12 +65,7 @@
 
             <article>
                 <p>可视化示例图</p>
-            </article>
-
-            <article>
-                <!-- 然后来看一个使用 ECharts 可视化微博签到分布的图 -->
-                <h2>微博签到分布</h2>
-                <div class="item fullscreen" data-action="showWeiboCheckin"></div>
+                <!-- TODO -->
             </article>
 
             <article>
@@ -99,8 +94,7 @@
                     <div style="width:33.3%">
                         <ul class="list">
                             <!-- 可以是物理属性 -->
-                            <li>温度</li>
-                            <li>势能</li>
+                            <li>温度, 湿度</li>
                             <li>高度</li>
                             <!-- 也可以是 -->
                             <li>分布密度</li>
@@ -118,61 +112,146 @@
                     </div>
                 </div>
             </article>
-            <article>
-                <h2>颜色 - Canvas 填充</h2>
-                <div class="row">
-                    <div class="left" style="width:35%;margin-top:-50px;">
+
+            <article class="center">
+                <!-- 绘制方法 -->
+                <div class="row content" style="width:1000px;">
+                    <div class="left">
+                        <h3>Canvas</h3>
                         <ul class="list">
-                            <!-- tip: 可以像前面微博签到数据中那样画路径 -->
-                            <li>画路径(方块，圆)
+                            <li>路径图形(方块，圆)
+                                <p>数据稀疏</p>
+                                <p>有形状，大小的属性</p>
+                                <p>缺点：开销大</p>
+<!--
 <pre class="prettyprint">
 ctx.fillStyle = i % 2 ? 'black' : 'red';
 ctx.beginPath();
 ctx.rect(i, j, 1, 1);
 ctx.fill();
 </pre>
+-->
                             </li>
-                            <li>方块填充</li>
+<!--
+                            <li>方块绘制</li>
 <pre class="prettyprint">
 ctx.fillStyle = '#ccc';
 ctx.fillRect(x, y, 2, 2);
 </pre>
-                            <!-- tip: 最高效的方法是直接在 Canvas 里写入像素数据 -->
+-->
+                            <!-- tip: 可以直接把数据映射到像素上 -->
                             <li>
-                                写入像素
+                                像素操作
+                                <p>数据量大的均匀网格</p>
+                                <p>快</p>
+                                <p>缺点：能表达的只有颜色</p>
+<!--
 <pre>
 var imageData = ctx.createImageData(width, height);
 ...
 ctx.putImageData(imageData, 0, 0);
 </pre>
+-->
                             </li>
                         </ul>
                     </div>
-                    <div class="right" style="width:65%">
-                        <!-- TODO 示例 -->
+
+                    <div class="right">
+                        <h3>WebGL</h3>
+                        <ul class="list">
+                            <li>
+                                点云（Point Cloud）
+                                <p>颜色</p>
+                                <p>纹理</p>
+<!--
+<pre>
+gl.drawArrays(gl.POINTS, 0, vertexCount);
+</pre>
+<p>Vertex Shader</p>
+<pre>
+attribute float size;
+...
+gl_PointSize = size;
+...
+</pre>
+<p>Fragment Shader</p>
+<pre>
+gl_FragColor = color * texture2D(sprite, gl_PointCoord);
+</pre>
+-->
+                            </li>
+                            <li>
+                                写入纹理
+                            </li>
+                            <li>三维图形</li>
+                        </ul>
                     </div>
                 </div>
             </article>
 
+            <article>
+                <!-- 然后来看一个使用 ECharts 可视化微博签到分布的图 -->
+                <h2>微博签到分布 - Canvas</h2>
+                <div class="item fullscreen" data-action="showWeiboCheckin"></div>
+<pre class="side" style="font-size:20px; line-height:40px;">
+ctx.fillStyle = color;
+ctx.beginPath();
+ctx.rect(i, j, 1, 1);
+ctx.fill();
+</pre>
+            </article>
+
+            <article>
+                <h2>微博签到分布 - WebGL</h2>
+                <!-- 然后来看一个使用 ECharts 可视化微博签到分布的图 -->
+                <div class="item fullscreen" data-action="showWeiboCheckin" data-webgl="1"></div>
+<div class="side">
+<pre>
+gl.drawArrays(gl.POINTS, 0, vertexCount);
+</pre>
+<p>Vertex Shader</p>
+<pre>
+attribute float size;
+...
+gl_PointSize = size;
+...
+</pre>
+<p>Fragment Shader</p>
+<pre>
+gl_FragColor = color * texture2D(sprite, gl_PointCoord);
+</pre>
+</div>
+            </article>
+
             <article class="center">
-                <h2 style="position:relative;z-index:1">亮度 - 全国 GDP 分布</h2>
+                <h2 style="position:relative;z-index:1">全国 GDP 网格分布</h2>
+<pre class="side" style="font-size:20px; line-height:40px;">
+pixels[i] = value;
+pixels[i + 1] = value;
+pixels[i + 2] = value;
+</pre>
                 <!--tip: 在写入数据的时候，数据太大就会超出颜色的显示范围，这些超出范围的都会变成白色。因此很多细节都看不到了，可以调整曝光度使那些太大的数据也能在颜色的显示范围内。
                 -->
                 <img data-src="data/cngdp2010.png" style="margin-top:-100px;">
             </article>
+
             <article class="center">
                 <!--tip: 
                 当然曝光调小后也有弊端就是数据比较小的那一片，比如中心部那一片都肉眼看不到了
-                -->
+                -->          
+<pre class="side" style="font-size:20px; line-height:40px;">
+value = value * Math.pow(2, exposure);
+</pre>
                 <h2 style="position:relative;z-index:1">后处理 - 曝光调整</h2>
                 <img data-src="data/cngdp2010-exp.png" style="margin-top:-100px;">
+                <!-- TODO 曝光公式 -->
                 <!-- TODO 曝光调整示例 -->
                 <!--tip:
                 颜色区分度不是很大
                 -->
             </article>
             <article class="center">
-                <h2>渐变 - 一维颜色查找表</h2>
+                <h2>颜色映射 - 一维颜色查找表</h2>
                 <img data-src="img/gradient.png" height="20" alt="">
                 <!-- ECharts data range -->
                 <!-- tip:
@@ -197,7 +276,7 @@ ctx.putImageData(imageData, 0, 0);
             <article>
                 <h2>明暗面 - Lambert Shading</h2>
                 <div class="item fullscreen" data-action="showHistogram3d" data-light="1"></div>
-                <img style="position:absolute;left:50px;top:100px;" data-src="img/lambert.jpeg"></img>
+                <img class="side" style="left:50px" data-src="img/lambert.jpeg"></img>
             </article>
             <article>
                 <h2>全球人口分布 - ECharts</h2>
@@ -209,12 +288,17 @@ ctx.putImageData(imageData, 0, 0);
                 <!-- 流场 -->
                 <!-- 流场可视化的核心目标有效的描绘流动信息 -->
             </article>
-            <article>
+            <article class="center">
                 <h2>向量场（Vector Field）</h2>
+                <ul class="content list">
+                    <li>图形表示向量大小和方向</li>
+                    <li>纹理流线</li>
+                    <li>粒子模拟</li>
+                </ul>
             </article>
 
             <article class="center">
-                <h2>使用图形表示向量</h2>
+                <h2>图形表示向量大小和方向</h2>
                 <!-- 适用于比较规则的简单的向量场 -->
                 <div class="item content" data-action="showVectorArrows" style="height:500px;width:500px;"></div>
             </article>
@@ -250,11 +334,13 @@ ctx.putImageData(imageData, 0, 0);
                 <img data-src="img/vector_field.png" style="height:400px;" alt="">
             </article>
 -->
-            <article>
+            <article class="center">
                 <h2>纹理流线</h2>
                 <!-- 流线（stream line）是表示某一瞬时流体各点流动趋势的曲线，曲线上任一点的切线方向与该点的流速方向重合 -->
                 <!-- http://www.zhanpingliu.org/Research/FlowVis/LIC/LIC.htm -->
                 <!-- 双向 bidirectional -->
+                <!-- TODO -->
+
             </article>
             <article class="center">
                 <h2>Canvas 写入白噪声</h2>
@@ -282,9 +368,12 @@ ctx.putImageData(imageData, 0, 0);
                 <!-- 标量场 -->
                 <div class="item content" data-action="lic" data-scalar-field="1" style="height:400px;width:400px;"></div>
             </article>
+            <!-- TODO -->
+            <!--
             <article class="center">
                 <h2>后处理 - 对比度调整</h2>
             </article>
+            -->
             <article class="center">
                 <h2>风场</h2>
                 <div class="item content" data-action="lic" style="height:362px;width:720px;" data-wind-field="1" data-scalar-field="1"></div>
@@ -296,19 +385,15 @@ ctx.putImageData(imageData, 0, 0);
             </article>
 
             <article>
-                <h2>使用 WebGL</h2>
-            </article>
-
-            <article>
                 <h2>使用粒子效果</h2>
                 <div class="item fullscreen" data-action="showSingleParticle"></div>
                 <!-- 假设有这么一个使用二维柏林噪声生成的向量场 -->
                 <!-- 放入一个粒子，记录下运动的轨迹 -->
             </article>
 
-            <article>
-                <h2></h2>
-            </article>
+            <article data-action="showGlobeWind" data-flat="1"></article>
+
+            <article data-action="showGlobeWind"></article>
             
             <!--
             <article>
@@ -344,7 +429,7 @@ ctx.putImageData(imageData, 0, 0);
                 <h2>百度迁徙</h2>
             </article>
             <article>
-                <h2></h2>
+                <h2>飞行航线</h2>
             </article>
             <article>
                 <h1>关系数据的可视化</h1>

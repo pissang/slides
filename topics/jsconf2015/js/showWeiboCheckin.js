@@ -3,9 +3,12 @@ define(function (require) {
     var echarts = require('echarts');
     require('echarts/chart/map');
 
+    require('echarts-x');
+    require('echarts-x/chart/map3d');
+
     var myChart;
 
-    function init(dom) {
+    function init(dom, useWebGL) {
         if (myChart) {
             return;
         }
@@ -57,10 +60,22 @@ define(function (require) {
                     },
                     series: [{
                         name: '弱',
-                        type: 'map',
+                        type: useWebGL ? 'map3d' : 'map',
                         mapType: 'china',
                         hoverable: false,
                         clickable: false,
+
+                        baseLayer: {
+                            backgroundColor: 'rgba(0, 0, 0, 0)'
+                        },
+
+                        roam: {
+                            minZoom: 4.0,
+                            zoom: 5.0,
+                            maxZoom: 10.0
+                        },
+
+                        flat: true,
 
                         itemStyle: {
                             normal: {
@@ -90,7 +105,7 @@ define(function (require) {
                         data:[]
                     }, {
                         name: '中',
-                        type: 'map',
+                        type: useWebGL ? 'map3d' : 'map',
                         mapType: 'china',
                         markPoint: {
                             symbolSize: 1,
@@ -104,7 +119,7 @@ define(function (require) {
                         data:[]
                     }, {
                         name: '强',
-                        type: 'map',
+                        type: useWebGL ? 'map3d' : 'map',
                         mapType: 'china',
                         markPoint: {
                             symbolSize: 1,

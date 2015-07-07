@@ -70,7 +70,7 @@ define(function (require) {
 
         showWeiboCheckin: {
             enter: function (dom) {
-                require('./showWeiboCheckin').init(dom);
+                require('./showWeiboCheckin').init(dom, dom.getAttribute('data-webgl'));
             },
             leave: function (dom) {
                 require('./showWeiboCheckin').dispose(dom);
@@ -84,8 +84,17 @@ define(function (require) {
             leave: function (dom) {
                 require('./showSingleParticle').dispose(dom);
             }
+        },
+
+        showGlobeWind: {
+            enter: function (dom) {
+                require('./showGlobeWind').init(dom, dom.getAttribute('data-flat'));
+            },
+            leave: function (dom) {
+                require('./showGlobeWind').dispose(dom);
+            }
         }
-    }
+    };
 
     slides.init('articles', {
         itemClass: 'item',
