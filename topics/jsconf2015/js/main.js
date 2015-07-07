@@ -93,6 +93,24 @@ define(function (require) {
             leave: function (dom) {
                 require('./showGlobeWind').dispose(dom);
             }
+        },
+
+        showMigration: {
+            enter: function (dom) {
+                require('./showMigration').init(dom);
+            },
+            leave: function (dom) {
+                require('./showMigration').dispose(dom);
+            }
+        },
+
+        showGlobeFlights: {
+            enter: function (dom) {
+                require('./showGlobeFlights').init(dom);
+            },
+            leave: function (dom) {
+                require('./showGlobeFlights').dispose(dom);
+            }
         }
     };
 

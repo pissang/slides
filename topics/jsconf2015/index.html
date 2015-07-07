@@ -162,23 +162,7 @@ ctx.putImageData(imageData, 0, 0);
                             <li>
                                 点云（Point Cloud）
                                 <p>颜色</p>
-                                <p>纹理</p>
-<!--
-<pre>
-gl.drawArrays(gl.POINTS, 0, vertexCount);
-</pre>
-<p>Vertex Shader</p>
-<pre>
-attribute float size;
-...
-gl_PointSize = size;
-...
-</pre>
-<p>Fragment Shader</p>
-<pre>
-gl_FragColor = color * texture2D(sprite, gl_PointCoord);
-</pre>
--->
+                                <p>纹理表现每个点的形状</p>
                             </li>
                             <li>
                                 写入纹理
@@ -190,7 +174,6 @@ gl_FragColor = color * texture2D(sprite, gl_PointCoord);
             </article>
 
             <article>
-                <!-- 然后来看一个使用 ECharts 可视化微博签到分布的图 -->
                 <h2>微博签到分布 - Canvas</h2>
                 <div class="item fullscreen" data-action="showWeiboCheckin"></div>
 <pre class="side" style="font-size:20px; line-height:40px;">
@@ -240,9 +223,10 @@ pixels[i + 2] = value;
                 当然曝光调小后也有弊端就是数据比较小的那一片，比如中心部那一片都肉眼看不到了
                 -->          
 <pre class="side" style="font-size:20px; line-height:40px;">
-value = value * Math.pow(2, exposure);
+var m = pow(2, exposure);
+value *= m;
 </pre>
-                <h2 style="position:relative;z-index:1">后处理 - 曝光调整</h2>
+                <h2 style="position:relative;z-index:1">曝光值调整</h2>
                 <img data-src="data/cngdp2010-exp.png" style="margin-top:-100px;">
                 <!-- TODO 曝光公式 -->
                 <!-- TODO 曝光调整示例 -->
@@ -252,7 +236,7 @@ value = value * Math.pow(2, exposure);
             </article>
             <article class="center">
                 <h2>颜色映射 - 一维颜色查找表</h2>
-                <img data-src="img/gradient.png" height="20" alt="">
+                <img data-src="img/lut_explain.png" style="margin-top:100px;" alt="">
                 <!-- ECharts data range -->
                 <!-- tip:
                     可以使用一个一维的数组做查找表。从这张表里找到不同的亮度对应的应该显示什么颜色。
@@ -291,7 +275,7 @@ value = value * Math.pow(2, exposure);
             <article class="center">
                 <h2>向量场（Vector Field）</h2>
                 <ul class="content list">
-                    <li>图形表示向量大小和方向</li>
+                    <li>图形表示</li>
                     <li>纹理流线</li>
                     <li>粒子模拟</li>
                 </ul>
@@ -340,11 +324,29 @@ value = value * Math.pow(2, exposure);
                 <!-- http://www.zhanpingliu.org/Research/FlowVis/LIC/LIC.htm -->
                 <!-- 双向 bidirectional -->
                 <!-- TODO -->
-
+                <ul class="content list">
+                    <li>
+                        生成白噪声图
+                        <p>随机写入像素数据</p>
+                    </li>
+                    <li>
+                        在向量方向上做模糊
+                        <p>低通滤波</p>
+                    </li>
+                    <li>
+                        颜色表示向量大小
+                        <p>热力图</p>
+                    </li>
+                </ul>
             </article>
             <article class="center">
                 <h2>Canvas 写入白噪声</h2>
+                <!-- 最快的方式就是使用像素操作 -->
                 <div class="item content" data-action="showWhiteNoise" style="height:400px;width:400px;"></div>
+            </article>
+            <article>
+                <h2>模糊 - 低通滤波</h2>
+                <!-- TODO -->
             </article>
             <!--
             <article>
@@ -357,7 +359,7 @@ value = value * Math.pow(2, exposure);
             </article>
             -->
             <article class="center">
-                <h2>在向量方向上做卷积</h2>
+                <h2>在向量方向上做模糊</h2>
                 <div class="item content" data-action="lic" style="height:400px;width:400px;"></div>
                 <!-- 在流线的切线和法线方向上有的纹理频率的差异 -->
                 <!-- https://en.wikipedia.org/wiki/Line_integral_convolution -->
@@ -427,13 +429,57 @@ value = value * Math.pow(2, exposure);
             </article>
             <article>
                 <h2>百度迁徙</h2>
+                <div class="item fullscreen" data-action="showMigration"></div>
+            </article>
+            <article class="center">
+                <ul class="content list">
+                    <li>
+                        连线绘制
+                        <p>直线，贝塞尔曲线</p>
+                    </li>
+                    <li>
+                        动画效果
+                        <p>线性，贝塞尔插值</p>
+                    </li>
+                    <li>
+                        尾迹
+                        <p>Canvas 残影</p>
+                    </li>
+                </ul>
             </article>
             <article>
                 <h2>飞行航线</h2>
+                <div class="item fullscreen" data-action="showGlobeFlights"></div>
             </article>
+            <article class="center">
+                <ul class="content list">
+                    <li>
+                        绘制贝塞尔曲线
+                        <p>WebGL 只支持直线绘制 - 曲线细分</p>
+                    </li>
+                    <li>
+                        Shader 计算飞行的小点位置
+                        <p>减小 JS 顶点的计算以及传输开销</p>
+<pre>
+float onet = 1.0 - t;
+vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
+    + t * t * (t * p3 + 3.0 * onet * p2);
+</pre>
+                    </li>
+                    <li>
+                        尾迹
+                        <p>多个不透明度逐渐衰减的图形</p>
+                    </li>
+                </ul>
+            </article>
+<!--
             <article>
                 <h1>关系数据的可视化</h1>
             </article>
+            <article>
+                <h2>力导向布局</h2>
+            </article>
+-->
             <article>
                 <h1>Thanks</h1>
             </article>
