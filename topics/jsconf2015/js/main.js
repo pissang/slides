@@ -57,6 +57,33 @@ define(function (require) {
             leave: function (dom) {
                 require('./showHeatmap').dispose(dom);
             }
+        },
+
+        showGlobePopulation: {
+            enter: function (dom) {
+                require('./showGlobePopulation').init(dom);
+            },
+            leave: function (dom) {
+                require('./showGlobePopulation').dispose(dom);
+            }
+        },
+
+        showWeiboCheckin: {
+            enter: function (dom) {
+                require('./showWeiboCheckin').init(dom);
+            },
+            leave: function (dom) {
+                require('./showWeiboCheckin').dispose(dom);
+            }
+        },
+
+        showSingleParticle: {
+            enter: function (dom) {
+                require('./showSingleParticle').init(dom);
+            },
+            leave: function (dom) {
+                require('./showSingleParticle').dispose(dom);
+            }
         }
     }
 

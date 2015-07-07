@@ -70,7 +70,7 @@
             <article>
                 <!-- 然后来看一个使用 ECharts 可视化微博签到分布的图 -->
                 <h2>微博签到分布</h2>
-                <div class="item"></div>
+                <div class="item fullscreen" data-action="showWeiboCheckin"></div>
             </article>
 
             <article>
@@ -164,7 +164,7 @@ ctx.putImageData(imageData, 0, 0);
                 <!--tip: 
                 当然曝光调小后也有弊端就是数据比较小的那一片，比如中心部那一片都肉眼看不到了
                 -->
-                <h2 style="position:relative;z-index:1">亮度 - 曝光调整</h2>
+                <h2 style="position:relative;z-index:1">后处理 - 曝光调整</h2>
                 <img data-src="data/cngdp2010-exp.png" style="margin-top:-100px;">
                 <!-- TODO 曝光调整示例 -->
                 <!--tip:
@@ -187,7 +187,6 @@ ctx.putImageData(imageData, 0, 0);
             <article class="center">
                 <h2>页面点击热力图</h2>
                 <img data-src="img/analysis-of-heatmap-overview.png" alt="">
-                <!-- TODO -->
             </article>
             <article>
                 <h2>高度 - 三维直方图</h2>
@@ -197,11 +196,12 @@ ctx.putImageData(imageData, 0, 0);
             </article>
             <article>
                 <h2>明暗面 - Lambert Shading</h2>
-                <!-- TODO Lambert Shading 示例图 -->
                 <div class="item fullscreen" data-action="showHistogram3d" data-light="1"></div>
+                <img style="position:absolute;left:50px;top:100px;" data-src="img/lambert.jpeg"></img>
             </article>
             <article>
-                <h2>全球人口分布 - ECharts-X</h2>
+                <h2>全球人口分布 - ECharts</h2>
+                <div class="item fullscreen" data-action="showGlobePopulation"></div>
             </article>
 
             <article>
@@ -217,15 +217,13 @@ ctx.putImageData(imageData, 0, 0);
                 <h2>使用图形表示向量</h2>
                 <!-- 适用于比较规则的简单的向量场 -->
                 <div class="item content" data-action="showVectorArrows" style="height:500px;width:500px;"></div>
-                <!-- TODO 箭头 -->
             </article>
 
             <article class="center">
                 <h2>风场（360 x 180）</h2>
-                <!-- tip: 图形的方式比较适合那些简单的向量场，如果我们用图形去可视化风场的数据 -->
                 <div class="item content" data-action="showVectorArrows" data-wind-field="1" style="height:500px;width:1000px;"></div>
             </article>
-
+<!--
             <article class="center">
                 <h2>使用颜色表示向量</h2>
                 <div class="content" style="width:300px;">
@@ -240,9 +238,6 @@ ctx.putImageData(imageData, 0, 0);
                             24bit
                             <p>R 8, G 8, B 8</p>
                         </li>
-                        <!-- 
-                            可以对数据预处理归一
-                        -->
                         <li>向量归一(0, 1)
                             <p>x*x + y*y + z*z = 1</p>
                             <p>x = (x + 1) / 2</p>
@@ -253,9 +248,8 @@ ctx.putImageData(imageData, 0, 0);
             <article class="center">
                 <h2>写入 Canvas</h2>
                 <img data-src="img/vector_field.png" style="height:400px;" alt="">
-                <!-- 可以看出形状，但是还是无法一眼看出迹线和走势 -->
             </article>
-    
+-->
             <article>
                 <h2>纹理流线</h2>
                 <!-- 流线（stream line）是表示某一瞬时流体各点流动趋势的曲线，曲线上任一点的切线方向与该点的流速方向重合 -->
@@ -284,12 +278,12 @@ ctx.putImageData(imageData, 0, 0);
                 <!-- Very similar to throwing paint in a river -->
             </article>
             <article class="center">
-                <h2>向量大小</h2>
+                <h2>向量大小 - 混合颜色</h2>
                 <!-- 标量场 -->
                 <div class="item content" data-action="lic" data-scalar-field="1" style="height:400px;width:400px;"></div>
             </article>
             <article class="center">
-                <h2>对比度调整</h2>
+                <h2>后处理 - 对比度调整</h2>
             </article>
             <article class="center">
                 <h2>风场</h2>
@@ -298,17 +292,22 @@ ctx.putImageData(imageData, 0, 0);
                 <!-- https://en.wikipedia.org/wiki/Line_integral_convolution -->
                 <!-- Very similar to throwing paint in a river -->
 
-                <!-- TODO 迭代效果 -->
-                <!-- TODO 数据集 or 效果 -->
+                <!-- TODO 数据集 and 效果 -->
             </article>
+
             <article>
-                <h2>使用 WebGL 做卷积</h2>
+                <h2>使用 WebGL</h2>
             </article>
 
             <article>
                 <h2>使用粒子效果</h2>
+                <div class="item fullscreen" data-action="showSingleParticle"></div>
+                <!-- 假设有这么一个使用二维柏林噪声生成的向量场 -->
                 <!-- 放入一个粒子，记录下运动的轨迹 -->
-                <!-- TODO 单个粒子的效果 -->
+            </article>
+
+            <article>
+                <h2></h2>
             </article>
             
             <!--
@@ -386,8 +385,7 @@ ctx.putImageData(imageData, 0, 0);
             require.config({
                 paths: {
                     echarts: '../../js/lib/echarts',
-                    'echarts-x': '../../js/lib/echarts-x',
-                    'worldcup-high': 'js/worldcup-high'
+                    'echarts-x': '../../js/lib/echarts-x'
                 }
             });
             require(['js/main']);
