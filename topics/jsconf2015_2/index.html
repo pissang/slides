@@ -25,7 +25,7 @@
             <article class="center">
                 <h2>Agenda</h2>
                 <ul class="content list">
-                    <li>前端的可视化手段</li>
+                    <!-- <li>前端的可视化手段</li> -->
                     <li>
                         Canvas 在 ECharts 中的应用
                         <p>Why Canvas ?</p>
@@ -33,19 +33,16 @@
                     </li>
                     <li>
                         WebGL 在 ECharts-X 中的应用
-                        <p>航班路线可视化</p>
-                        <p>洋流可视化</p>
                     </li>
                 </ul>
             </article>
+            <!--
             <article class="center">
                 <h2>前端的可视化手段</h2>
-                <!-- 可视化就是数据到图形 -->
                 <div class="content row" style="width:700px;">
                     <div class="left">
                         <h3>可视化库</h3>
                         <ul class="list">
-                            <!-- 从底层到高层 -->
                             <li>Processing</li>
                             <li>D3.js</li>
                             <li>
@@ -66,63 +63,168 @@
                     </div>
                 </div>
             </article>
+            -->
 
             <article>
                 <h1>Canvas 在 ECharts 中的应用</h1>
             </article>
 
+            <article>
+                <h2 style="font-size:60px; margin-top:200px;">Why Canvas?</h2>
+                <!-- tip: 
+                    为什么选择 Canvas, 网上一直有关于是选择 Canvas 还是 SVG 的讨论，包括在什么场景下选择使用 Canvas，这里我就不多做赘述了。
+                 -->
+            </article>
+
             <article class="center">
-                <h2>Why Canvas ?</h2>
                 <ul class="list content">
-                    <li>
-                        具备更多的能力和可能性
-                        <p>像素操作</p>
-                        <p>特效，性能</p>
-                    </li>
-                    <li>
-                        与 WebGL 结合更好
-                        <p>作为纹理</p>
-                    </li>
+                    <!-- 我们最开始选择 Canvas 主要是出于这三点的考虑 -->
+                    <!-- tip: 首先在性能上相同的帧数下相比 SVG 能够同时绘制更多的图形，这就意味着我们可以展现更大量的数据-->
+                    <li>性能</li>
+                    <!-- tip: 然后是使用 Canvas 去绘制一些特效，比如粒子特效，比 SVG 更加高效和便捷 -->
+                    <li>特效绘制</li>
+                    <!-- tip: 最后一点是 SVG 无法做到的，就是像素的操作，这一点直接导致了在有些可视化的手段上只能使用 Canvas 而不能使用 SVG -->
+                    <li>像素操作</li>
+                </ul>
+                <!-- TODO Icon -->
+                <!-- tip: 一言以蔽之就是 Canvas 相比 SVG 能够让我们在可视化上面拥有更多的能力和可能性 -->
+                <!-- tip: 下面我们通过两个例子来看一下这三点所带来的优势 -->
+            </article>
+
+            <article>
+                <h2>百度迁徙</h2>
+                <!-- 
+                    tip: 首先是这个春节期间百度和样式合作的百度迁徙的例子，
+                    这个例子里有 3k 条边的数据，也就是说这个画面有 3k 条连接两点的曲线，我们后来又在 ECharts 里对动画做了优化，画面中能够有 3k 个小点同时在各条边上移动的动画。
+                -->
+                <!--
+                    tip: 如果仔细看的话大家可以看到每个点在动画的时候是有尾迹特效的，
+                    这个尾迹可以更好的表现点动画的轨迹，可以使得在画面中同时有很多图形在动画的时候不会显得太乱。看不出每个点的一个运动路径
+                -->
+                <!--
+                    tip: 这个尾迹特效是用类似动态模糊的方法实现的，就是使用另外一个 Canvas 通过 drawImage 的方法保存上一帧的画面，然后把上一帧的画面跟这帧的画面以一定的透明度做一个混合，不透明度越大尾迹就会显得越长。
+
+                    这个是通过 Canvas 可以很方便的实现。
+                -->
+                <div class="item fullscreen" data-action="showMigration"></div>
+                <ul class="list">
+                    <li>3k 条边</li>
+                    <li>3k 个点的动画</li>
+                    <li>尾迹特效</li>
                 </ul>
             </article>
 
             <article class="center">
+                <h2 style="position:relative;z-index:1">全国 GDP 网格分布热力图</h2>
+                <!-- tip: 像这种比较规则的网格数据一般数据量都很大，直接通过绘制图形肯定是不行的，比较合适的办法是把数据映射成一个色值，然后把这个色值直接写入像素，然后再通过 Canvas 里提供的 putImageData 把整个像素数组输出到画布上，因为像素的操作基本等同于数组的操作，所以速度非常快，像这种可视化都能够实现实时的交互 -->
+                <div data-action="showHeatmap" class="fullscreen item"></div>
+                <ul class="list" style="text-align:left;z-index:1;position:relative;">
+                    <li>像素写入数据</li>
+                    <li>颜色映射</li>
+                </ul>
+                <!-- TODO 曝光度调整示例 -->
+                <!-- TODO 映射调整示例 -->
+            </article>
+            <article class="center">
+                <!-- tip: 当然选择 Canvas 也会带来一些比较麻烦的问题, 首先因为它相对来说是一个比较基础的接口，只提供了设置当前绘制状态，然后绘制图形的功能，不像 svg 那样可以方便的管理画布上的图形，这个图形的管理包括层级的管理，每个图形的样式和变换的管理，以及最后如何去绘制这些图形等等 -->
                 <h2>Canvas 的问题</h2>
                 <ul class="list content">
                     <li>
-                        图形的管理
-                        <!-- svg 可以有父子节点，父节点的变换会应用到子节点上 -->
-                        <!-- canvas 只能一个图形一个图形去画 -->
+                        <!-- TODO 为什么是难点 -->
+                        没有图形对象的管理
                         <p>层级 Hierarchy</p>
-                        <!-- svg 或者 dom 里每个图形样式的管理非常方便，还有 css 分离样式 -->
-                        <!-- canvas 只能设置当前绘制的样式状态 -->
-                        <!-- ECharts 也做了样式的管理，但是还停留在 inline-style 的状态 -->
                         <p>样式 Style</p>
                         <p>变换 Transform</p>
+                        <p>绘制</p>
                     </li>
-                    <li>鼠标事件的判断和分发</li>
+                    <!--tip: 然后因为 Canvas 里面没有把图形当做对象，所以无法对图形做事件绑定，事件处理等等 -->
+                    <li>鼠标事件处理</li>
                 </ul>
+            </article>
+
+            <article class="center">
+                <!-- tip: 接下去我会花一点时间分享下针对这两个问题我们在 ECharts 里的解决方案  -->
+                <h2 style="font-size:60px; margin-top:200px;">ECharts 中的实现</h2>
+            </article>
+
+            <article>
+                <h2>图形的管理 - 图形对象</h2>
+                <div class="row">
+                    <!-- tip: 首先是图形的管理，我们会把根据 Canvas 里绘制图形的方法把所有图形对象分为三大类，路径 Path，图片 Image 还有文字 Text, 每个图形对象都会维护各自的一些属性，比如用 style 属性去设置图形的绘制样式，比如路径的填充颜色，描边颜色，或者一张图片的高和宽等等，然后还有位移，旋转，缩放等坐标的变换属性，然后还有一个 z 去描述图形在 z 方向上的绘制顺序，类似 css 的 z-index, 最后的 zlevel 主要是提供一个Canvas分层绘制的能力，不同zlevel 的图形会放入不同的canvas里-->
+                    <div class="left" style="width:40%">
+                        <ul class="list" id="graphics">
+                            <li>
+                                <img data-src="img/icon-path.png" />
+                                Path
+                            </li>
+                            <li>
+                                <img data-src="img/icon-image.png" />
+                                Image
+                            </li>
+                            <li>
+                                <img data-src="img/icon-text.png" />
+                                Text
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="right" style="width:60%">
+                        <ul class="list" style="font-size:22px;">
+                            <li>样式 Style
+                                <p>填充颜色, 描边颜色，描边线宽，图片高宽</p>
+                            </li>
+                            <li>
+                                平移，旋转，缩放变换
+                                <p>position, rotation, scale</p>
+                            </li>
+                            <li>
+                                z
+                            </li>
+                            <li>
+                                zlevel
+                                <p>分层绘制</p>
+                            </li>
+                            <li>...</li>
+                        </ul>
+                    </div>
+                </div>
             </article>
 
             <article class="center">
                 <h2>图形的管理 - 层级树</h2>
-                <img data-src="img/zr_hierarchy.png" alt="">
+                <!-- tip: 一开始在 ECharts 里面是使用一个平坦的数组去存储这些图形的 -->
+                <!-- tip: 后来随着应用的复杂度提升，我们发现h还是需要像 SVG 一样用一棵树去组织图形的层级关系，就像图中这样，这个树的叶子节点都是刚才提到的可以直接绘制到画布上的图形 -->
+                <!-- tip: 然后这个树里的非叶子节点都是容器 Group，它会包含一些图形或者其他容器作为子节点，这个容器节点也会有坐标变换的属性，然后这些坐标变换会应用到子节点上 -->
+                <img data-src="img/render_list.png" alt="">
+                 <br />
+                 <br />
+                <img data-src="img/zr_hierarchy.png" width="500" alt="">
             </article>
 
             <article class="center">
                 <h2>图形的管理 - 绘制</h2>
-                <ul class="content list" style="margin-left:0;">
+                <!-- tip: 
+                在使用一颗树管理图形之后，在每一帧的绘制准备上就会有一点麻烦，不能像存在数组里一样直接遍历一遍所有图形就可以进行绘制了。
+                -->
+                <!-- tip:
+                在 ECharts 里每一帧的绘制步骤大概是这样，首先是深度优先的遍历一遍整个树，对于每个节点会从一些坐标变换的属性上计算这些图形的变换矩阵，并且乘上父节点的变换矩阵，然后会找到所有图形，根据需要去更新图形的包围盒，并且根据这个包围盒去做图形的裁剪。防止那些画布外的图形会做不必要的绘制。裁剪过后的图形是最终需要绘制到画布上的，所以会放到一个渲染列表里，这个渲染列表除了图形的绘制之外在后面图形的鼠标相交判断上也会用到。
+                -->
+                <!-- tip:
+                在更新完渲染列表之后会对这个列表做一个 z 方向上的排序，保证图形是从后面往前面画的，然后就是线性遍历所有图形然后一个个绘制了
+                -->
+                <!-- tip:
+                这几步看起来比较复杂，但实际开销很小，在绘制中所占的开销比例几乎可以忽略
+                -->
+                <ul class="list content" style="text-align:left;">
                     <li>
-                        遍历层级树
-                        <p>过滤不可见的节点</p>
+                        遍历整个树
                         <!-- 从 postion, rotation, scale 计算出变换矩阵，然后乘上父节点的矩阵 -->
-                        <p>更新变换矩阵, position, rotation, scale</p>
+                        <p>计算变换矩阵</p>
+                        <p>找到图形，更新包围盒，裁剪</p>
                         <p>放入渲染列表</p>
                     </li>
                     <li>
                         渲染列表排序
-                        <p>zlevel</p>
-                        <p>z</p>
+                        <p>zlevel, z</p>
                     </li>
                     <li>
                         <!-- 依次对每个图形绑定样式，应用变换矩阵，然后进行绘制 -->
@@ -130,49 +232,61 @@
                         遍历渲染列表依次进行绘制
                     </li>
                 </ul>
-                <img data-src="img/render_list.png" style="position:absolute;right:50px;top:200px;" alt="">
             </article>
             
             <article class="center">
+                <!-- tip: 完成图形的管理之后，每个图形对象事件的管理也变得顺利成章-->
                 <h2>事件处理与分发</h2>
+                <!-- tip:  首先对整个容器绑定需要的事件，然后在有事件触发的时候去反向循环刚才生成的渲染列表判断鼠标是否在某个图形上，是的话就会对这个图形分发事件，如果图形有父节点的话，事件也会冒泡到父节点-->
+                <!-- tip: 这里面最复杂的应该是第二步判断鼠标位置是否在某个图形上 -->
                 <ul class="content list">
                     <li>容器绑定事件</li>
-                    <li>循环渲染列表判断鼠标是否在某个图形上</li>
+                    <li>反向循环渲染列表判断鼠标是否在某个图形上</li>
                     <li>图形事件分发与冒泡</li>
                 </ul>
             </article>
 
             <article class="center">
                 <h2>判断鼠标是否在图形上</h2>
+                <!-- tip: 
+                    这个相交的判断首先会粗略估计鼠标是不是在图形的包围盒中，因为包围盒是个轴对齐的矩形，所以这个判断非常快而且能够排除掉大部分的图形
+                 -->
+                <!-- tip:
+                    文字和图片这两种类型的图形也可以只使用包围盒的判断就行了，但是对于大部分路径图形来说，需要进一步去做一些精确的相交判断。
+                -->
                 <ul class="content list">
-                    <li>
-                        包围盒判断
-                        <p>快，不精确</p>
-                    </li>
-                    <li>
-                        isPointInPath
-                        <p>每次都需要重新构建路径</p>
-                        <p>excanvas 不支持</p>
-                        <p>不支持描边</p>
-                    </li>
-                    <li>完全 JS 实现？</li>
+                    <li>包围盒粗略判断</li>
+                    <li>路径与鼠标相交的精确判断</li>
                 </ul>
+                <!-- tip:
+                    比如说这张图片里需要去判断鼠标在地图的哪个区域里面，因为每个区域的路径都是贴着的，如果不是做精确判断的话，会产生很多错误的操作。
+                -->
+                <img data-src="img/map.png" class="item" width="400" alt="">
             </article>
 
             <article class="center">
-                <h2>包围盒判断</h2>
-                <ul class="list content">
+                <!-- 每次路径形状变化的时候，都需要重新去计算它的包围盒，如果只是用于刚才提到的相交测试的粗略判断的话，我们简要的计算一下图形的非最小包围盒就行了，但是如果是需要知道确切的这个图形的高宽的话，是需要计算最小包围盒的，对于只有直线的路径来说这两个都一样从端点计算，但是对于贝塞尔曲线来说，最小包围盒还需要计算曲线的极值，这个是有一定的开销的。不像左边的非最小包围盒只需要从四个控制点计算-->
+                <h2>路径图形包围盒的计算</h2>
+                <div class="row">
+                    <!-- TODO 示例 -->
+                    <div class="left">
+                        <h3>非最小包围盒</h3>
+                    </div>
+                    <div class="right">
+                        <h3>最小包围盒</h3>
+                    </div>
+                </div>
+            </article>
+
+            <article class="center">
+                <h2>路径与鼠标相交的精确判断</h2>
+                <ul class="content list">
                     <li>
-                        包围盒计算
-                        <p>直线和曲线的端点</p>
-                        <p>圆弧的极值</p>
+                        isPointInPath<br />isPointInStroke
+                        <p>每次都需要重新构建路径</p>
+                        <p>excanvas 不支持</p>
                     </li>
-                    <li>
-                        适合文字，图片, 和粗略的筛选
-                    </li>
-                    <li>
-                        <img data-src="img/map.png" width="256" alt=""> ?
-                    </li>
+                    <li>JS 实现鼠标位置与路径的相交</li>
                 </ul>
             </article>
 
@@ -185,21 +299,17 @@
                     </li>
                     <li>
                         描边（Stroke）路径
-                        <p>计算点到线段和曲线的位置</p>
+                        <p>计算点到线段和曲线的距离</p>
                     </li>
                 </ul>
             </article>
 
+<!--
             <article class="center">
                 <h2>填充 - Non Zero Winding Rule</h2>
                 <img data-src="img/non-zero.png" width="300" alt="">
                 <p>直线，贝塞尔，圆弧</p>
             </article>
-<!--
-            <article>
-                <h2>描边</h2>
-            </article>
--->
             <article class="center">
                 <h2>描边</h2>
                 <ul class="list content">
@@ -208,9 +318,15 @@
                     <li>判断距离是否小于描边的宽度</li>
                 </ul>
             </article>
+-->
+
+            <article>
+                <h2>Benchmark</h2>
+                <div class="item" style="height:400px;" data-action="showContainBench"></div>
+            </article>
 
             <article class="center">
-                <h2>Path Object</h2>
+                <h2>路径数据存储 - Path Object</h2>
 <pre class="prettyprint content" style="font-size:25; line-height:36px;">
 var path = new Path(ctx);
 path.moveTo(...);
@@ -243,105 +359,6 @@ if (ctx.isPointInStroke(path, x, y)) {...}
             </article>
 
             <article class="center">
-                <!-- 像素操作是可视化大规模网格数据的一个有效的手段 -->
-                <h2>像素操作</h2>
-                <div class="content">
-<pre class="prettyprint">
-var pixels = ctx.getImageData(x, y, width, height).data;
-...
-ctx.putImageData(pixels, x, y);
-</pre>
-                </div>
-                <div>
-                    <!--  一个行优先的 TypedArray -->
-                    <h3 style="margin-top:-30px;">Pixel Layout - Uint8ClampedArray</h3>
-                    <img data-src="img/pixellayout.png" alt="">
-                </div>
-            </article>
-
-            <article class="center">
-                <!-- 
-                    对于数据密集的网格数据，比如这份全国 GDP 分布的网格数据，使用图形绘制并没有什么意义，而且很慢，
-                    可以尝试非常直观的通过 Canvas 里的像素操作把数据映射为图像，
-                -->
-                <h2 style="position:relative;z-index:1">全国 GDP 网格分布</h2>
-<pre class="side prettyprint" style="line-height:30px;">
-var imgData = ctx.createImageData(w, h);
-var pixels = imgData.data;
-for (var j = 0; j < h; j++)
-    for (var i = 0; i < w; i++) {
-        var idx = (j * w + i) * 4;
-        var value = ...;
-        pixels[idx + 1] = value;
-        pixels[idx + 2] = value;
-        pixels[idx + 3] = value;
-    }
-}
-ctx.putImageData(imgData, 0, 0);
-</pre>
-                <!--tip: 在写入数据的时候，数据太大就会超出颜色的显示范围，这些超出范围的都会变成白色。因此很多细节都看不到了，可以调整曝光度使那些太大的数据也能在颜色的显示范围内。
-                -->
-                <img data-src="data/cngdp2010.png" style="margin-top:-100px;margin-right: -150px;">
-            </article>
-            <article class="center">
-                <!--tip: 
-                曝光值是摄影里的概念，它相当于把所有的数据（颜色）乘上一个值，使得那些太大的数值会缩小到颜色表达的范围内，或者曝光值大于 0 的话是太小的数值会增大到一个颜色表达的范围内。
-                当然曝光调小后也有弊端就是数据比较小的那一片，比如中心部那一片都肉眼看不到了
-                -->          
-<pre class="side prettyprint" style="font-size:20px; line-height:40px;">
-var m = pow(2, exposure);
-value *= m;
-</pre>
-                <h2 style="position:relative;z-index:1">曝光值调整</h2>
-                <img data-src="data/cngdp2010-exp.png" style="margin-top:-100px;">
-                <!-- 可以看到右边这一片有了明显的区分 -->
-                <!-- TODO 曝光调整示例 -->
-                <!--tip:
-                颜色区分度不是很大
-                -->
-            </article>
-            <article class="center">
-                <h2>颜色映射 - 一维颜色查找表</h2>
-                <img data-src="img/lut_explain.png" style="margin-top:100px;" alt="">
-                <!-- ECharts data range -->
-                <!-- tip:
-                    可以使用一个一维的数组做查找表。从这张表里找到不同的亮度对应的应该显示什么颜色。
-
-                    一般会存储在一张宽 256, 高度为 1 的图片里，或者使用 canvas 生成一个渐变色然后使用 getImageData() 获取这个数组
-                -->
-                <!-- 图片后期处理 -->
-            </article>
-            <article class="center" data-action="showHeatmap"></article>
-            <article class="center">
-                <h2>页面点击热力图</h2>
-                <img data-src="img/analysis-of-heatmap-overview.png" alt="">
-            </article>
-
-            <article>
-                <h2>特效绘制 - 百度迁徙</h2>
-                <div class="item fullscreen" data-action="showMigration"></div>
-            </article>
-            <article class="center">
-                <ul class="content list">
-                    <li>
-                        连线绘制
-                        <p>直线，贝塞尔曲线</p>
-                    </li>
-                    <li>
-                        动画效果
-                        <p>线性，贝塞尔插值</p>
-                    </li>
-                    <li>
-                        尾迹
-                        <!-- 慢 -->
-                        <p>绘制多个轨迹点</p>
-                        <!-- 不能移动整副画面 -->
-                        <p>保留上一帧的画面作为残影</p>
-                    </li>
-                </ul>
-            </article>
-
-            <article class="center">
                 <h2>残影绘制 - 动态模糊</h2>
                 <p>保留上一帧的图片，与当前帧混合</p>
 
@@ -358,7 +375,8 @@ value *= m;
             <article>
                 <h1>WebGL 在 ECharts-X 中的使用</h1>
             </article>
-            
+
+            <!-- TODO 为什么要用 WebGL -->
             <article>
                 <h2>二维绘制加速 - Point Cloud</h2>
                 <div class="item fullscreen" data-action="showWeiboCheckin" data-webgl="1"></div>

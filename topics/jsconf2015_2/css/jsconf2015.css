@@ -140,3 +140,11 @@ article h2 {
 pre.side {
     margin: 0;
 }
+
+#graphics li {
+    list-style: none;
+    line-height: 120px;
+}
+#graphics li img {
+    width: 50px;
+}

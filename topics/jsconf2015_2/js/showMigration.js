@@ -110,7 +110,7 @@ define(function (require) {
                 }
                 option.series[0].markLine.data = data.allLine.sort(function (a, b) {
                     return b.num - a.num
-                }).slice(0, 2000).map(function (line) {
+                }).slice(0, 3000).map(function (line) {
                     return [{
                         geoCoord: getGeoCoord(line.start)   
                     }, {

@@ -23,33 +23,6 @@ define(function (require) {
             }
         },
 
-        showVectorArrows: {
-            enter: function (dom) {
-                require('./showVectorArrows').init(dom, dom.getAttribute('data-wind-field'));
-            },
-            leave: function (dom) {
-                require('./showVectorArrows').dispose(dom);
-            }
-        },
-
-        showWhiteNoise: {
-            enter: function (dom) {
-                require('./showWhiteNoise').init(dom);
-            },
-            leave: function (dom) {
-                require('./showWhiteNoise').dispose(dom);
-            }
-        },
-
-        lic: {
-            enter: function (dom) {
-                require('./lic').init(dom, dom.getAttribute('data-wind-field'), dom.getAttribute('data-scalar-field'));
-            },
-            leave: function (dom) {
-                require('./lic').dispose(dom);
-            }
-        },
-
         showHeatmap: {
             enter: function (dom) {
                 require('./showHeatmap').init(dom);
@@ -119,6 +92,15 @@ define(function (require) {
             },
             leave: function (dom) {
                 require('./showGlobe').dispose(dom);
+            }
+        },
+
+        showContainBench: {
+            enter: function (dom) {
+                require('./showContainBench').init(dom);
+            },
+            leave: function (dom) {
+                require('./showContainBench').dispose(dom);
             }
         }
     };
