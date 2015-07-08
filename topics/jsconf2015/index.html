@@ -113,8 +113,18 @@
                 </div>
             </article>
 
+            <article>
+                <h2>微博签到分布 - Canvas</h2>
+                <div class="item fullscreen" data-action="showWeiboCheckin"></div>
+                <ul class="side list">
+                    <li>物理空间</li>
+                    <li>分布密度</li>
+                    <li>颜色</li>
+                </ul>
+            </article>
+
             <article class="center">
-                <!-- 绘制方法 -->
+                <h2>几种绘制方法</h2>
                 <div class="row content" style="width:1000px;">
                     <div class="left">
                         <h3>Canvas</h3>
@@ -142,7 +152,7 @@ ctx.fillRect(x, y, 2, 2);
                             <!-- tip: 可以直接把数据映射到像素上 -->
                             <li>
                                 像素操作
-                                <p>数据量大的均匀网格</p>
+                                <p>数据密集的均匀网格</p>
                                 <p>快</p>
                                 <p>缺点：能表达的只有颜色</p>
 <!--
@@ -174,61 +184,63 @@ ctx.putImageData(imageData, 0, 0);
             </article>
 
             <article>
-                <h2>微博签到分布 - Canvas</h2>
-                <div class="item fullscreen" data-action="showWeiboCheckin"></div>
-<pre class="side" style="font-size:20px; line-height:40px;">
-ctx.fillStyle = color;
-ctx.beginPath();
-ctx.rect(i, j, 1, 1);
-ctx.fill();
-</pre>
-            </article>
-
-            <article>
                 <h2>微博签到分布 - WebGL</h2>
-                <!-- 然后来看一个使用 ECharts 可视化微博签到分布的图 -->
                 <div class="item fullscreen" data-action="showWeiboCheckin" data-webgl="1"></div>
 <div class="side">
-<pre>
+<pre class="prettyprint">
 gl.drawArrays(gl.POINTS, 0, vertexCount);
 </pre>
 <p>Vertex Shader</p>
-<pre>
+<pre class="prettyprint">
 attribute float size;
 ...
 gl_PointSize = size;
 ...
 </pre>
 <p>Fragment Shader</p>
-<pre>
+<pre class="prettyprint">
 gl_FragColor = color * texture2D(sprite, gl_PointCoord);
 </pre>
 </div>
             </article>
 
             <article class="center">
-                <h2 style="position:relative;z-index:1">全国 GDP 网格分布</h2>
-<pre class="side" style="font-size:20px; line-height:40px;">
-pixels[i] = value;
-pixels[i + 1] = value;
-pixels[i + 2] = value;
+                <!-- 
+                    对于数据密集的网格数据，比如这份全国 GDP 分布的网格数据，使用图形绘制并没有什么意义，而且很慢，
+                    可以尝试非常直观的通过 Canvas 里的像素操作把数据映射为图像，
+                -->
+                <h2 style="position:relative;z-index:1">全国 GDP 网格分布 - 亮度</h2>
+<pre class="side prettyprint" style="line-height:30px;">
+var imgData = ctx.createImageData(w, h);
+var pixels = imgData.data;
+for (var j = 0; j < h; j++)
+    for (var i = 0; i < w; i++) {
+        var idx = (j * w + i) * 4;
+        var value = ...;
+        pixels[idx + 1] = value;
+        pixels[idx + 2] = value;
+        pixels[idx + 3] = value;
+    }
+}
+ctx.putImageData(imgData, 0, 0);
 </pre>
                 <!--tip: 在写入数据的时候，数据太大就会超出颜色的显示范围，这些超出范围的都会变成白色。因此很多细节都看不到了，可以调整曝光度使那些太大的数据也能在颜色的显示范围内。
                 -->
-                <img data-src="data/cngdp2010.png" style="margin-top:-100px;">
+                <img data-src="data/cngdp2010.png" style="margin-top:-100px;margin-right: -150px;">
             </article>
 
             <article class="center">
                 <!--tip: 
+                曝光值是摄影里的概念，它相当于把所有的数据（颜色）乘上一个值，使得那些太大的数值会缩小到颜色表达的范围内，或者曝光值大于 0 的话是太小的数值会增大到一个颜色表达的范围内。
                 当然曝光调小后也有弊端就是数据比较小的那一片，比如中心部那一片都肉眼看不到了
                 -->          
-<pre class="side" style="font-size:20px; line-height:40px;">
+<pre class="side prettyprint" style="font-size:20px; line-height:40px;">
 var m = pow(2, exposure);
 value *= m;
 </pre>
                 <h2 style="position:relative;z-index:1">曝光值调整</h2>
                 <img data-src="data/cngdp2010-exp.png" style="margin-top:-100px;">
-                <!-- TODO 曝光公式 -->
+                <!-- 可以看到右边这一片有了明显的区分 -->
                 <!-- TODO 曝光调整示例 -->
                 <!--tip:
                 颜色区分度不是很大
@@ -460,7 +472,7 @@ value *= m;
                     <li>
                         Shader 计算飞行的小点位置
                         <p>减小 JS 顶点的计算以及传输开销</p>
-<pre>
+<pre class="prettyprint">
 float onet = 1.0 - t;
 vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
     + t * t * (t * p3 + 3.0 * onet * p2);
