@@ -77,6 +77,8 @@ define(function (require) {
 
                         flat: true,
 
+                        flatAngle: 0,
+
                         itemStyle: {
                             normal: {
                                 label: {

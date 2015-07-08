@@ -339,6 +339,7 @@ if (path.containStroke(x, y)) {...}
 
             <article class="center">
                 <h2>Path2D</h2>
+<!-- 实际上在部分浏览器中也提供了类似的 Path Object，只是支持的浏览器比较少 -->
 <pre class="prettyprint content" style="font-size:25; line-height:36px;">
 var path = new Path2D();
 ...
@@ -352,73 +353,52 @@ if (ctx.isPointInStroke(path, x, y)) {...}
 
             <article class="center">
                 <h2>Summary</h2>
+<!-- 这部分大概介绍了我们选择 Canvas 的几个理由，以及如何在 Canvas 中管理图形的绘制和处理事件-->
                 <ul class="content list">
-                    <li>Canvas 图形管理与绘制</li>
-                    <li>Canvas 事件管理</li>
+                    <!-- TODO 整理 -->
+                    <li>选择 Canvas 的几个理由</li>
+                    <li>图形管理与绘制</li>
+                    <li>事件管理</li>
                 </ul>
+            </article>
+
+            <article>
+                <!-- tip: 但是 Canvas 也有极限, 比如这个用 ECharts 做的微博签到的可视化，大概有 6w 个数据，可以看到拖动交互的时候明显非常卡顿。 -->
+                <div class="item fullscreen" data-action="showWeiboCheckin"></div>
+            </article>
+
+            <article>
+                <!-- tip: 于是我们开了一个 ECharts-X 的分支尝试使用 WebGL 去加速一些 2D 的绘制，以及做一些使用 Canvas 比较难实现的可视化效果 -->
+                <h1>WebGL 在 ECharts-X 中的使用</h1>
+            </article>
+            
+            <article>
+                <!-- tip: 然后是把刚才的微博签到图使用 WebGL 绘制 -->
+                <div class="item fullscreen" data-action="showWeiboCheckin" data-webgl="1"></div>
             </article>
 
             <article class="center">
-                <h2>残影绘制 - 动态模糊</h2>
-                <p>保留上一帧的图片，与当前帧混合</p>
-
-                <pre class="prettyprint item" style="font-size:20px; line-height:40px;text-align:left;">
-                backCtx.drawImage(canvas, 0, 0, width, height);
-                ctx.clearRect(0, 0, width, height);
-                ctx.globalAlpha = 0.9;
-                ctx.drawImage(backCanvas, 0, 0, width, height);
-                ctx.globalAlpha = 1;
-                ....
-                </pre>
-            </article>
-                
-            <article>
-                <h1>WebGL 在 ECharts-X 中的使用</h1>
-            </article>
-
-            <!-- TODO 为什么要用 WebGL -->
-            <article>
-                <h2>二维绘制加速 - Point Cloud</h2>
-                <div class="item fullscreen" data-action="showWeiboCheckin" data-webgl="1"></div>
-<div class="side">
-<pre class="prettyprint">
-gl.drawArrays(gl.POINTS, 0, vertexCount);
-</pre>
-<p>Vertex Shader</p>
-<pre class="prettyprint">
-attribute float size;
-...
-gl_PointSize = size;
-...
-</pre>
-<p>Fragment Shader</p>
-<pre class="prettyprint">
-gl_FragColor = color * texture2D(sprite, gl_PointCoord);
-</pre>
-</div>
-            </article>
-
-            <article>
-                <h2>人均 GDP 网格分布 - 三维直方图</h2>
-                <!--tip: 颜色可以用来表示另外信息，比如给数据分类, 或者高于某个标准线的 -->
-                <div class="item fullscreen" data-action="showHistogram3d"></div>
-                <!-- TODO 全国 2005 - 2010 GDP 动画图 -->
-                <ul class="side">
-                    <li>高度属性表达数据维度</li>
-                    <li>图形合并</li>
+                <!-- 我们对 WebGL 的定位是可以像刚才那个示例那样加速二维图形的绘制，使得可以展现更大的数据量，
+                或者可以在三维空间里面去展现三维的数据，
+                -->
+                <ul class="content list">
+                    <li>加速二维图形绘制</li>
+                    <li>展现三维数据</li>
                 </ul>
             </article>
+
             <article>
-                <h2>明暗面 - Lambert Shading</h2>
+                <!-- 这个示例使用的是开始的人均 GDP 网格分布的数据，但是它用高度去表现 GDP 的大小，这样原来的颜色属性就可以用来表示其它的维度，比如说数据的分类
+                -->
+                <h2>人均 GDP 网格分布 - 三维直方图</h2>
                 <div class="item fullscreen" data-action="showHistogram3d" data-light="1"></div>
-                <img class="side" style="left:50px" data-src="img/lambert.jpeg"></img>
             </article>
+
             <article>
                 <h2>全球人口分布 - ECharts</h2>
                 <div class="item fullscreen" data-action="showGlobePopulation"></div>
             </article>
 
-            <!-- TODO 过渡 -->
             <article>
                 <h2>飞行航线可视化</h2>
                 <div class="item fullscreen" data-action="showGlobeFlights"></div>
@@ -447,7 +427,6 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
 
             <article data-action="showGlobeWind" data-flat="1"></article>
 
-            <!-- TODO 过渡 -->
             <article>
                 <h2>向量场与粒子运动</h2>
                 <div class="item fullscreen" data-action="showSingleParticle"></div>
