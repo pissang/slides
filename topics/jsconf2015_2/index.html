@@ -12,7 +12,6 @@
             <article>
                 <h1 class="title">前端技术与可视化</h1>
                 <h2 class="subtitle">Canvas 与 WebGL 在 ECharts 中的应用</h2>
-                <!-- tip: 这次分享侧重于如何使用一些前端的技术诸如 Canvas 和 WebGL 去做可视化的绘制和展现 -->
             </article>
             <article>
                 <h2>About Me</h2>
@@ -286,39 +285,28 @@
                         <p>每次都需要重新构建路径</p>
                         <p>excanvas 不支持</p>
                     </li>
-                    <li>JS 实现鼠标位置与路径的相交</li>
+                    <!--tip: 我们一开始是根据图形的形状去判断点是否在图形里，图形是圆形的话就判断点是不是在圆形里，是多边形的话就判断是不是在多边形里，但是这样每次扩展图形的时候都非常麻烦，而且对于自定义的复杂路径还是没办法解决这个问题
+                    -->
+                    <li>JS 根据图形形状判断</li>
+                    <!--tip: 于是我们自己使用 JavaScript 重新实现了一遍 isPointInPath 与 isPointInStroke -->
+                    <li>JS 实现 isPointInPath 和 isPointInStroke</li>
                 </ul>
             </article>
 
             <article class="center">
-                <h2>JS 实现鼠标位置与路径的相交</h2>
+                <h2>JavaScript 实现</h2>
                 <ul class="content list">
                     <li>
-                        填充（Fill）路径
-                        <p>Non Zero Winding Rule</p>
+                        isPointInPath
+                        <p>Non Zero Winding Rule <img data-src="img/non-zero.png" width="140" alt="" style="vertical-align:middle;margin-left:20px;"></p>
                     </li>
                     <li>
-                        描边（Stroke）路径
-                        <p>计算点到线段和曲线的距离</p>
+                        isPointInStroke
+                        <p>求点到线段和曲线的距离</p>
+                        <!-- TODO 图片 -->
                     </li>
                 </ul>
             </article>
-
-<!--
-            <article class="center">
-                <h2>填充 - Non Zero Winding Rule</h2>
-                <img data-src="img/non-zero.png" width="300" alt="">
-                <p>直线，贝塞尔，圆弧</p>
-            </article>
-            <article class="center">
-                <h2>描边</h2>
-                <ul class="list content">
-                    <li>找出鼠标位置在线段和曲线上距离最短的投影点</li>
-                    <li>计算投影点和位置的距离</li>
-                    <li>判断距离是否小于描边的宽度</li>
-                </ul>
-            </article>
--->
 
             <article>
                 <h2>Benchmark</h2>
@@ -388,14 +376,15 @@ if (ctx.isPointInStroke(path, x, y)) {...}
             </article>
 
             <article>
-                <!-- 这个示例使用的是开始的人均 GDP 网格分布的数据，但是它用高度去表现 GDP 的大小，这样原来的颜色属性就可以用来表示其它的维度，比如说数据的分类
+                <!--tip: 这个示例使用的是开始的人均 GDP 网格分布的数据，但是它用高度去表现 GDP 的大小，这样原来的颜色属性就可以用来表示其它的维度，比如说数据的分类
                 -->
                 <h2>人均 GDP 网格分布 - 三维直方图</h2>
                 <div class="item fullscreen" data-action="showHistogram3d" data-light="1"></div>
             </article>
 
             <article>
-                <h2>全球人口分布 - ECharts</h2>
+                <!--tip: 同样的这个也是使用 ECharts-X 去可视化全球人口分布的结果 -->
+                <h2>全球人口分布</h2>
                 <div class="item fullscreen" data-action="showGlobePopulation"></div>
             </article>
 
@@ -427,11 +416,10 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
 
             <article data-action="showGlobeWind" data-flat="1"></article>
 
+<!--
             <article>
                 <h2>向量场与粒子运动</h2>
                 <div class="item fullscreen" data-action="showSingleParticle"></div>
-                <!-- 假设有这么一个使用二维柏林噪声生成的向量场 -->
-                <!-- 放入一个粒子，记录下运动的轨迹 -->
             </article>
 
             <article class="center">
@@ -441,13 +429,6 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
             <article class="center">
                 <h2>WebGL 中的残影效果</h2>
                 <img data-src="img/motion_blur.png" alt="">
-            </article>
-<!--
-            <article>
-                <h1>关系数据的可视化</h1>
-            </article>
-            <article>
-                <h2>力导向布局</h2>
             </article>
 -->
             <article>
