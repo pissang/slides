@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta charset="utf-8" />
+        <link rel=stylesheet type=text/css href="../../css/slide.css" />
+        <link rel=stylesheet type=text/css href="../../css/desert.css" />
+        <link rel=stylesheet type=text/css href="css/jsconf2015.css" />
+    </head>
+    <body id="jsconf2015">
+        <div id="articles">
+            <article>
+                <h1 class="title">前端技术与可视化</h1>
+                <h2 class="subtitle">Canvas 与 WebGL 在 ECharts 中的应用</h2>
+                <!-- tip: 这次分享侧重于如何使用一些前端的技术诸如 Canvas 和 WebGL 去做可视化的绘制和展现 -->
+            </article>
+            <article>
+                <h2>About Me</h2>
+                <!-- 作品 -->
+            </article>
+            <article>
+                <h2>About Baidu EFE</h2>
+                <!-- tip: 我们在前端的各个方向造了很多轮子 -->
+            </article>
+            <article class="center">
+                <h2>Agenda</h2>
+                <ul class="content list">
+                    <li>前端的可视化手段</li>
+                    <li>
+                        Canvas 在 ECharts 中的应用
+                        <p>Why Canvas ?</p>
+                        <p>碰到的问题以及方案</p>
+                    </li>
+                    <li>
+                        WebGL 在 ECharts-X 中的应用
+                        <p>航班路线可视化</p>
+                        <p>洋流可视化</p>
+                    </li>
+                </ul>
+            </article>
+            <article class="center">
+                <h2>前端的可视化手段</h2>
+                <!-- 可视化就是数据到图形 -->
+                <div class="content row" style="width:700px;">
+                    <div class="left">
+                        <h3>可视化库</h3>
+                        <ul class="list">
+                            <!-- 从底层到高层 -->
+                            <li>Processing</li>
+                            <li>D3.js</li>
+                            <li>
+                                ECharts
+                                <p>ECharts-X, 图说</p>
+                            </li>
+                            <li>Highcharts</li>
+                            <li>...</li>
+                        </ul>
+                    </div>
+                    <div class="right">
+                        <h3>图形接口</h3>
+                        <ul class="list">
+                            <li>SVG</li>
+                            <li>Canvas</li>
+                            <li>WebGL</li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+
+            <article>
+                <h1>Canvas 在 ECharts 中的应用</h1>
+            </article>
+
+            <article class="center">
+                <h2>Why Canvas ?</h2>
+                <ul class="list content">
+                    <li>
+                        具备更多的能力和可能性
+                        <p>像素操作</p>
+                        <p>性能</p>
+                    </li>
+                    <li>
+                        与 WebGL 结合更好
+                        <p>作为纹理</p>
+                    </li>
+                </ul>
+            </article>
+
+            <article class="center">
+                <h2>Canvas 的问题</h2>
+                <ul class="list content">
+                    <li>
+                        图形的管理
+                        <p>层级 Hierarchy</p>
+                        <p>样式 Style</p>
+                        <p>变换 Transform</p>
+                    </li>
+                    <li>
+                        事件的判断和分发
+                    </li>
+                </ul>
+            </article>
+
+            <article class="center">
+                <h2>图形的管理 - 层级树</h2>
+                <img data-src="img/zr_hierarchy.png" alt="">
+            </article>
+
+            <article class="center">
+                <h2>图形的管理 - 绘制</h2>
+                <ul class="content list">
+                    <li>
+                        遍历层级树
+                        <p>更新 Transform</p>
+                        <p>过滤不可见的节点</p>
+                        <p>生成渲染列表</p>
+                    </li>
+                    <li>
+                        渲染列表排序
+                        <p>z, zlevel</p>
+                    </li>
+                    <li>
+                        遍历渲染列表依次绑定样式进行绘制
+                    </li>
+                </ul>
+                <img data-src="img/render_list.png" style="position:absolute;right:10px;top:200px;" alt="">
+            </article>
+
+            <article class="center">
+                <h2>判断鼠标是否在图形上</h2>
+                <ul class="content list">
+                    <li>
+                        包围盒判断
+                        <p>快，不精确</p>
+                    </li>
+                    <li>
+                        isPointInPath
+                        <p>每次都需要重新构建路径</p>
+                        <p>excanvas 不支持</p>
+                        <p>不支持描边</p>
+                    </li>
+                    <li>完全 JS 实现？</li>
+                </ul>
+            </article>
+
+            <article class="center">
+                <h2>包围盒判断</h2>
+                <ul class="list content">
+                    <li>
+                        包围盒计算
+                        <p>直线和曲线的端点</p>
+                        <p>圆弧的极值</p>
+                    </li>
+                    <li>
+                        适合文字，图片, 和粗略的筛选
+                    </li>
+                    <li>
+                        <img data-src="img/map.png" width="256" alt=""> ?
+                    </li>
+                </ul>
+            </article>
+
+            <article class="center">
+                <h2>JS 实现鼠标位置与路径的相交</h2>
+                <ul class="content list">
+                    <li>
+                        填充（Fill）路径
+                        <p>Non Zero Winding Rule</p>
+                    </li>
+                    <li>
+                        描边（Stroke）路径
+                        <p>计算点到线段和曲线的位置</p>
+                    </li>
+                </ul>
+            </article>
+
+            <article class="center">
+                <h2>填充 - Non Zero Winding Rule</h2>
+                <img data-src="img/non-zero.png" width="300" alt="">
+                <p>直线，贝塞尔，圆弧</p>
+            </article>
+<!--
+            <article>
+                <h2>描边</h2>
+            </article>
+-->
+            <article class="center">
+                <h2>描边</h2>
+                <ul class="list content">
+                    <li>找出鼠标位置在线段和曲线上距离最短的投影点</li>
+                    <li>计算投影点和位置的距离</li>
+                    <li>判断距离是否小于描边的宽度</li>
+                </ul>
+            </article>
+
+            <article class="center">
+                <h2>路径代理</h2>
+<pre class="prettyprint content" style="font-size:30px; line-height:50px;">
+var path = new Path(ctx);
+path.moveTo(...);
+path.lineTo(...);
+...
+if (path.contain(x, y)) {...}
+if (path.containStroke(x, y)) {...}
+</pre>
+            </article>
+
+            <article>
+                <!-- TODO 过渡用语 -->
+            </article>
+
+            <article class="center">
+                <!-- 像素操作是可视化大规模网格数据的一个有效的手段 -->
+                <h2>像素操作</h2>
+                <div class="content">
+<pre class="prettyprint">
+var pixels = ctx.getImageData(x, y, width, height).data;
+...
+ctx.putImageData(pixels, x, y);
+</pre>
+                </div>
+                <div>
+                    <!--  一个行优先的 TypedArray -->
+                    <h3 style="margin-top:-30px;">Pixel Layout - Uint8ClampedArray</h3>
+                    <img data-src="img/pixellayout.png" alt="">
+                </div>
+            </article>
+
+            <article class="center">
+                <!-- 
+                    对于数据密集的网格数据，比如这份全国 GDP 分布的网格数据，使用图形绘制并没有什么意义，而且很慢，
+                    可以尝试非常直观的通过 Canvas 里的像素操作把数据映射为图像，
+                -->
+                <h2 style="position:relative;z-index:1">像素操作案例 - 全国 GDP 网格分布</h2>
+<pre class="side prettyprint" style="line-height:30px;">
+var imgData = ctx.createImageData(w, h);
+var pixels = imgData.data;
+for (var j = 0; j < h; j++)
+    for (var i = 0; i < w; i++) {
+        var idx = (j * w + i) * 4;
+        var value = ...;
+        pixels[idx + 1] = value;
+        pixels[idx + 2] = value;
+        pixels[idx + 3] = value;
+    }
+}
+ctx.putImageData(imgData, 0, 0);
+</pre>
+                <!--tip: 在写入数据的时候，数据太大就会超出颜色的显示范围，这些超出范围的都会变成白色。因此很多细节都看不到了，可以调整曝光度使那些太大的数据也能在颜色的显示范围内。
+                -->
+                <img data-src="data/cngdp2010.png" style="margin-top:-100px;margin-right: -150px;">
+            </article>
+            <article class="center">
+                <!--tip: 
+                曝光值是摄影里的概念，它相当于把所有的数据（颜色）乘上一个值，使得那些太大的数值会缩小到颜色表达的范围内，或者曝光值大于 0 的话是太小的数值会增大到一个颜色表达的范围内。
+                当然曝光调小后也有弊端就是数据比较小的那一片，比如中心部那一片都肉眼看不到了
+                -->          
+<pre class="side prettyprint" style="font-size:20px; line-height:40px;">
+var m = pow(2, exposure);
+value *= m;
+</pre>
+                <h2 style="position:relative;z-index:1">曝光值调整</h2>
+                <img data-src="data/cngdp2010-exp.png" style="margin-top:-100px;">
+                <!-- 可以看到右边这一片有了明显的区分 -->
+                <!-- TODO 曝光调整示例 -->
+                <!--tip:
+                颜色区分度不是很大
+                -->
+            </article>
+            <article class="center">
+                <h2>颜色映射 - 一维颜色查找表</h2>
+                <img data-src="img/lut_explain.png" style="margin-top:100px;" alt="">
+                <!-- ECharts data range -->
+                <!-- tip:
+                    可以使用一个一维的数组做查找表。从这张表里找到不同的亮度对应的应该显示什么颜色。
+
+                    一般会存储在一张宽 256, 高度为 1 的图片里，或者使用 canvas 生成一个渐变色然后使用 getImageData() 获取这个数组
+                -->
+                <!-- 图片后期处理 -->
+            </article>
+            <article class="center" data-action="showHeatmap"></article>
+            <article class="center">
+                <h2>页面点击热力图</h2>
+                <img data-src="img/analysis-of-heatmap-overview.png" alt="">
+            </article>
+
+            <article>
+                <h2>特效绘制 - 百度迁徙</h2>
+                <div class="item fullscreen" data-action="showMigration"></div>
+            </article>
+            <article class="center">
+                <ul class="content list">
+                    <li>
+                        连线绘制
+                        <p>直线，贝塞尔曲线</p>
+                    </li>
+                    <li>
+                        动画效果
+                        <p>线性，贝塞尔插值</p>
+                    </li>
+                    <li>
+                        尾迹
+                        <p>残影</p>
+                    </li>
+                </ul>
+            </article>
+
+            <article class="center">
+                <h2>残影绘制 - 动态模糊</h2>
+                <p>保留上一帧的图片，与当前帧混合</p>
+
+                <pre class="prettyprint item" style="font-size:20px; line-height:40px;text-align:left;">
+                backCtx.drawImage(canvas, 0, 0, width, height);
+                ctx.clearRect(0, 0, width, height);
+                ctx.globalAlpha = 0.9;
+                ctx.drawImage(backCanvas, 0, 0, width, height);
+                ctx.globalAlpha = 1;
+                ....
+                </pre>
+            </article>
+                
+            <article>
+                <h1>WebGL 在 ECharts-X 中的使用</h1>
+            </article>
+            
+            <article>
+                <h2>二维绘制加速 - Point Cloud</h2>
+                <div class="item fullscreen" data-action="showWeiboCheckin" data-webgl="1"></div>
+<div class="side">
+<pre class="prettyprint">
+gl.drawArrays(gl.POINTS, 0, vertexCount);
+</pre>
+<p>Vertex Shader</p>
+<pre class="prettyprint">
+attribute float size;
+...
+gl_PointSize = size;
+...
+</pre>
+<p>Fragment Shader</p>
+<pre class="prettyprint">
+gl_FragColor = color * texture2D(sprite, gl_PointCoord);
+</pre>
+</div>
+            </article>
+
+            <article>
+                <h2>人均 GDP 网格分布 - 三维直方图</h2>
+                <!--tip: 颜色可以用来表示另外信息，比如给数据分类, 或者高于某个标准线的 -->
+                <div class="item fullscreen" data-action="showHistogram3d"></div>
+                <!-- TODO 全国 2005 - 2010 GDP 动画图 -->
+                <ul class="side">
+                    <li>长方体集合</li>
+                    <li>高度属性表达数据维度</li>
+                </ul>
+            </article>
+            <article>
+                <h2>明暗面 - Lambert Shading</h2>
+                <div class="item fullscreen" data-action="showHistogram3d" data-light="1"></div>
+                <img class="side" style="left:50px" data-src="img/lambert.jpeg"></img>
+            </article>
+            <article>
+                <h2>全球人口分布 - ECharts</h2>
+                <div class="item fullscreen" data-action="showGlobePopulation"></div>
+            </article>
+
+            <!-- TODO 过渡 -->
+            <article>
+                <h2>飞行航线可视化</h2>
+                <div class="item fullscreen" data-action="showGlobeFlights"></div>
+            </article>
+            <article class="center">
+                <ul class="content list">
+                    <li>
+                        绘制贝塞尔曲线
+                        <p>WebGL 只支持直线绘制 - 曲线细分</p>
+                    </li>
+                    <li>
+                        Shader 计算动画的小点位置
+                        <p>减小 JS 顶点的计算以及传输开销</p>
+<pre class="prettyprint">
+float onet = 1.0 - t;
+vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
+    + t * t * (t * p3 + 3.0 * onet * p2);
+</pre>
+                    </li>
+                    <li>
+                        尾迹
+                        <p>多个不透明度逐渐衰减的图形</p>
+                    </li>
+                </ul>
+            </article>
+
+            <article data-action="showGlobeWind" data-flat="1"></article>
+
+            <!-- TODO 过渡 -->
+            <article>
+                <h2>向量场与粒子运动</h2>
+                <div class="item fullscreen" data-action="showSingleParticle"></div>
+                <!-- 假设有这么一个使用二维柏林噪声生成的向量场 -->
+                <!-- 放入一个粒子，记录下运动的轨迹 -->
+            </article>
+
+            <article>
+                <h2>Shader 计算粒子位置</h2>
+                
+            </article>
+            <article>
+                <h2>WebGL 中的残影效果</h2>
+
+            </article>
+<!--
+            <article>
+                <h1>关系数据的可视化</h1>
+            </article>
+            <article>
+                <h2>力导向布局</h2>
+            </article>
+-->
+            <article>
+                <h1>Canvas 与 WebGL 结合</h1>
+            </article>
+
+            <article>
+                <div class="item fullscreen" data-action="showGlobe"></div>
+            </article>
+
+            <article>
+                <div class="item fullscreen" data-flat="1" data-action="showGlobe"></div>
+            </article>
+
+            <article class="center">
+                <div class="content">
+                    <h2>绘制</h2>
+                    <ul class="list">
+                        <li>重绘 Canvas</li>
+                        <li>更新纹理</li>
+                    </ul>
+                    <h2>
+                        交互
+                    </h2>
+                    <ul class="list">
+                        <li>3D 射线求交</li>
+                        <li>得到交点在三角面片的重心坐标</li>
+                        <li>计算出在 Canvas 中的坐标</li>
+                        <li>2D 图形拾取</li>
+                    </ul>
+                </div>
+            </article>
+
+            <article>
+                <h1>Thanks</h1>
+            </article>
+        </div>
+    
+        <div id="timer"></div>
+        <div id="slide-info">
+            <h1 id="title">前端技术与可视化</h1>
+            <ul class="aboutme">
+                <li id="author">沈毅</li>
+                <li id="date">2015-06-07</li>
+                <li id="github">
+                    github : 
+                    <a href="https://github.com/pissang" target="_blank">pissang</a>
+                </li>
+                <li id="weibo">
+                    @
+                    <a href="http://weibo.com/pissang" target="_blank">pissang</a>
+                </li>
+            </ul>
+        </div>
+
+        <link rel=stylesheet type=text/css href="../../css/desert.css" />
+        <script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
+        <script type="text/javascript" src="../../js/lib/esl.js"></script>
+        <script type="text/javascript" src="../../js/lib/prettify.js"></script>
+        <script type="text/javascript" src="../../js/lib/zrender.js"></script>
+        <script type="text/javascript" src="../../js/lib/qtek.amd.min.js"></script>
+        <script type="text/javascript" src="../../js/lib/echarts/echarts.js"></script>
+        <script type="text/javascript" src="../../js/lib/echarts-x/echarts-x.js"></script>
+        <script type="text/javascript" src="../../js/slides.js"></script>
+
+        <script>
+            require.config({
+                paths: {
+                    echarts: '../../js/lib/echarts',
+                    'echarts-x': '../../js/lib/echarts-x'
+                }
+            });
+            require(['js/main']);
+        </script>
+    </body>
+</html>

@@ -1,0 +1,10 @@
+// Line integral convolution
+// https://en.wikipedia.org/wiki/Line_integral_convolution
+
+uniform sampler2D vector;
+uniform sampler2D whiteNoise;
+
+void main()
+{
+    
+}
