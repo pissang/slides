@@ -13,12 +13,12 @@ define(function (require) {
             return;
         }
 
+        disposed = false;
         var img = new Image();
         img.onload = function () {
             if (disposed) {
                 return;
             }
-            disposed = false;
             function createParticle(x, y) {
                 var circle = new Circle({
                     hoverable: false,

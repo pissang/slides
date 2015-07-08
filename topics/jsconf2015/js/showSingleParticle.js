@@ -14,11 +14,11 @@ define(function (require) {
         }
 
         var img = new Image();
+        disposed = false;
         img.onload = function () {
             if (disposed) {
                 return;
             }
-            disposed = false;
             function createParticle(x, y) {
                 var circle = new Circle({
                     hoverable: false,
