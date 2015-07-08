@@ -77,7 +77,7 @@
                     <li>
                         具备更多的能力和可能性
                         <p>像素操作</p>
-                        <p>性能</p>
+                        <p>特效，性能</p>
                     </li>
                     <li>
                         与 WebGL 结合更好
@@ -91,13 +91,16 @@
                 <ul class="list content">
                     <li>
                         图形的管理
+                        <!-- svg 可以有父子节点，父节点的变换会应用到子节点上 -->
+                        <!-- canvas 只能一个图形一个图形去画 -->
                         <p>层级 Hierarchy</p>
+                        <!-- svg 或者 dom 里每个图形样式的管理非常方便，还有 css 分离样式 -->
+                        <!-- canvas 只能设置当前绘制的样式状态 -->
+                        <!-- ECharts 也做了样式的管理，但是还停留在 inline-style 的状态 -->
                         <p>样式 Style</p>
                         <p>变换 Transform</p>
                     </li>
-                    <li>
-                        事件的判断和分发
-                    </li>
+                    <li>鼠标事件的判断和分发</li>
                 </ul>
             </article>
 
@@ -108,22 +111,35 @@
 
             <article class="center">
                 <h2>图形的管理 - 绘制</h2>
-                <ul class="content list">
+                <ul class="content list" style="margin-left:0;">
                     <li>
                         遍历层级树
-                        <p>更新 Transform</p>
                         <p>过滤不可见的节点</p>
-                        <p>生成渲染列表</p>
+                        <!-- 从 postion, rotation, scale 计算出变换矩阵，然后乘上父节点的矩阵 -->
+                        <p>更新变换矩阵, position, rotation, scale</p>
+                        <p>放入渲染列表</p>
                     </li>
                     <li>
                         渲染列表排序
-                        <p>z, zlevel</p>
+                        <p>zlevel</p>
+                        <p>z</p>
                     </li>
                     <li>
-                        遍历渲染列表依次绑定样式进行绘制
+                        <!-- 依次对每个图形绑定样式，应用变换矩阵，然后进行绘制 -->
+                        <!-- 对于画布外的元素裁剪 -->
+                        遍历渲染列表依次进行绘制
                     </li>
                 </ul>
-                <img data-src="img/render_list.png" style="position:absolute;right:10px;top:200px;" alt="">
+                <img data-src="img/render_list.png" style="position:absolute;right:50px;top:200px;" alt="">
+            </article>
+            
+            <article class="center">
+                <h2>事件处理与分发</h2>
+                <ul class="content list">
+                    <li>容器绑定事件</li>
+                    <li>循环渲染列表判断鼠标是否在某个图形上</li>
+                    <li>图形事件分发与冒泡</li>
+                </ul>
             </article>
 
             <article class="center">
@@ -194,8 +210,8 @@
             </article>
 
             <article class="center">
-                <h2>路径代理</h2>
-<pre class="prettyprint content" style="font-size:30px; line-height:50px;">
+                <h2>Path Object</h2>
+<pre class="prettyprint content" style="font-size:25; line-height:36px;">
 var path = new Path(ctx);
 path.moveTo(...);
 path.lineTo(...);
@@ -205,8 +221,25 @@ if (path.containStroke(x, y)) {...}
 </pre>
             </article>
 
-            <article>
-                <!-- TODO 过渡用语 -->
+            <article class="center">
+                <h2>Path2D</h2>
+<pre class="prettyprint content" style="font-size:25; line-height:36px;">
+var path = new Path2D();
+...
+if (ctx.isPointInPath(path, x, y)) {...}
+if (ctx.isPointInStroke(path, x, y)) {...}
+</pre>
+                <img src="./img/path2d_browser.png" alt="">
+                <br />
+                <img src="./img/path2d_browser_mobile.png" alt="">
+            </article>
+
+            <article class="center">
+                <h2>Summary</h2>
+                <ul class="content list">
+                    <li>Canvas 图形管理与绘制</li>
+                    <li>Canvas 事件管理</li>
+                </ul>
             </article>
 
             <article class="center">
@@ -231,7 +264,7 @@ ctx.putImageData(pixels, x, y);
                     对于数据密集的网格数据，比如这份全国 GDP 分布的网格数据，使用图形绘制并没有什么意义，而且很慢，
                     可以尝试非常直观的通过 Canvas 里的像素操作把数据映射为图像，
                 -->
-                <h2 style="position:relative;z-index:1">像素操作案例 - 全国 GDP 网格分布</h2>
+                <h2 style="position:relative;z-index:1">全国 GDP 网格分布</h2>
 <pre class="side prettyprint" style="line-height:30px;">
 var imgData = ctx.createImageData(w, h);
 var pixels = imgData.data;
@@ -300,7 +333,10 @@ value *= m;
                     </li>
                     <li>
                         尾迹
-                        <p>残影</p>
+                        <!-- 慢 -->
+                        <p>绘制多个轨迹点</p>
+                        <!-- 不能移动整副画面 -->
+                        <p>保留上一帧的画面作为残影</p>
                     </li>
                 </ul>
             </article>
@@ -350,8 +386,8 @@ gl_FragColor = color * texture2D(sprite, gl_PointCoord);
                 <div class="item fullscreen" data-action="showHistogram3d"></div>
                 <!-- TODO 全国 2005 - 2010 GDP 动画图 -->
                 <ul class="side">
-                    <li>长方体集合</li>
                     <li>高度属性表达数据维度</li>
+                    <li>图形合并</li>
                 </ul>
             </article>
             <article>
