@@ -1,14 +1,19 @@
 define(function (require) {
 
-    function heatmap(image, gradientImage) {
-        var gradientCanvas = document.createElement('canvas');
-        var gradientCtx = gradientCanvas.getContext('2d');
-        gradientCanvas.width = 256;
-        gradientCanvas.height = 1;
-        gradientCtx.drawImage(gradientImage, 0, 0, 256, 1);
+    function heatmap(image, gradientImage, output, gradientCanvas) {
+        if (! gradientCanvas) {
+            gradientCanvas = document.createElement('canvas');
+            var gradientCtx = gradientCanvas.getContext('2d');
+            gradientCanvas.width = 256;
+            gradientCanvas.height = 1;
+            gradientCtx.drawImage(gradientImage, 0, 0, 256, 1);
+        }
+        else {
+            var gradientCtx = gradientCanvas.getContext('2d');
+        }
         var gradient = gradientCtx.getImageData(0, 0, 256, 1).data;
 
-        var canvas = document.createElement('canvas');
+        var canvas = output || document.createElement('canvas');
         var ctx = canvas.getContext('2d');
 
         canvas.width = image.width;

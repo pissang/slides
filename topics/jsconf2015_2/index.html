@@ -15,11 +15,30 @@
             </article>
             <article>
                 <h2>About Me</h2>
-                <!-- 作品 -->
+                <div class="row">
+                    <div class="left">
+                    </div>
+                    <div class="right"></div>
+                </div>
             </article>
             <article>
                 <h2>About Baidu EFE</h2>
-                <!-- tip: 我们在前端的各个方向造了很多轮子 -->
+                <div class="row">
+                    <div class="left">
+                        <div id="efe-icon"></div> 
+                    </div>
+                    <div class="right">
+                        <ul class="content" id="efe-products">
+                            <li><span class="prod">ECharts</span> <span class="desc">可视化</span></li>
+                            <li><span class="prod">EDP</span> <span class="desc">前端开发平台</span></li>
+                            <li><span class="prod">EST</span> <span class="desc">样式工具库</span></li>
+                            <li><span class="prod">Fate</span> <span class="desc">移动开发</span></li>
+                            <li><span class="prod">ESL</span> <span class="desc">AMD Loader</span></li>
+                            <li><span class="prod">ER</span> <span class="desc">RIA</span></li>
+                            <li><span class="prod">Fontmin</span> <span class="desc">字体子集化</span></li>
+                        </ul>
+                    </div>
+                </div>
             </article>
             <article class="center">
                 <h2>Agenda</h2>
@@ -86,7 +105,6 @@
                     <!-- tip: 最后一点是 SVG 无法做到的，就是像素的操作，这一点直接导致了在有些可视化的手段上只能使用 Canvas 而不能使用 SVG -->
                     <li><img data-src="img/icon-pixel.png" />像素操作</li>
                 </ul>
-                <!-- TODO Icon -->
                 <!-- tip: 一言以蔽之就是 Canvas 相比 SVG 能够让我们在可视化上面拥有更多的能力和可能性 -->
                 <!-- tip: 下面我们通过两个例子来看一下这三点所带来的优势 -->
             </article>
@@ -128,6 +146,7 @@
                 <!-- tip: 当然选择 Canvas 也会带来一些比较麻烦的问题, 首先因为它相对来说是一个比较基础的接口，只提供了设置当前绘制状态，然后绘制图形的功能，不像 svg 那样可以方便的管理画布上的图形，这个图形的管理包括层级的管理，每个图形的样式和变换的管理，以及最后如何去绘制这些图形等等 -->
                 <h2>Canvas 的问题</h2>
                 <ul class="list content">
+
                     <li>
                         <!-- TODO 为什么是难点 -->
                         没有图形对象的管理
@@ -377,7 +396,6 @@ if (ctx.isPointInStroke(path, x, y)) {...}
                     <li>三维</li>
                     <li>...</li>
                 </ul>
-                <!-- TODO Icon -->
             </article>
             
             <article>
@@ -443,6 +461,7 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
 
             <article>
                 <!-- tip: 这个示例是一个用粒子效果表现的向量场的可视化，大概用了 26w 个粒子, 当然粒子数目越多能够表达的向量场细节就越丰富 -->
+                <!-- tip: 看起来有点像气象预报，这几天台风很厉害 -->
                 <h2>洋流 - 向量场可视化</h2>
                 <div class="item fullscreen" data-action="showGlobeWind" data-flat="1"></div>
                 <h3 class="side" style="z-index:1">260k 粒子</h3>
@@ -527,14 +546,21 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
         </div>
 
         <link rel=stylesheet type=text/css href="../../css/desert.css" />
-        <script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
-        <script type="text/javascript" src="../../js/lib/esl.js"></script>
-        <script type="text/javascript" src="../../js/lib/prettify.js"></script>
-        <script type="text/javascript" src="../../js/lib/zrender.js"></script>
-        <script type="text/javascript" src="../../js/lib/qtek.amd.min.js"></script>
-        <script type="text/javascript" src="../../js/lib/echarts/echarts.js"></script>
-        <script type="text/javascript" src="../../js/lib/echarts-x/echarts-x.js"></script>
-        <script type="text/javascript" src="../../js/slides.js"></script>
+        <script src="../../js/lib/jquery.min.js"></script>
+        <script src="../../js/lib/esl.js"></script>
+        <script src="../../js/lib/prettify.js"></script>
+        <script src="../../js/lib/zrender.js"></script>
+        <script src="../../js/lib/qtek.amd.min.js"></script>
+        <script src="../../js/lib/echarts/echarts.js"></script>
+        <script src="../../js/lib/echarts-x/echarts-x.js"></script>
+        <script src="../../js/lib/underscore.js"></script>
+        <script src="../../js/slides.js"></script>
+
+        <link rel=stylesheet type=text/css href="js/vendor/jqPlugins/jquery.gradientPicker.css" />
+        <link rel=stylesheet type=text/css href="js/vendor/jqPlugins/colorpicker/css/colorpicker.css" />
+        <script src="js/vendor/jqueryUI-custom.js"></script>
+        <script src="js/vendor/jqPlugins/colorpicker/js/colorpicker.js"></script>
+        <script src="js/vendor/jqPlugins/jquery.gradientPicker.js"></script>
 
         <script>
             require.config({

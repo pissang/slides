@@ -4,6 +4,25 @@
     src: url("font/noto-thin.min.ttf");
 }
 
+@font-face {
+    font-family: 'efe-icons';
+    src:url('font/efe-icons.woff') format('woff'),
+        url('font/efe-icons.ttf') format('truetype'),
+        url('font/efe-icons.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#efe-icon::before {
+    font-size: 180px;
+    font-family: 'efe-icons';
+    content: "\e600";
+    display: block;
+    float: right;
+    margin-top: 80px;
+    margin-right: 100px;
+}
+
 html,h1,h2,h3,h4,h5{
     /*font-family: "Helvetica Neue";*/
     font-family: 'noto-thin';
@@ -183,4 +202,18 @@ pre.side {
     width: 100px;
     height: 50px;
     z-index: 10000;
+}
+
+#efe-products {
+    font-size: 20px;
+    line-height: 45px;
+}
+
+#efe-products span.prod {
+    display: inline-block;
+    width: 80px;
+}
+#efe-products span.desc {
+    font-size: 16px;
+    color: #aaa;
 }
