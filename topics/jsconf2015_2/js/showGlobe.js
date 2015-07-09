@@ -48,7 +48,7 @@ define(function (require) {
                         borderWidth: 1,
                         borderColor: 'yellow',
                         areaStyle: {
-                            color: 'rgba(0, 0, 122, 0.5)'
+                            color: 'rgba(0, 0, 0, 0)'
                         }
                     }
                 },
@@ -60,6 +60,7 @@ define(function (require) {
             option.series[0].baseLayer.backgroundColor = 'rgba(0, 0, 0, 0)';
             option.series[0].background = '';
             option.series[0].baseLayer.backgroundImage = '';
+            option.series[0].itemStyle.normal.areaStyle.color = 'rgba(0, 0, 122, 0.5)';
 
             option.series[0].surfaceLayers = [{
                 type: 'texture',

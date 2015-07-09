@@ -148,3 +148,12 @@ pre.side {
 #graphics li img {
     width: 50px;
 }
+
+#timer {
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    width: 100px;
+    height: 50px;
+    z-index: 10000;
+}

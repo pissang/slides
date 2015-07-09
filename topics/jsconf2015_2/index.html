@@ -32,6 +32,7 @@
                     </li>
                     <li>
                         WebGL 在 ECharts-X 中的应用
+                        <p>在 WebGL 中使用 Canvas</p>
                     </li>
                 </ul>
             </article>
@@ -208,7 +209,8 @@
                 在 ECharts 里每一帧的绘制步骤大概是这样，首先是深度优先的遍历一遍整个树，对于每个节点会从一些坐标变换的属性上计算这些图形的变换矩阵，并且乘上父节点的变换矩阵，然后会找到所有图形，根据需要去更新图形的包围盒，并且根据这个包围盒去做图形的裁剪。防止那些画布外的图形会做不必要的绘制。裁剪过后的图形是最终需要绘制到画布上的，所以会放到一个渲染列表里，这个渲染列表除了图形的绘制之外在后面图形的鼠标相交判断上也会用到。
                 -->
                 <!-- tip:
-                在更新完渲染列表之后会对这个列表做一个 z 方向上的排序，保证图形是从后面往前面画的，然后就是线性遍历所有图形然后一个个绘制了
+                在更新完渲染列表之后会对这个列表做一个 z 方向上的排序，保证图形是从后面往前面画的，
+                然后就是线性遍历所有图形然后一个个绘制了
                 -->
                 <!-- tip:
                 这几步看起来比较复杂，但实际开销很小，在绘制中所占的开销比例几乎可以忽略
@@ -217,7 +219,7 @@
                     <li>
                         遍历整个树
                         <!-- 从 postion, rotation, scale 计算出变换矩阵，然后乘上父节点的矩阵 -->
-                        <p>计算变换矩阵</p>
+                        <p>计算每个节点变换矩阵(平移，旋转，缩放)</p>
                         <p>找到图形，更新包围盒，裁剪</p>
                         <p>放入渲染列表</p>
                     </li>
@@ -235,13 +237,14 @@
             
             <article class="center">
                 <!-- tip: 完成图形的管理之后，每个图形对象事件的管理也变得顺利成章-->
-                <h2>事件处理与分发</h2>
-                <!-- tip:  首先对整个容器绑定需要的事件，然后在有事件触发的时候去反向循环刚才生成的渲染列表判断鼠标是否在某个图形上，是的话就会对这个图形分发事件，如果图形有父节点的话，事件也会冒泡到父节点-->
+                <h2>事件管理</h2>
+                <!-- tip:  首先对整个容器绑定需要的事件，然后在有事件触发的时候去反向循环刚才生成的渲染列表判断鼠标是否在某个图形上，是的话就会对这个图形分发事件，如果图形有父节点的话，事件也会冒泡到父节点，反向循环是为了保证最上面的图形能够触发事件 -->
                 <!-- tip: 这里面最复杂的应该是第二步判断鼠标位置是否在某个图形上 -->
-                <ul class="content list">
+                <ul class="content list" style="width:400px;">
                     <li>容器绑定事件</li>
                     <li>反向循环渲染列表判断鼠标是否在某个图形上</li>
                     <li>图形事件分发与冒泡</li>
+                    <!-- TODO 整理 -->
                 </ul>
             </article>
 
@@ -254,17 +257,21 @@
                     文字和图片这两种类型的图形也可以只使用包围盒的判断就行了，但是对于大部分路径图形来说，需要进一步去做一些精确的相交判断。
                 -->
                 <ul class="content list">
-                    <li>包围盒粗略判断</li>
+                    <li>
+                        包围盒粗略判断
+                        <p>快，不精确</p>
+                        <p>适合文字，图片</p>
+                    </li>
                     <li>路径与鼠标相交的精确判断</li>
                 </ul>
                 <!-- tip:
                     比如说这张图片里需要去判断鼠标在地图的哪个区域里面，因为每个区域的路径都是贴着的，如果不是做精确判断的话，会产生很多错误的操作。
                 -->
-                <img data-src="img/map.png" class="item" width="400" alt="">
+                <img data-src="img/map.png" class="item" width="400" style="position:absolute;right:40px;top:140px;"alt="">
             </article>
 
             <article class="center">
-                <!-- 每次路径形状变化的时候，都需要重新去计算它的包围盒，如果只是用于刚才提到的相交测试的粗略判断的话，我们简要的计算一下图形的非最小包围盒就行了，但是如果是需要知道确切的这个图形的高宽的话，是需要计算最小包围盒的，对于只有直线的路径来说这两个都一样从端点计算，但是对于贝塞尔曲线来说，最小包围盒还需要计算曲线的极值，这个是有一定的开销的。不像左边的非最小包围盒只需要从四个控制点计算-->
+                <!-- tip: 每次路径形状变化的时候，都需要重新去计算它的包围盒，如果只是用于刚才提到的相交测试的粗略判断的话，我们简要的计算一下图形的非最小包围盒就行了，但是如果是需要知道确切的这个图形的高宽的话，是需要计算最小包围盒的，对于只有直线的路径来说这两个都一样从端点计算，但是对于贝塞尔曲线来说，最小包围盒还需要计算曲线的极值，这个是有一定的开销的。不像左边的非最小包围盒只需要从四个控制点计算-->
                 <h2>路径图形包围盒的计算</h2>
                 <div class="row">
                     <!-- TODO 示例 -->
@@ -287,7 +294,7 @@
                     </li>
                     <!--tip: 我们一开始是根据图形的形状去判断点是否在图形里，图形是圆形的话就判断点是不是在圆形里，是多边形的话就判断是不是在多边形里，但是这样每次扩展图形的时候都非常麻烦，而且对于自定义的复杂路径还是没办法解决这个问题
                     -->
-                    <li>JS 根据图形形状判断</li>
+                    <li>根据图形形状判断</li>
                     <!--tip: 于是我们自己使用 JavaScript 重新实现了一遍 isPointInPath 与 isPointInStroke -->
                     <li>JS 实现 isPointInPath 和 isPointInStroke</li>
                 </ul>
@@ -309,6 +316,7 @@
             </article>
 
             <article>
+                <!-- tip: 我们对 JavaScript 的实现和使用 Native 的方式去做了 Benchmark, 这个图里的数据是每秒钟能够对多少个图形做相交判断，单位是百万，我们使用几种在图表里比较常见的图形做了测试，结果是 JS 的实现普遍都是使用 Native 方式的 10x 以上-->
                 <h2>Benchmark</h2>
                 <div class="item" style="height:400px;" data-action="showContainBench"></div>
             </article>
@@ -320,8 +328,8 @@ var path = new Path(ctx);
 path.moveTo(...);
 path.lineTo(...);
 ...
-if (path.contain(x, y)) {...}
-if (path.containStroke(x, y)) {...}
+if (path.isPointInPath(x, y)) {...}
+if (path.isPointInStroke(x, y)) {...}
 </pre>
             </article>
 
@@ -344,7 +352,7 @@ if (ctx.isPointInStroke(path, x, y)) {...}
 <!-- 这部分大概介绍了我们选择 Canvas 的几个理由，以及如何在 Canvas 中管理图形的绘制和处理事件-->
                 <ul class="content list">
                     <!-- TODO 整理 -->
-                    <li>选择 Canvas 的几个理由</li>
+                    <li>Why Canvas</li>
                     <li>图形管理与绘制</li>
                     <li>事件管理</li>
                 </ul>
@@ -356,26 +364,33 @@ if (ctx.isPointInStroke(path, x, y)) {...}
             </article>
 
             <article>
-                <!-- tip: 于是我们开了一个 ECharts-X 的分支尝试使用 WebGL 去加速一些 2D 的绘制，以及做一些使用 Canvas 比较难实现的可视化效果 -->
+                <!-- tip: 于是我们开了一个 ECharts-X 的分支尝试使用 WebGL -->
                 <h1>WebGL 在 ECharts-X 中的使用</h1>
-            </article>
-            
-            <article>
-                <!-- tip: 然后是把刚才的微博签到图使用 WebGL 绘制 -->
-                <div class="item fullscreen" data-action="showWeiboCheckin" data-webgl="1"></div>
             </article>
 
             <article class="center">
-                <!-- 我们对 WebGL 的定位是可以像刚才那个示例那样加速二维图形的绘制，使得可以展现更大的数据量，
-                或者可以在三维空间里面去展现三维的数据，
-                -->
-                <ul class="content list">
-                    <li>加速二维图形绘制</li>
-                    <li>展现三维数据</li>
+                <!-- tip: 去加速一些 2D 的绘制，以及做一些使用 Canvas 比较难实现的可视化效果 -->
+                <!-- tip: 使用 WebGL 能够带来更高的性能，从而可以展现更多的数据，实现一些用 Canvas 很难做到的特效，同时在三维空间里可以多一个去展现数据，总而言之 WebGL 给我们提供了更多可视化的可能性-->
+                <!-- tip: 下面我依旧会通过几个例子去看这几点 -->
+                <ul class="content list" style="margin-top: 100px;width: 300px;">
+                    <li>更高的性能</li>
+                    <li>更好的特效</li>
+                    <li>三维</li>
+                    <li>...</li>
                 </ul>
+                <!-- TODO Icon -->
+            </article>
+            
+            <article>
+                <h2>加速二维图形绘制</h2>
+                <!-- tip: 这个就是把刚才的微博签到图使用 WebGL 绘制的效果, 在 WebGL 里可以无压力同时绘制几十万的顶点 -->
+                <div class="item fullscreen" data-action="showWeiboCheckin" data-webgl="1"></div>
             </article>
 
             <article>
+                <!-- 我们对 WebGL 的定位是可以像刚才那个示例那样加速二维图形的绘制，使得可以展现更大的数据量，
+                或者可以在三维空间里面去展现三维的数据，比如接下来这个示例
+                -->
                 <!--tip: 这个示例使用的是开始的人均 GDP 网格分布的数据，但是它用高度去表现 GDP 的大小，这样原来的颜色属性就可以用来表示其它的维度，比如说数据的分类
                 -->
                 <h2>人均 GDP 网格分布 - 三维直方图</h2>
@@ -383,20 +398,22 @@ if (ctx.isPointInStroke(path, x, y)) {...}
             </article>
 
             <article>
-                <!--tip: 同样的这个也是使用 ECharts-X 去可视化全球人口分布的结果 -->
+                <!--tip: 这个是把刚才的直方图转成球形坐标系后的结果，展现的是一个全球人口的分布图 -->
                 <h2>全球人口分布</h2>
                 <div class="item fullscreen" data-action="showGlobePopulation"></div>
             </article>
-
+    
             <article>
                 <h2>飞行航线可视化</h2>
                 <div class="item fullscreen" data-action="showGlobeFlights"></div>
             </article>
+
             <article class="center">
+                <!-- tip: 这里面的细节还挺多的，所以我这里只是大概讲一下思路 -->
                 <ul class="content list">
                     <li>
                         绘制贝塞尔曲线
-                        <p>WebGL 只支持直线绘制 - 曲线细分</p>
+                        <p>WebGL 只支持线段绘制 - 曲线细分</p>
                     </li>
                     <li>
                         Shader 计算动画的小点位置
@@ -414,14 +431,31 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
                 </ul>
             </article>
 
-            <article data-action="showGlobeWind" data-flat="1"></article>
+            <article>
+                <div class="item fullscreen" data-action="showGlobe"></div>
+                <ul class="side list" style="z-index:1">
+                    <li>日照
+                        <p>Lambert Shading</p>
+                    </li>
+                    <li>地表纹理</li>
+                    <li>地势变化</li>
+                </ul>
+            </article>
 
+            <article>
+                <!-- tip: 这个示例是一个用粒子效果表现的向量场的可视化，大概用了 26w 个粒子, 当然粒子数目越多能够表达的向量场细节就越丰富 -->
+                <h2>洋流 - 向量场可视化</h2>
+                <div class="item fullscreen" data-action="showGlobeWind" data-flat="1"></div>
+                <h3 class="side" style="z-index:1">260k 粒子</h3>
+            </article>
 <!--
             <article>
                 <h2>向量场与粒子运动</h2>
                 <div class="item fullscreen" data-action="showSingleParticle"></div>
             </article>
+-->
 
+<!--
             <article class="center">
                 <h2>Shader 计算粒子位置</h2>
                 <img data-src="img/gpgpu.png" alt="">
@@ -432,34 +466,41 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
             </article>
 -->
             <article>
-                <h1>Canvas 与 WebGL 结合</h1>
+                <h1>在 WebGL 中使用 Canvas</h1>
             </article>
 
             <article>
                 <div class="item fullscreen" data-action="showGlobe"></div>
+                <ul class="side list" style="z-index:1">
+                    <li>鼠标选择表面的区域</li>
+                    <li>区域高亮绘制</li>
+                </ul>
+            </article>
+
+            <article class="center">
+                <div class="row">
+                    <div class="left" style="text-align:left;">
+                        <h3>绘制</h3>
+                        <ul>
+                            <li>2D 图形管理</li>
+                            <li>重绘管理</li>
+                        </ul>
+                        <h3>交互</h3>
+                        <ul>
+                            <li>3D 射线求交</li>
+                            <li>求出交点的纹理坐标</li>
+                            <li>计算出在 Canvas 中的坐标</li>
+                            <li>2D 图形拾取</li>
+                        </ul>
+                    </div>
+                    <div class="right">
+                        <img src="img/canvas_surface.png" alt="">
+                    </div>
+                </div>
             </article>
 
             <article>
                 <div class="item fullscreen" data-flat="1" data-action="showGlobe"></div>
-            </article>
-
-            <article class="center">
-                <div class="content">
-                    <h2>绘制</h2>
-                    <ul class="list">
-                        <li>重绘 Canvas</li>
-                        <li>更新纹理</li>
-                    </ul>
-                    <h2>
-                        交互
-                    </h2>
-                    <ul class="list">
-                        <li>3D 射线求交</li>
-                        <li>得到交点在三角面片的重心坐标</li>
-                        <li>计算出在 Canvas 中的坐标</li>
-                        <li>2D 图形拾取</li>
-                    </ul>
-                </div>
             </article>
 
             <article>

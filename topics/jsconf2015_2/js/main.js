@@ -1,5 +1,8 @@
 define(function (require) {
 
+    var echarts = require('echarts');
+    require('echarts/chart/gauge');
+
     require('qtek/shader/buildin');
 
     var codes = {};
@@ -109,4 +112,72 @@ define(function (require) {
         itemClass: 'item',
         actions: actions
     });
+    
+    var myChart = echarts.init(document.getElementById('timer'));
+
+    myChart.setOption({
+        series: [{
+            name:'Timer',
+            type:'gauge',
+            startAngle: 180,
+            endAngle: 0,
+            radius: [0, '160%'],
+            center: ['50%', '80%'],
+            splitNumber: 5,
+            axisLine: {
+                lineStyle: {
+                    color: [[0.5, '#dd0000'],[0.8, '#dddd00'],[1, '#00dd00']], 
+                    width: 2
+                }
+            },
+            axisTick: {
+                splitNumber: 5,
+                length :5,
+                lineStyle: {
+                    color: 'auto',
+                    width: 1
+                }
+            },
+            axisLabel: {
+                show: false
+            },
+            splitLine: {
+                show: true,
+                length: 5,
+                lineStyle: {
+                    color: 'auto'
+                }
+            },
+            pointer : {
+                width : 3
+            },
+            title : {
+                show : false
+            },
+            detail : {
+                formatter:'',
+                textStyle: {
+                    color: 'auto',
+                    fontWeight: 'bolder'
+                }
+            },
+            data:[{value: 0, name: 'current'}]
+        }]
+    });
+    
+    var timeAll = 30 * 60 * 1000;
+    var elapsedTime = 0;
+    var timeInterval = 1000 * 30;
+    setInterval(function () {
+        elapsedTime += timeInterval;
+        myChart.setOption({
+            series: [{
+                name: 'Timer',
+                data: [{
+                    name: 'current',
+                    value: elapsedTime / timeAll * 100
+                }]
+            }]
+        })
+    }, timeInterval);
 });
