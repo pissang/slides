@@ -105,6 +105,15 @@ define(function (require) {
             leave: function (dom) {
                 require('./showContainBench').dispose(dom);
             }
+        },
+
+        showBBox: {
+            enter: function (dom) {
+                require('./showBBox').init(dom);
+            },
+            leave: function (dom) {
+                require('./showBBox').dispose(dom);
+            }
         }
     };
 

@@ -16,8 +16,7 @@
             <article>
                 <h2>About Me</h2>
                 <div class="row">
-                    <div class="left">
-                    </div>
+                    <div class="left"></div>
                     <div class="right"></div>
                 </div>
             </article>
@@ -140,7 +139,6 @@
                     <li>像素写入数据</li>
                     <li>颜色映射</li>
                 </ul>
-                <!-- TODO 映射调整示例 -->
             </article>
             <article class="center">
                 <!-- tip: 当然选择 Canvas 也会带来一些比较麻烦的问题, 首先因为它相对来说是一个比较基础的接口，只提供了设置当前绘制状态，然后绘制图形的功能，不像 svg 那样可以方便的管理画布上的图形，这个图形的管理包括层级的管理，每个图形的样式和变换的管理，以及最后如何去绘制这些图形等等 -->
@@ -288,16 +286,17 @@
                 <img data-src="img/map.png" class="item" width="400" style="position:absolute;right:40px;top:140px;"alt="">
             </article>
 
-            <article class="center">
+            <article class="center" data-action="showBBox">
                 <!-- tip: 每次路径形状变化的时候，都需要重新去计算它的包围盒，如果只是用于刚才提到的相交测试的粗略判断的话，我们简要的计算一下图形的非最小包围盒就行了，但是如果是需要知道确切的这个图形的高宽的话，是需要计算最小包围盒的，对于只有直线的路径来说这两个都一样从端点计算，但是对于贝塞尔曲线来说，最小包围盒还需要计算曲线的极值，这个是有一定的开销的。不像左边的非最小包围盒只需要从四个控制点计算-->
                 <h2>路径图形包围盒的计算</h2>
                 <div class="row">
-                    <!-- TODO 示例 -->
                     <div class="left">
                         <h3>非最小包围盒</h3>
+                        <div class="bbox-example0" style="height:250px;width:300px;margin:0 auto"></div>
                     </div>
                     <div class="right">
                         <h3>最小包围盒</h3>
+                        <div class="bbox-example1" style="height:250px;width:300px;margin:0 auto"></div>
                     </div>
                 </div>
             </article>
@@ -382,12 +381,11 @@ if (ctx.isPointInStroke(path, x, y)) {...}
             </article>
 
             <article>
-                <!-- tip: 于是我们开了一个 ECharts-X 的分支尝试使用 WebGL -->
-                <h1>WebGL 在 ECharts-X 中的使用</h1>
+                <!-- tip: 于是我们开了一个 ECharts-X 的分支尝试使用 WebGL 去加速一些 2D 的绘制，以及做一些使用 Canvas 比较难实现的可视化效果 -->
+                <h1>WebGL 在 ECharts-X 中的应用</h1>
             </article>
 
             <article class="center">
-                <!-- tip: 去加速一些 2D 的绘制，以及做一些使用 Canvas 比较难实现的可视化效果 -->
                 <!-- tip: 使用 WebGL 能够带来更高的性能，从而可以展现更多的数据，实现一些用 Canvas 很难做到的特效，同时在三维空间里可以多一个去展现数据，总而言之 WebGL 给我们提供了更多可视化的可能性-->
                 <!-- tip: 下面我依旧会通过几个例子去看这几点 -->
                 <ul class="content list" style="margin-top: 100px;width: 300px;">
@@ -405,9 +403,6 @@ if (ctx.isPointInStroke(path, x, y)) {...}
             </article>
 
             <article>
-                <!-- tip: 我们对 WebGL 的定位是可以像刚才那个示例那样加速二维图形的绘制，使得可以展现更大的数据量，
-                或者可以在三维空间里面去展现三维的数据，比如接下来这个示例
-                -->
                 <!--tip: 这个示例使用的是开始的人均 GDP 网格分布的数据，但是它用高度去表现 GDP 的大小，这样原来的颜色属性就可以用来表示其它的维度，比如说数据的分类
                 -->
                 <h2>人均 GDP 网格分布 - 三维直方图</h2>
@@ -415,12 +410,13 @@ if (ctx.isPointInStroke(path, x, y)) {...}
             </article>
 
             <article>
-                <!--tip: 这个是把刚才的直方图转成球形坐标系后的结果，展现的是一个全球人口的分布图 -->
+                <!--tip: 这个是把刚才的直方图转成球坐标系后的结果，展现的是一个全球人口的分布图 -->
                 <h2>全球人口分布</h2>
                 <div class="item fullscreen" data-action="showGlobePopulation"></div>
             </article>
     
             <article>
+                <!-- TODO 引入-->
                 <h2>飞行航线可视化</h2>
                 <div class="item fullscreen" data-action="showGlobeFlights"></div>
             </article>
@@ -466,12 +462,12 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
                 <div class="item fullscreen" data-action="showGlobeWind" data-flat="1"></div>
                 <h3 class="side" style="z-index:1">260k 粒子</h3>
             </article>
-<!--
+
             <article>
                 <h2>向量场与粒子运动</h2>
                 <div class="item fullscreen" data-action="showSingleParticle"></div>
             </article>
--->
+
 
 <!--
             <article class="center">
@@ -484,7 +480,8 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
             </article>
 -->
             <article>
-                <!-- 最后一点时间我讲讲我们是如何在 WebGL 中管理二维图形的绘制的 
+                <!-- 
+                最后一点时间我讲讲我们是如何在 WebGL 中管理二维图形的绘制的
                 -->
                 <h1>在 WebGL 中使用 Canvas</h1>
             </article>
