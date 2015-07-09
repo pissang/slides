@@ -387,7 +387,7 @@ if (ctx.isPointInStroke(path, x, y)) {...}
 
             <article class="center">
                 <!-- tip: 使用 WebGL 能够带来更高的性能，从而可以展现更多的数据，实现一些用 Canvas 很难做到的特效，同时在三维空间里可以多一个去展现数据，总而言之 WebGL 给我们提供了更多可视化的可能性-->
-                <!-- tip: 下面我依旧会通过几个例子去看这几点 -->
+                <!-- tip: 下面我依旧会通过几个 ECharts-X 里的例子去看这几点 -->
                 <ul class="content list" style="margin-top: 100px;width: 300px;">
                     <li>更高的性能</li>
                     <li>更好的特效</li>
@@ -416,13 +416,19 @@ if (ctx.isPointInStroke(path, x, y)) {...}
             </article>
     
             <article>
-                <!-- TODO 引入-->
+                <!-- tip: 这个飞机航线的可视化跟刚才百度迁徙的例子相似，只是换到了三维的球坐标系上，它用三维的把贝塞尔曲线连接了航线的起点和终点，然后通过这些小点的动画可以看到航线的方向 -->
                 <h2>飞行航线可视化</h2>
                 <div class="item fullscreen" data-action="showGlobeFlights"></div>
             </article>
 
             <article class="center">
                 <!-- tip: 这里面的细节还挺多的，所以我这里只是大概讲一下思路 -->
+                <!-- tip: 首先是曲线的绘制，在 WebGL 里面绘制曲线比较麻烦，不像 Canvas 调用一个命令就出来了，WebGL 只支持线段的绘制，所以画曲线需要把这个曲线细分成一段段直线 -->
+
+                <!-- tip: 然后小点的动画特效，小点的位置是在 Shader 里面计算的，从而减小 JS 顶点位置的计算量以及每次都要传输到 GPU 的开销 -->
+
+                <!-- tip: 小点动画的尾迹跟刚才百度迁徙里提到的思路不太一样，刚才的是保存上一帧的画面与这一帧混合，但是那样就不能移动整个画面了，所以这里是用多个不透明度逐渐衰减的小点去模拟尾迹。因为动画计算什么的都放在 GPU 里，所以多加这些图形并没有多少压力
+                -->
                 <ul class="content list">
                     <li>
                         绘制贝塞尔曲线
@@ -430,7 +436,7 @@ if (ctx.isPointInStroke(path, x, y)) {...}
                     </li>
                     <li>
                         Shader 计算动画的小点位置
-                        <p>减小 JS 顶点的计算以及传输开销</p>
+                        <p>减小 JS 顶点的计算量以及传输到 GPU 的开销</p>
 <pre class="prettyprint">
 float onet = 1.0 - t;
 vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
@@ -438,13 +444,14 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
 </pre>
                     </li>
                     <li>
-                        尾迹
+                        动画的尾迹
                         <p>多个不透明度逐渐衰减的图形</p>
                     </li>
                 </ul>
             </article>
 
             <article>
+                <!--tip: 然后这是一个有日照信息的示例, 它用一个 Lambert Shading 去画这个地球的明暗面，还有地表的纹理，通过阴影表现的地势的变化 -->
                 <div class="item fullscreen" data-action="showGlobe"></div>
                 <ul class="side list" style="z-index:1">
                     <li>日照
@@ -457,15 +464,23 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
 
             <article>
                 <!-- tip: 这个示例是一个用粒子效果表现的向量场的可视化，大概用了 26w 个粒子, 当然粒子数目越多能够表达的向量场细节就越丰富 -->
-                <!-- tip: 看起来有点像气象预报，这几天台风很厉害 -->
+                <!-- tip: 看起来有点像气象预报 -->
                 <h2>洋流 - 向量场可视化</h2>
                 <div class="item fullscreen" data-action="showGlobeWind" data-flat="1"></div>
                 <h3 class="side" style="z-index:1">260k 粒子</h3>
             </article>
 
             <article>
+                <!-- tip: 然后也大概介绍一下怎么用粒子效果去可视化一个向量场，这个图用箭头绘制了一个向量场，这个向量场是用柏林噪声生成的，我们随机放入一个粒子，然后读取这个粒子在向量场中的位置读取向量场里面的速度信息，然后根据这个速度位移一个新的位置，再在下一帧从这个新的位置新的速度，然后每一帧都这样，这个粒子就会沿着向量场的迹线运动 -->
                 <h2>向量场与粒子运动</h2>
                 <div class="item fullscreen" data-action="showSingleParticle"></div>
+                <ul class="side">
+                    <li>生成粒子</li>
+                    <li>根据位置读取速度</li>
+                    <li>位移</li>
+                    <li>读取新的速度</li>
+                    <li>...</li>
+                </ul>
             </article>
 
 
@@ -480,13 +495,16 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
             </article>
 -->
             <article>
-                <!-- 
+                <!-- tip:
                 最后一点时间我讲讲我们是如何在 WebGL 中管理二维图形的绘制的
                 -->
                 <h1>在 WebGL 中使用 Canvas</h1>
             </article>
 
             <article>
+                <!-- tip:
+                比如再回到刚才那个示例，这个示例里可以鼠标选择表面的区域然后高亮这个区域。这个表面就是用 Canvas 绘制的 2D 纹理
+                -->
                 <div class="item fullscreen" data-action="showGlobe"></div>
                 <ul class="side list" style="z-index:1">
                     <li>鼠标选择表面的区域</li>
@@ -495,6 +513,9 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
             </article>
 
             <article class="center">
+                <!-- tip:
+                然后大概讲一下我们在 ECharts-X 里是如何去管理二维图形的绘制和交互的问题的
+                -->
                 <div class="row">
                     <div class="left" style="text-align:left;">
                         <h3>绘制</h3>
