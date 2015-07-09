@@ -77,14 +77,14 @@
             </article>
 
             <article class="center">
-                <ul class="list content">
+                <ul class="list content" id="why-canvas">
                     <!-- 我们最开始选择 Canvas 主要是出于这三点的考虑 -->
                     <!-- tip: 首先在性能上相同的帧数下相比 SVG 能够同时绘制更多的图形，这就意味着我们可以展现更大量的数据-->
-                    <li>性能</li>
+                    <li><img data-src="img/icon-performance.png" />性能</li>
                     <!-- tip: 然后是使用 Canvas 去绘制一些特效，比如粒子特效，比 SVG 更加高效和便捷 -->
-                    <li>特效绘制</li>
+                    <li><img data-src="img/icon-effect.png" />特效绘制</li>
                     <!-- tip: 最后一点是 SVG 无法做到的，就是像素的操作，这一点直接导致了在有些可视化的手段上只能使用 Canvas 而不能使用 SVG -->
-                    <li>像素操作</li>
+                    <li><img data-src="img/icon-pixel.png" />像素操作</li>
                 </ul>
                 <!-- TODO Icon -->
                 <!-- tip: 一言以蔽之就是 Canvas 相比 SVG 能够让我们在可视化上面拥有更多的能力和可能性 -->
@@ -122,7 +122,6 @@
                     <li>像素写入数据</li>
                     <li>颜色映射</li>
                 </ul>
-                <!-- TODO 曝光度调整示例 -->
                 <!-- TODO 映射调整示例 -->
             </article>
             <article class="center">
@@ -144,7 +143,7 @@
 
             <article class="center">
                 <!-- tip: 接下去我会花一点时间分享下针对这两个问题我们在 ECharts 里的解决方案  -->
-                <h2 style="font-size:60px; margin-top:200px;">ECharts 中的实现</h2>
+                <h2 style="font-size:60px; margin-top:200px;">ECharts 中的方案</h2>
             </article>
 
             <article>
@@ -168,7 +167,7 @@
                         </ul>
                     </div>
                     <div class="right" style="width:60%">
-                        <ul class="list" style="font-size:22px;">
+                        <ul class="list" style="font-size:22px;margin-top:-10px;">
                             <li>样式 Style
                                 <p>填充颜色, 描边颜色，描边线宽，图片高宽</p>
                             </li>
@@ -466,6 +465,8 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
             </article>
 -->
             <article>
+                <!-- 最后一点时间我讲讲我们是如何在 WebGL 中管理二维图形的绘制的 
+                -->
                 <h1>在 WebGL 中使用 Canvas</h1>
             </article>
 
