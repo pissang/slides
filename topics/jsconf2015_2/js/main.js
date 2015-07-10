@@ -114,6 +114,15 @@ define(function (require) {
             leave: function (dom) {
                 require('./showBBox').dispose(dom);
             }
+        },
+
+        showRaycasting: {
+            enter: function (dom) {
+                require('./showRaycasting').init(dom);
+            },
+            leave: function (dom) {
+                require('./showRaycasting').dispose(dom);
+            }
         }
     };
 

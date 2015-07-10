@@ -10,17 +10,38 @@
     <body id="jsconf2015">
         <div id="articles">
             <article>
+                <!--tip: 大家下午好，我是来自百度 EFE 团队的沈毅，接下来三十分钟我会为大家分享一些我们团队在前端可视化上使用 WebGL 和 Canvas 的经验 -->
                 <h1 class="title">前端技术与可视化</h1>
                 <h2 class="subtitle">Canvas 与 WebGL 在 ECharts 中的应用</h2>
             </article>
-            <article>
+            <article id="about-me">
+                <!-- tip: 
+                我 12年毕业后加入百度做前端开发，然后在百度三年技能点大都点在了前端的图形开发上，包括的2D的Canvas，3D的WebGl 等等， 然后最近一直在做 ECharts 的开发，也维护了一个 WebGL的图形库 qtek，右边这些截图是我用 WebGL 开发的一些案例
+                -->
                 <h2>About Me</h2>
                 <div class="row">
-                    <div class="left"></div>
-                    <div class="right"></div>
+                    <div class="left" style="text-align:center;">
+                        <img data-src="img/avatar_2.png" id="avatar" alt="">
+                        <h3>沈 毅</h3>
+                        <ul style="font-size:16px;width:100px;margin:0 auto; text-align:left;">
+                            <li>WebGL</li>
+                            <li>Canvas</li>
+                            <li>ECharts</li>
+                            <li>QTEK</li>
+                        </ul>
+                    </div>
+                    <div class="right">
+                        <img data-src="img/screenshots/1.png" alt="" />
+                        <img data-src="img/screenshots/2.png" alt="" />
+                        <img data-src="img/screenshots/3.png" alt="" />
+                        <img data-src="img/screenshots/4.png" alt="" />
+                        <img data-src="img/screenshots/5.png" alt="" />
+                        <img data-src="img/screenshots/6.png" alt="" />
+                    </div>
                 </div>
             </article>
             <article>
+                <!-- tip: EFE是百度多个部门的前端团队联合组成的一个技术组织，一直致力于造各种轮子去提升百度前端研发效率, 我们在前端的各个技术方向都有开源产品的产出，有可视化方向的 ECharts，也是我这次分享的重点，还有.... -->
                 <h2>About Baidu EFE</h2>
                 <div class="row">
                     <div class="left">
@@ -34,6 +55,7 @@
                             <li><span class="prod">Fate</span> <span class="desc">移动开发</span></li>
                             <li><span class="prod">ESL</span> <span class="desc">AMD Loader</span></li>
                             <li><span class="prod">ER</span> <span class="desc">RIA</span></li>
+                            <li><span class="prod">FECS</span> <span class="desc">代码质量静态检查工具</span></li>
                             <li><span class="prod">Fontmin</span> <span class="desc">字体子集化</span></li>
                         </ul>
                     </div>
@@ -90,16 +112,16 @@
             <article>
                 <h2 style="font-size:60px; margin-top:200px;">Why Canvas?</h2>
                 <!-- tip: 
-                    为什么选择 Canvas, 网上一直有关于是选择 Canvas 还是 SVG 的讨论，包括在什么场景下选择使用 Canvas，这里我就不多做赘述了。
+                    为什么在三年前刚开始开发 ECharts 的时候会选择 Canvas而不是 SVG, 网上一直有关于是选择 Canvas 还是 SVG 的争论，但是这两个之间的争论相比于其它很多的争论，比如说咸豆腐脑好吃还是甜豆腐脑好吃， 或者咸粽子好吃还是甜粽子好吃，还是不算什么的，基本上有些明确的建议，该在什么场景下选择使用 SVG，什么场景下选择 Canvas
                  -->
             </article>
 
             <article class="center">
-                <ul class="list content" id="why-canvas">
+                <ul class="list content" id="why-canvas" style="width:350px;">
                     <!-- 我们最开始选择 Canvas 主要是出于这三点的考虑 -->
-                    <!-- tip: 首先在性能上相同的帧数下相比 SVG 能够同时绘制更多的图形，这就意味着我们可以展现更大量的数据-->
+                    <!-- tip: 首先是被提的最多的性能，相同的帧数下相比 SVG 能够同时绘制更多的图形，这就意味着我们可以展现更大量的数据-->
                     <li><img data-src="img/icon-performance.png" />性能</li>
-                    <!-- tip: 然后是使用 Canvas 去绘制一些特效，比如粒子特效，比 SVG 更加高效和便捷 -->
+                    <!-- tip: 特效的绘制，特效的绘制也是在第一点性能的基础上，就是使用 Canvas 往往有能力去绘制一些更好的特效 -->
                     <li><img data-src="img/icon-effect.png" />特效绘制</li>
                     <!-- tip: 最后一点是 SVG 无法做到的，就是像素的操作，这一点直接导致了在有些可视化的手段上只能使用 Canvas 而不能使用 SVG -->
                     <li><img data-src="img/icon-pixel.png" />像素操作</li>
@@ -109,9 +131,9 @@
             </article>
 
             <article>
-                <h2>百度迁徙</h2>
+                <h2>特效绘制 - 百度迁徙</h2>
                 <!-- 
-                    tip: 首先是这个春节期间百度和样式合作的百度迁徙的例子，
+                    tip: 首先是这个春节期间百度和央视合作的百度迁徙的例子，
                     这个例子里有 3k 条边的数据，也就是说这个画面有 3k 条连接两点的曲线，我们后来又在 ECharts 里对动画做了优化，画面中能够有 3k 个小点同时在各条边上移动的动画。
                 -->
                 <!--
@@ -119,9 +141,7 @@
                     这个尾迹可以更好的表现点动画的轨迹，可以使得在画面中同时有很多图形在动画的时候不会显得太乱。看不出每个点的一个运动路径
                 -->
                 <!--
-                    tip: 这个尾迹特效是用类似动态模糊的方法实现的，就是使用另外一个 Canvas 通过 drawImage 的方法保存上一帧的画面，然后把上一帧的画面跟这帧的画面以一定的透明度做一个混合，不透明度越大尾迹就会显得越长。
-
-                    这个是通过 Canvas 可以很方便的实现。
+                    tip: 如果要在 svg 里实现这个尾迹特效的话只能在每个小点后面跟着画一串小点,这样整个画布上就会有至少上w个点，这么多点的动画是肯定 hold 不住的，但是我们用 Canvas 的画就可以用一个类似动态模糊的效果去实现，就是使用另外一个 Canvas 通过 drawImage 的方法保存上一帧的画面，然后把上一帧的画面跟这帧的画面以一定的透明度做一个混合，这样就会有一个残影的效果, 通过这个效果就可以非常高效的去实现这个尾迹特效
                 -->
                 <div class="item fullscreen" data-action="showMigration"></div>
                 <ul class="list">
@@ -132,11 +152,15 @@
             </article>
 
             <article class="center">
-                <h2 style="position:relative;z-index:1">全国 GDP 网格分布热力图</h2>
-                <!-- tip: 像这种比较规则的网格数据一般数据量都很大，直接通过绘制图形肯定是不行的，比较合适的办法是把数据映射成一个色值，然后把这个色值直接写入像素，然后再通过 Canvas 里提供的 putImageData 把整个像素数组输出到画布上，因为像素的操作基本等同于数组的操作，所以速度非常快，像这种可视化都能够实现实时的交互 -->
+                <h2 style="position:relative;z-index:1">像素操作 - 全国 GDP 网格分布热力图</h2>
+                <!-- tip: 像这种比较规则的网格数据一般数据量都很大，直接通过绘制图形肯定是不行的，比较合适的办法是把数据映射成一个色值，然后把这个色值直接写入像素，这个映射可以是线性的映射到一个渐变色上， 操作完所有像素之后再通过 Canvas 里提供的 putImageData 把整个像素数组输出到画布上，因为像素的操作基本等同于数组的操作，所以速度非常快，像这种可视化都能够实现实时的交互 -->
                 <div data-action="showHeatmap" class="fullscreen item"></div>
                 <ul class="list" style="text-align:left;z-index:1;position:relative;">
-                    <li>像素写入数据</li>
+                    <li>
+                        像素写入数据
+                        <p>createImageData</p>
+                        <p>putImageData</p>
+                    </li>
                     <li>颜色映射</li>
                 </ul>
             </article>
@@ -155,6 +179,7 @@
                     </li>
                     <!--tip: 然后因为 Canvas 里面没有把图形当做对象，所以无法对图形做事件绑定，事件处理等等 -->
                     <li>鼠标事件处理</li>
+                    <!--tip: 这两个问题是很多人使用 Canvas 做开发比较头疼的 -->
                 </ul>
             </article>
 
@@ -166,7 +191,7 @@
             <article>
                 <h2>图形的管理 - 图形对象</h2>
                 <div class="row">
-                    <!-- tip: 首先是图形的管理，我们会把根据 Canvas 里绘制图形的方法把所有图形对象分为三大类，路径 Path，图片 Image 还有文字 Text, 每个图形对象都会维护各自的一些属性，比如用 style 属性去设置图形的绘制样式，比如路径的填充颜色，描边颜色，或者一张图片的高和宽等等，然后还有位移，旋转，缩放等坐标的变换属性，然后还有一个 z 去描述图形在 z 方向上的绘制顺序，类似 css 的 z-index, 最后的 zlevel 主要是提供一个Canvas分层绘制的能力，不同zlevel 的图形会放入不同的canvas里-->
+                    <!-- tip: 首先是图形的管理，我们会把根据 Canvas 里绘制图形的方法把所有图形对象分为三大类，路径 Path，图片 Image 还有文字 Text, 每个图形对象都会维护各自的一些属性，比如用 style 属性去设置图形的绘制样式，比如路径的填充颜色，描边颜色，或者一张图片的高和宽等等，然后第二个也是很重要的坐标变换的属性，它指定了这个图形在画布上的或者相对父节点的一个位置，缩放还有旋转，然后还有一个 z 去描述图形在 z 方向上的绘制顺序，类似 css 的 z-index, 最后的 zlevel 主要是提供一个Canvas分层绘制的能力，不同zlevel 的图形会放入不同的canvas里-->
                     <div class="left" style="width:40%">
                         <ul class="list" id="graphics">
                             <li>
@@ -207,7 +232,7 @@
 
             <article class="center">
                 <h2>图形的管理 - 层级树</h2>
-                <!-- tip: 一开始在 ECharts 里面是使用一个平坦的数组去存储这些图形的 -->
+                <!-- tip: 然后我们需要一个数据结构去存储这些图形对象，一开始在 ECharts 里面是使用一个平坦的数组去存储这些图形的 -->
                 <!-- tip: 后来随着应用的复杂度提升，我们发现h还是需要像 SVG 一样用一棵树去组织图形的层级关系，就像图中这样，这个树的叶子节点都是刚才提到的可以直接绘制到画布上的图形 -->
                 <!-- tip: 然后这个树里的非叶子节点都是容器 Group，它会包含一些图形或者其他容器作为子节点，这个容器节点也会有坐标变换的属性，然后这些坐标变换会应用到子节点上 -->
                 <img data-src="img/render_list.png" alt="">
@@ -257,7 +282,7 @@
                 <!-- tip:  首先对整个容器绑定需要的事件，然后在有事件触发的时候去反向循环刚才生成的渲染列表判断鼠标是否在某个图形上，是的话就会对这个图形分发事件，如果图形有父节点的话，事件也会冒泡到父节点，反向循环是为了保证最上面的图形能够触发事件 -->
                 <!-- tip: 这里面最复杂的应该是第二步判断鼠标位置是否在某个图形上 -->
                 <ul class="content list" style="width:400px;">
-                    <li>容器绑定事件</li>
+                    <li>容器绑定代理事件</li>
                     <li style="margin:30px 0;">反向循环渲染列表判断鼠标是否在某个图形上</li>
                     <li>图形事件分发与冒泡</li>
                     <!-- TODO 整理 -->
@@ -273,6 +298,7 @@
                     文字和图片这两种类型的图形也可以只使用包围盒的判断就行了，但是对于大部分路径图形来说，需要进一步去做一些精确的相交判断。
                 -->
                 <ul class="content list">
+                    <li>鼠标坐标变换</li>
                     <li>
                         包围盒粗略判断
                         <p>快，不精确</p>
@@ -287,11 +313,11 @@
             </article>
 
             <article class="center" data-action="showBBox">
-                <!-- tip: 每次路径形状变化的时候，都需要重新去计算它的包围盒，如果只是用于刚才提到的相交测试的粗略判断的话，我们简要的计算一下图形的非最小包围盒就行了，但是如果是需要知道确切的这个图形的高宽的话，是需要计算最小包围盒的，对于只有直线的路径来说这两个都一样从端点计算，但是对于贝塞尔曲线来说，最小包围盒还需要计算曲线的极值，这个是有一定的开销的。不像左边的非最小包围盒只需要从四个控制点计算-->
-                <h2>路径图形包围盒的计算</h2>
+                <!-- tip: 刚才提到包围盒，这个包围盒该怎么去计算，Canvas 并没有提供这个功能，所以需要我们自己去算，如果只是用于刚才提到的相交测试的粗略判断的话，我们简要的计算一下图形的非最小包围盒就行了，但是如果是需要知道确切的这个图形的高宽的话，是需要计算最小包围盒的，对于只有直线的路径来说这两个都一样从端点计算，但是对于贝塞尔曲线来说，最小包围盒还需要计算曲线的极值，这个是有一定的开销的。不像左边的非最小包围盒只需要从四个控制点计算-->
+                <h2>包围盒的计算 - getBoundingRect</h2>
                 <div class="row">
                     <div class="left">
-                        <h3>非最小包围盒</h3>
+                        <h3>包围盒</h3>
                         <div class="bbox-example0" style="height:250px;width:300px;margin:0 auto"></div>
                     </div>
                     <div class="right">
@@ -319,26 +345,33 @@
 
             <article class="center">
                 <h2>JavaScript 实现</h2>
-                <ul class="content list">
-                    <li>
-                        isPointInPath
-                        <p>Non Zero Winding Rule <img data-src="img/non-zero.png" width="140" alt="" style="vertical-align:middle;margin-left:20px;"></p>
-                    </li>
-                    <li>
-                        isPointInStroke
-                        <p>求点到线段和曲线的距离</p>
-                        <!-- TODO 图片 -->
-                    </li>
-                </ul>
+                <div class="row">
+                    <div class="left" style="text-align:left;">
+                        <ul class="list">
+                            <li>
+                                isPointInPath
+                                <p>Non Zero Winding Rule <img data-src="img/non-zero.png" width="140" alt="" style="vertical-align:middle;margin-left:20px;"></p>
+                            </li>
+                            <li>
+                                isPointInStroke
+                                <p>求点到线段和曲线的距离</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="right item" data-action="showRaycasting" style="height:400px;"></div>
+                </div>
             </article>
 
             <article>
-                <!-- tip: 我们对 JavaScript 的实现和使用 Native 的方式去做了 Benchmark, 这个图里的数据是每秒钟能够对多少个图形做相交判断，单位是百万，我们使用几种在图表里比较常见的图形做了测试，结果是 JS 的实现普遍都是使用 Native 方式的 10x 以上-->
+                <!-- tip: 我们对 JavaScript 的实现和使用 Native 的方式去做了 Benchmark, 衡量的标准就是每秒钟能够对多少个图形做相交判断，单位是百万，我们使用几种在图表里比较常见的图形做了测试，结果是 JS 的实现普遍都是使用 Native 方式的 10x 以上-->
                 <h2>Benchmark</h2>
                 <div class="item" style="height:400px;" data-action="showContainBench"></div>
             </article>
 
             <article class="center">
+                <!--tip:
+                    在用 JS 去做路径与坐标点相交判断的时候，是需要知道这个路径的数据的，有哪些线段和曲线，但是使用 Canvas Context 绘制路径不会存储这些数据的，所以我们用了一个 Path 对象去代理路径的绘制。这样在绘制的时候就可以保存数据，然后顺手计算个包围盒。
+                -->
                 <h2>路径数据存储 - Path Object</h2>
 <pre class="prettyprint content" style="font-size:25; line-height:36px;">
 var path = new Path(ctx);
@@ -347,6 +380,9 @@ path.lineTo(...);
 ...
 if (path.isPointInPath(x, y)) {...}
 if (path.isPointInStroke(x, y)) {...}
+...
+path.fastBoundingRect();
+path.getBoundingRect();
 </pre>
             </article>
 
@@ -359,15 +395,15 @@ var path = new Path2D();
 if (ctx.isPointInPath(path, x, y)) {...}
 if (ctx.isPointInStroke(path, x, y)) {...}
 </pre>
-                <img src="./img/path2d_browser.png" alt="">
+                <img data-src="./img/path2d_browser.png" alt="">
                 <br />
-                <img src="./img/path2d_browser_mobile.png" alt="">
+                <img data-src="./img/path2d_browser_mobile.png" alt="">
             </article>
 
             <article class="center">
                 <h2>Summary</h2>
 <!-- 这部分大概介绍了我们选择 Canvas 的几个理由，以及如何在 Canvas 中管理图形的绘制和处理事件-->
-                <ul class="content list">
+                <ul class="content list" style="width:300px;">
                     <!-- TODO 整理 -->
                     <li>Why Canvas</li>
                     <li>图形管理与绘制</li>
@@ -386,7 +422,7 @@ if (ctx.isPointInStroke(path, x, y)) {...}
             </article>
 
             <article class="center">
-                <!-- tip: 使用 WebGL 能够带来更高的性能，从而可以展现更多的数据，实现一些用 Canvas 很难做到的特效，同时在三维空间里可以多一个去展现数据，总而言之 WebGL 给我们提供了更多可视化的可能性-->
+                <!-- tip: 使用 WebGL 能够带来更高的性能，从而可以展现更多的数据，实现一些用 Canvas 很难做到的特效，同时在三维空间里可以多一个维度去观察这些数据，总而言之 WebGL 给我们提供了更多可视化的可能性-->
                 <!-- tip: 下面我依旧会通过几个 ECharts-X 里的例子去看这几点 -->
                 <ul class="content list" style="margin-top: 100px;width: 300px;">
                     <li>更高的性能</li>
@@ -403,7 +439,7 @@ if (ctx.isPointInStroke(path, x, y)) {...}
             </article>
 
             <article>
-                <!--tip: 这个示例使用的是开始的人均 GDP 网格分布的数据，但是它用高度去表现 GDP 的大小，这样原来的颜色属性就可以用来表示其它的维度，比如说数据的分类
+                <!--tip: 这个例子展现的是在三维空间里面的一个可视化效果，它是一个三维的直方图， 同样的是一个刚才人均 GDP 网格分布的一个例子，但是它用多出来的那个高度属性去表现 GDP 的大小，这样原来的颜色属性就可以用来表示其它的维度，比如说数据的分类
                 -->
                 <h2>人均 GDP 网格分布 - 三维直方图</h2>
                 <div class="item fullscreen" data-action="showHistogram3d" data-light="1"></div>
@@ -416,7 +452,7 @@ if (ctx.isPointInStroke(path, x, y)) {...}
             </article>
     
             <article>
-                <!-- tip: 这个飞机航线的可视化跟刚才百度迁徙的例子相似，只是换到了三维的球坐标系上，它用三维的把贝塞尔曲线连接了航线的起点和终点，然后通过这些小点的动画可以看到航线的方向 -->
+                <!-- tip: 同样的这个飞机航线的可视化也是在一个三维空间里去可视化线数据，跟刚才百度迁徙的例子相似，只是换到了三维的球坐标系上，它用三维的贝塞尔曲线连接了航线的起点和终点，然后通过这些小点的动画可以看到航线的方向，这个就是我刚才提到的使用 WebGL 能够绘制比 Canvas 更炫酷的特效，而且是在一个三维的空间里，更吸引眼球-->
                 <h2>飞行航线可视化</h2>
                 <div class="item fullscreen" data-action="showGlobeFlights"></div>
             </article>
@@ -451,7 +487,7 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
             </article>
 
             <article>
-                <!--tip: 然后这是一个有日照信息的示例, 它用一个 Lambert Shading 去画这个地球的明暗面，还有地表的纹理，通过阴影表现的地势的变化 -->
+                <!--tip: 然后还可以加入日照的效果, 它用 Lambert Shading 去画这个地球的明暗面，还有地表的纹理，通过阴影表现的地势的变化 -->
                 <div class="item fullscreen" data-action="showGlobe"></div>
                 <ul class="side list" style="z-index:1">
                     <li>日照
@@ -463,8 +499,7 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
             </article>
 
             <article>
-                <!-- tip: 这个示例是一个用粒子效果表现的向量场的可视化，大概用了 26w 个粒子, 当然粒子数目越多能够表达的向量场细节就越丰富 -->
-                <!-- tip: 看起来有点像气象预报 -->
+                <!-- tip: 最后一个示例是一个洋流的可视化 这个示例是一个用粒子效果表现的二维向量场的可视化，大概用了 26w 个粒子, 这个效果其实用 Canvas 也能做，只是无法处理那么多粒子了，当然粒子数目越多能够表达的向量场细节就越丰富，比如说这些很想台风眼的地方 -->
                 <h2>洋流 - 向量场可视化</h2>
                 <div class="item fullscreen" data-action="showGlobeWind" data-flat="1"></div>
                 <h3 class="side" style="z-index:1">260k 粒子</h3>
@@ -514,7 +549,8 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
 
             <article class="center">
                 <!-- tip:
-                然后大概讲一下我们在 ECharts-X 里是如何去管理二维图形的绘制和交互的问题的
+                然后大概讲一下我们在 ECharts-X 里是如何去管理二维图形的绘制和交互的问题的，
+                刚才那个地球是一个有很多三角面的 Mesh， Mesh 表面贴的纹理是一个 Canvas Surface, 这个 Canvas Surface 就是一个 WebGL 的纹理对象，使用 Canvas 作为数据
                 -->
                 <div class="row">
                     <div class="left" style="text-align:left;">
@@ -532,7 +568,7 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
                         </ul>
                     </div>
                     <div class="right">
-                        <img src="img/canvas_surface.png" alt="">
+                        <img data-src="img/canvas_surface.png" alt="">
                     </div>
                 </div>
             </article>
@@ -550,15 +586,17 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
         <div id="slide-info">
             <h1 id="title">前端技术与可视化</h1>
             <ul class="aboutme">
-                <li id="author">沈毅</li>
-                <li id="date">2015-06-07</li>
+                <li id="author"><a href="http://efe.baidu.com/" target="_blank">EFE</a> 沈毅</li>
+                <li id="date">2015-07-11</li>
                 <li id="github">
-                    github : 
-                    <a href="https://github.com/pissang" target="_blank">pissang</a>
+                    GitHub : 
+                    @<a href="https://github.com/ecomfe" target="_blank">EFE</a>
+                    @<a href="https://github.com/pissang" target="_blank">pissang</a>
                 </li>
                 <li id="weibo">
-                    @
-                    <a href="http://weibo.com/pissang" target="_blank">pissang</a>
+                    Weibo:
+                    @<a href="http://weibo.com/u/3147992721" target="_blank">EFE</a>
+                    @<a href="http://weibo.com/pissang" target="_blank">pissang</a>
                 </li>
             </ul>
         </div>

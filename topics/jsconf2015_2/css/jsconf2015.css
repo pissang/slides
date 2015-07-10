@@ -85,6 +85,7 @@ article h2 {
     text-align: center;
     text-shadow: 0px 10px 10px black;
     font-size: 36px;
+    margin-top: 5px;
 }
 
 #jsconf2015 pre {
@@ -216,4 +217,15 @@ pre.side {
 #efe-products span.desc {
     font-size: 16px;
     color: #aaa;
+}
+
+#avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 100px;
+}
+
+#about-me .right img {
+    width: 250px;
+    vertical-align: top;
 }
