@@ -13,14 +13,25 @@
     font-style: normal;
 }
 
-#efe-icon::before {
+#efe {
+    float: right;
+    margin-top: 80px;
+    margin-right: 100px;
+}
+
+#efe a {
+    text-decoration: none;
+    border-bottom: 1px solid white;
+    margin-left: -10px;
+    font-size: 20px;
+}
+
+#efe::before {
     font-size: 180px;
     font-family: 'efe-icons';
     content: "\e600";
     display: block;
-    float: right;
-    margin-top: 80px;
-    margin-right: 100px;
+    margin-bottom: 20px;
 }
 
 html,h1,h2,h3,h4,h5{
