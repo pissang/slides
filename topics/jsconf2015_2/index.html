@@ -10,17 +10,17 @@
     <body id="jsconf2015">
         <div id="articles">
             <article>
-                <!--tip: 大家下午好，我是来自百度 EFE 团队的沈毅，接下来三十分钟我会为大家分享一些我们团队在前端可视化上使用 WebGL 和 Canvas 的经验 -->
+                <!--大家下午好，我是来自百度 EFE 团队的沈毅，然后这次分享我会为大家分享一些我们团队在前端可视化上使用 WebGL 和 Canvas 的经验 -->
                 <h1 class="title">前端技术与可视化</h1>
                 <h2 class="subtitle">Canvas 与 WebGL 在 ECharts 中的应用</h2>
             </article>
             <article id="about-me">
-                <!-- tip: 
-                我 12年毕业后加入百度做前端开发，然后在百度三年技能点大都点在了前端的图形开发上，包括的2D的Canvas，3D的WebGl 等等， 然后最近一直在做 ECharts 的开发，也维护了一个 WebGL的图形库 qtek，右边这些截图是我用 WebGL 开发的一些案例
+                <!--
+                我是12年毕业后加入百度做前端开发，然后在百度三年技能点大都点在了前端的图形开发上，包括的2D的Canvas，3D的WebGl 等等， 然后最近一直在做 ECharts 的开发，也维护了一个 WebGL的图形库 qtek，右边这些截图是我用 WebGL 开发的一些案例
                 -->
                 <h2>About Me</h2>
                 <div class="row">
-                    <div class="left" style="text-align:center;">
+                    <div class="left" style="text-align:center;width:40%;">
                         <img data-src="img/avatar.jpg" id="avatar" alt="">
                         <h3>沈 毅</h3>
                         <ul style="font-size:16px;width:100px;margin:0 auto; text-align:left;">
@@ -30,7 +30,7 @@
                             <li>QTEK</li>
                         </ul>
                     </div>
-                    <div class="right">
+                    <div class="right" style="width:60%;">
                         <img data-src="img/screenshots/1.png" alt="" />
                         <img data-src="img/screenshots/2.png" alt="" />
                         <img data-src="img/screenshots/3.png" alt="" />
@@ -41,7 +41,7 @@
                 </div>
             </article>
             <article>
-                <!-- tip: EFE是百度多个部门的前端团队联合组成的一个技术组织，一直致力于造各种轮子去提升百度前端研发效率, 我们在前端的各个技术方向都有开源产品的产出，有可视化方向的 ECharts，也是我这次分享的重点，还有....
+                <!-- EFE是百度多个部门的前端团队联合组成的一个技术组织，一直致力于造各种轮子去提升百度前端研发效率, 我们在前端的各个技术方向都有开源产品的产出，有可视化方向的 ECharts，也是我这次分享的重点，还有....
                 这个 ppt 的字体就是使用 Fontmin 去把原来 8M 多的字体缩减到 100k 多。
                  -->
                 <h2>About Baidu EFE</h2>
@@ -114,7 +114,7 @@
             <article>
                 <h2 style="font-size:60px; margin-top:200px;">Why Canvas?</h2>
                 <!-- tip: 
-                    为什么在三年前刚开始开发 ECharts 的时候会选择 Canvas而不是 SVG, 网上一直有关于是选择 Canvas 还是 SVG 的争论，但是这两个之间的争论相比于其它很多的争论，比如说咸豆腐脑好吃还是甜豆腐脑好吃， 或者咸粽子好吃还是甜粽子好吃，还是不算什么的，基本上有些明确的建议，该在什么场景下选择使用 SVG，什么场景下选择 Canvas
+                    为什么在三年前刚开始开发 ECharts 的时候会选择 Canvas而不是 SVG, 网上一直有关于是选择 Canvas 还是 SVG 的争论，但是这两个之间的争论相比于其它很多的争论，还是不算什么的，基本上有些明确的建议，该在什么场景下选择使用 SVG，什么场景下选择 Canvas
                  -->
             </article>
 
@@ -147,13 +147,12 @@
                 -->
                 <div class="item fullscreen" data-action="showMigration"></div>
                 <ul class="list">
-                    <li>3k 条边</li>
-                    <li>3k 个点的动画</li>
+                    <li>3k 条路线</li>
                     <li>尾迹特效</li>
                 </ul>
             </article>
 
-            <article class="center">
+            <article class="center" style="background:black">
                 <h2 style="position:relative;z-index:1">像素操作 - 全国 GDP 网格分布热力图</h2>
                 <!-- tip: 像这种比较规则的网格数据一般数据量都很大，直接通过绘制图形肯定是不行的，比较合适的办法是把数据映射成一个色值，然后把这个色值直接写入像素，这个映射可以是线性的映射到一个渐变色上， 操作完所有像素之后再通过 Canvas 里提供的 putImageData 把整个像素数组输出到画布上，因为像素的操作基本等同于数组的操作，所以速度非常快，像这种可视化都能够实现实时的交互 -->
                 <div data-action="showHeatmap" class="fullscreen item"></div>
@@ -172,12 +171,10 @@
                 <ul class="list content">
 
                     <li>
-                        <!-- TODO 为什么是难点 -->
                         没有图形对象的管理
                         <p>层级 Hierarchy</p>
                         <p>样式 Style</p>
                         <p>变换 Transform</p>
-                        <p>绘制</p>
                     </li>
                     <!--tip: 然后因为 Canvas 里面没有把图形当做对象，所以无法对图形做事件绑定，事件处理等等 -->
                     <li>鼠标事件处理</li>
@@ -234,8 +231,8 @@
 
             <article class="center">
                 <h2>图形的管理 - 层级树</h2>
-                <!-- tip: 然后我们需要一个数据结构去存储这些图形对象，一开始在 ECharts 里面是使用一个平坦的数组去存储这些图形的 -->
-                <!-- tip: 后来随着应用的复杂度提升，我们发现h还是需要像 SVG 一样用一棵树去组织图形的层级关系，就像图中这样，这个树的叶子节点都是刚才提到的可以直接绘制到画布上的图形 -->
+                <!-- tip: 然后我们需要一个数据结构去存储这些图形对象，一开始在 ECharts 里面是使用一个线性的数组去存储这些图形的 -->
+                <!-- tip: 后来随着应用的复杂度提升，我们发现还是需要像 SVG 一样用一棵树去组织图形的层级关系，就像图中这样，这个树的叶子节点都是刚才提到的可以直接绘制到画布上的图形 -->
                 <!-- tip: 然后这个树里的非叶子节点都是容器 Group，它会包含一些图形或者其他容器作为子节点，这个容器节点也会有坐标变换的属性，然后这些坐标变换会应用到子节点上 -->
                 <img data-src="img/render_list.png" alt="">
                  <br />
@@ -374,7 +371,7 @@
                 <!--tip:
                     在用 JS 去做路径与坐标点相交判断的时候，是需要知道这个路径的数据的，有哪些线段和曲线，但是使用 Canvas Context 绘制路径不会存储这些数据的，所以我们用了一个 Path 对象去代理路径的绘制。这样在绘制的时候就可以保存数据，然后顺手计算个包围盒。
                 -->
-                <h2>路径数据存储 - Path Object</h2>
+                <h2>路径数据存储 - Path</h2>
 <pre class="prettyprint content" style="font-size:25; line-height:36px;">
 var path = new Path(ctx);
 path.moveTo(...);
@@ -501,7 +498,7 @@ vec3 position = onet * onet * (onet * p0 + 3.0 * t * p1)
             </article>
 
             <article>
-                <!-- tip: 最后一个示例是一个洋流的可视化 这个示例是一个用粒子效果表现的二维向量场的可视化，大概用了 26w 个粒子, 这个效果其实用 Canvas 也能做，只是无法处理那么多粒子了，当然粒子数目越多能够表达的向量场细节就越丰富，比如说这些很想台风眼的地方 -->
+                <!-- tip: 最后一个示例是一个洋流的可视化的粒子特效，这个示例是一个用粒子效果表现的二维向量场的可视化，大概用了 26w 个粒子, 这个效果其实用 Canvas 也能做，只是无法处理那么多粒子了，当然粒子数目越多能够表达的向量场细节就越丰富，比如说这些很像台风眼的地方 -->
                 <h2>洋流 - 向量场可视化</h2>
                 <div class="item fullscreen" data-action="showGlobeWind" data-flat="1"></div>
                 <h3 class="side" style="z-index:1">260k 粒子</h3>
