@@ -7,5 +7,3 @@ slides
 + [Web3D Development](http://pissang.github.com/slides/topics/web3d/)
 + [Rendering the World in Browser](http://pissang.github.com/slides/topics/scut/)
 + [ASM.js](http://pissang.github.com/slides/topics/asmjs/)
-
-中文字体使用[方正兰亭细黑](http://pissang.github.io/slides/css/FZLanTingHeiS-UL-GB.ttf)
