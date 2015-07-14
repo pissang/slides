@@ -29,6 +29,7 @@ var slides = (function() {
     document.body.appendChild($progressContainer);
 
     var init = function(container, opt) {
+
         if (typeof(container) == 'string') {
             container = g(container );
         }

@@ -7,8 +7,7 @@
 		<link rel=stylesheet type=text/css href="../../css/desert.css" />
 	</head>
 	<body>
-		<div id="articles">
-		</div>
+		<div id="articles"></div>
 		<div id="slide-info">
 			<h1 id="title"></h1>
 			<ul class="aboutme">
@@ -37,7 +36,9 @@
 				$("#github").html("github : " + res.meta.github);
 				$("#weibo").html("@" + res.meta.weibo);
 
-				slides.init('articles');
+				slides.init('articles', {
+					itemClass: 'item'
+				});
 
 				$('#articles pre').addClass('prettyprint');
 				prettyPrint();
