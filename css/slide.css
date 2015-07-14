@@ -184,6 +184,7 @@ article .slide-tip-container {
     left: 10px;
     width: 300px;
     top:0;
+    z-index: 10000;
 }
 
 article .slide-tip {
