@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta charset="utf-8" />
+        <link rel=stylesheet type=text/css href="../../css/slide.css" />
+        <link rel=stylesheet type=text/css href="../../css/slide2.css" />
+        <link rel=stylesheet type=text/css href="../../css/desert.css" />
+        <link rel=stylesheet type=text/css href="css/year-three.css" />
+    </head>
+    <body id="jsconf2015">
+        <div id="articles">
+            <article>
+                <h1 class="title">2015秋职称评定述职</h1>
+            </article>
+            <article class="center">
+                <h3>沈 毅</h3>
+                <ul class="content list">
+                    <li>2012/07 入职</li>
+                    <li>上次晋升：1年前</li>
+                    <li>2D 和 3D 图形开发，可视化</li>
+                    <li>EFE-TC Data Visualization</li>
+                </ul>
+            </article>
+            <article class="center">
+                <h2>2014 - 2015 主要负责和参与的项目</h2>
+                <ul class="content list">
+                    <li>ECharts 和 ZRender 维护</li>
+                    <li>ECharts-X 开发以及 Grapher.js</li>
+                    <li>人物图谱前端开发</li>
+                </ul>
+            </article>
+            <article class="center">
+                <h2>ECharts 和 ZRender</h2>
+                <ul>
+                    <!-- 工具链 -->
+                    <li>ZRender 优化</li>
+                    <li>在线打包工具，在线地图数据生成工具</li>
+                    <li>ECharts 中 Bug 修复以及功能改进</li>
+                </ul>
+            </article>
+            <article>
+                <h2>ZRender 优化 - 鼠标Hover判断的统一</h2>
+                <div class="row">
+                    <div class="left">
+                        <h3>问题</h3>
+                        <ul>
+                            <li>Canvas 没有鼠标事件</li>
+                            <li>需要判断鼠标点在哪个图形内</li>
+                            <li>excanvas 不支持 isPointInPath</li>
+                            <li>图形扩展麻烦</li>
+                        </ul>
+                    </div>
+                    <div class="right">
+                        <h3>JavaScript 实现 isPointInPath</h3>
+                        <ul>
+                            <li>性能高</li>
+                            <li>精确</li>
+                            <li>Path2D，扩展方便</li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+            <article>
+                <h2>ZRender 优化 - 提供多个渲染模块</h2>
+                <ul>
+                    <li>SVG - 移动</li>
+                    <li>Canvas - 高性能</li>
+                    <li>VML - IE8</li>
+                </ul>
+            </article>
+            <article>
+                <h2>在线打包工具</h2>
+                <p>对前端不熟悉的用户打包困难，默认的非 AMD 模块代码包太大</p>
+            </article>
+            <article>
+                <h2>在线地图数据生成工具</h2>
+                <p>用户觉得数据老旧，数据更新量大，更新频繁</p>
+            </article>
+            <article>
+                <h2>ECharts-X</h2>
+                <ul>
+                    <li>性能</li>
+                    <li>更吸引眼球</li>
+                    <li>三维的数据展示</li>
+                </ul>
+            </article>
+            <article>
+                <h2>技术点</h2>
+                <ul>
+                    <li>2D 和 3D 图形的统一管理</li>
+                    <li>GPU 加速的动画</li>
+                    <li>向量场粒子特效</li>
+                    <li>光照</li>
+                </ul>
+            </article>
+            <article>
+                <h2>2D 和 3D 图形的统一管理</h2>
+            </article>
+            <article>
+                <h2>GPU 加速的动画</h2>
+            </article>
+            <article>
+                效果
+            </article>
+            <article>
+                <h2>向量场粒子特效</h2>
+            </article>
+            <article>
+                效果
+            </article>
+            <article>
+                <h2>Grapher.js</h2>
+                <p>Wise 端数学公式的 3D 展现</p>
+                <ul>
+                    <li>
+                        体积要小
+                        <p>QTEK 模块粒度和依赖小，最后打包 150k</p>
+                        <p>Three.js 400k+</p>
+                    </li>
+                    <li>移动端支持多浏览器
+                        <p>Canvas 绘制3D</p>
+                    </li>
+                </ul>
+            </article>
+            <article>
+                <h2>Grapher.js</h2>
+                <p>演示</p>
+            </article>
+            <article>
+                <h2>人物图谱项目</h2>
+                <p>截图</p>
+            </article>
+            <article>
+                <h2>关系图布局</h2>
+                <ul>
+                    <li>分布均匀</li>
+                    <li>辐射状的树结构</li>
+                    <li>层级明显</li>
+                    <li>不能有重叠</li>
+                </ul>
+            </article>
+            <article>
+                <h2>力引导布局算法优化</h2>
+                <ul>
+                    <li>树形预布局</li>
+                    <li>节点和边的斥力</li>
+                    <li>层方向上的力约束</li>
+                </ul>
+            </article>
+            <article>
+                效果
+            </article>
+            <article>
+                <h2>其它小玩意</h2>
+                <p>壮汉DEMO</p>
+                <p>百小度</p>
+            </article>
+            <article>
+                <h2>接下来 - ECharts 重构</h2>
+                <ul>
+                    <li>移动版优化，代码体积，崩溃</li>
+                    <li>更易于扩展新的可视化手段</li>
+                    <li>方便开发人员扩展</li>
+                    <li>深度集成 3D</li>
+                </ul>
+            </article>
+            <article>
+                <h1>谢谢！</h1>
+            </article>
+        </div>
+
+        <div id="timer"></div>
+        <div id="slide-info">
+            <h1 id="title">前端技术与可视化</h1>
+            <ul class="aboutme">
+                <li id="author"><a href="http://efe.baidu.com/" target="_blank">EFE</a> 沈毅</li>
+                <li id="date">2015-07-11</li>
+                <li id="github">
+                    GitHub :
+                    @<a href="https://github.com/ecomfe" target="_blank">EFE</a>
+                    @<a href="https://github.com/pissang" target="_blank">pissang</a>
+                </li>
+                <li id="weibo">
+                    Weibo:
+                    @<a href="http://weibo.com/u/3147992721" target="_blank">EFE</a>
+                    @<a href="http://weibo.com/pissang" target="_blank">pissang</a>
+                </li>
+            </ul>
+        </div>
+
+        <script src="../../js/lib/jquery.min.js"></script>
+        <script src="../../js/lib/esl.js"></script>
+        <script src="../../js/lib/prettify.js"></script>
+        <script src="../../js/lib/zrender.js"></script>
+        <script src="../../js/lib/qtek.amd.min.js"></script>
+        <script src="../../js/lib/echarts/echarts.js"></script>
+        <script src="../../js/lib/echarts-x/echarts-x.js"></script>
+        <script src="../../js/lib/underscore.js"></script>
+        <script src="../../js/slides.js"></script>
+
+        <script>
+            require.config({
+                paths: {
+                    echarts: '../../js/lib/echarts',
+                    'echarts-x': '../../js/lib/echarts-x'
+                }
+            });
+            require(['js/main']);
+        </script>
+    </body>
+</html>
