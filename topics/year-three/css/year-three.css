@@ -9,3 +9,13 @@ html,h1,h2,h3,h4,h5{
     font-family: 'noto-thin';
     font-weight: 100;
 }
+
+
+article h2.subtitle {
+    text-align: right;
+    right: 300px;
+}
+
+.list {
+    font-size: 22px;
+}
