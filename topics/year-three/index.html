@@ -8,7 +8,7 @@
         <link rel=stylesheet type=text/css href="../../css/desert.css" />
         <link rel=stylesheet type=text/css href="css/year-three.css" />
     </head>
-    <body id="jsconf2015">
+    <body id="year-three">
         <div id="articles">
             <article>
                 <h1 class="title">2015秋职称评定述职</h1>
@@ -16,7 +16,7 @@
             </article>
             <article class="center">
                 <h2>自我介绍</h2>
-                <img src="" class="avatar" alt="">
+                <img data-src="" class="avatar" alt="">
                 <ul class="content list" style="font-size:22px;">
                     <li>2012 / 07 入职</li>
                     <li>2D 和 3D 图形，可视化开发</li>
@@ -28,51 +28,73 @@
             <article class="center">
                 <h2>2014 - 2015 主要负责和参与的项目</h2>
                 <ul class="content list">
-                    <li>ECharts 和 ZRender 维护</li>
-                    <li>负责人物图谱前端开发</li>
-                    <li>大屏可视化</li>
-                    <li>WebGL 框架 QTEK 的维护</li>
-                    <li>ECharts-X 开发以及 Grapher.js</li>
+                    <li class="item outfocus-fade">ECharts 和 ZRender 维护</li>
+                    <li class="item outfocus-fade">负责人物图谱前端开发</li>
+                    <li class="item outfocus-fade">WebGL 框架 QTEK 的维护</li>
+                    <li class="item outfocus-fade">ECharts-X 开发以及 Grapher.js</li>
+                    <li class="item outfocus-fade">展厅大屏</li>
                 </ul>
             </article>
             <article class="center">
                 <h2>ECharts 和 ZRender</h2>
                 <ul class="content list">
                     <!-- 工具链 -->
-                    <li>ZRender 优化</li>
-                    <li>在线打包工具，在线地图数据生成工具</li>
-                    <li>ECharts 中 Bug 修复以及功能改进</li>
+                    <li class="item outfocus-fade">ZRender 维护和优化</li>
+                    <li class="item outfocus-fade">ECharts 工具链</li>
+                    <li class="item outfocus-fade">ECharts 中 Bug 修复以及功能改进</li>
                 </ul>
             </article>
             <article class="center">
                 <h2>ZRender 优化 - 图形扩展</h2>
                 <div class="content">
-                    <h3>问题</h3>
-                    <ul class="list">
-                        <li>
-                            图形扩展麻烦
-                            <p>需要每个图形自己实现判断是否和鼠标坐标相交</p>
-                        </li>
-                        <li>复杂图形判断不精确</li>
-                    </ul>
-                    <h3>期望</h3>
-                    <ul class="list">
-                        <li>只用关心图形形状的描述</li>
-                    </ul>
+                    <div>
+                        <h3>问题</h3>
+                        <ul class="list">
+                            <li>
+                                图形扩展麻烦
+                                <p>需要每个图形自己实现判断是否和鼠标坐标相交</p>
+                            </li>
+                            <li>复杂图形判断不精确</li>
+                        </ul>
+                    </div>
+                    <div class="item">
+                        <h3>期望</h3>
+                        <ul class="list">
+                            <li>只用关心图形形状的描述</li>
+                        </ul>
+                    </div>
                 </div>
             </article>
             <article class="center">
                 <h2>方案</h2>
                 <ul class="content list" style="line-height:50px;">
-                    <li>JavaScript 实现完备的点在图形上的精确判断
-                        <p>绘制模式：Fill, Stroke</p>
-                        <p>路径：Bezier, Arc, Line</p>
-                    </li>
                     <li style="margin-top:20px;">Path2D 抽象
                         <p>代理路径绘制</p>
                         <p>路径绘制数据存储</p>
                         <p>包围盒计算</p>
                         <p>点在图形上的精确判断</p>
+                    </li>
+                    <li>JavaScript 实现完备的点在图形上的精确判断
+                        <p>绘制模式：Fill, Stroke</p>
+                        <p>路径：Bezier, Arc, Line</p>
+                    </li>
+                </ul>
+                结构图
+            </article>
+            <article class="center">
+                <h2>优点</h2>
+                <ul class="content list">
+                    <li class="item">
+                        性能
+                        <p>根据图形的复杂度，是 Native 方式的十几倍到几十倍</p>
+                    </li>
+                    <li class="item">
+                        扩展方便
+                        <p>不用再关心如何计算包围盒和判断相交</p>
+                    </li>
+                    <li class="item">
+                        只依赖路径数据
+                        <p>可以在 Node 上使用</p>
                     </li>
                 </ul>
             </article>
@@ -80,64 +102,82 @@
                 <h2>性能</h2>
                 <p>性能对比</p>
             </article>
-            <article>
-                <h2>扩展代码</h2>
-            </article>
             <article class="center">
                 <h2>ZRender 优化 - 多个渲染模块</h2>
                 <ul class="content list">
-                    <li>SVG - 移动</li>
                     <li>Canvas - 高性能</li>
-                    <li>VML - IE8</li>
+                    <li class="item">SVG - 移动</li>
+                    <li class="item">VML - IE8</li>
                 </ul>
                 <p>架构图</p>
             </article>
             <article class="center">
                 <h2>在线打包工具</h2>
                 <p style="color:red">对前端不熟悉的用户打包困难，默认的非 AMD 模块代码包太大</p sty>
-                <img src="img/echarts-builder-web.png" alt="">
+                <img data-src="img/echarts-builder-web.png" alt="">
             </article>
             <article class="center">
                 <h2>在线地图数据生成工具</h2>
                 <p style="color:red">用户觉得地图数据老旧，数据更新量大，更新频繁</p>
-                <img src="img/echarts-map-tool.png" alt="">
+                <img data-src="img/echarts-map-tool.png" alt="">
             </article>
 
             <article class="center">
                 <h2>人物图谱 - 娱乐圈人物关系的聚合展现</h2>
-                <ul class="list content">
-                    <li>没有可以参考的产品</li>
-                    <li>从无到有确定展现方案和交互细节</li>
+                <ul class="list content side" style="margin-top:100px;">
+                    <li class="item">没有可以参考的产品</li>
+                    <li class="item">从无到有确定展现方案和交互细节</li>
                 </ul>
-                <p>截图</p>
+                <img class="item" data-src="img/tupu.png" style="float:right;" alt="">
             </article>
             <article class="center">
                 <h2>关系图布局 - 目标</h2>
                 <ul class="content list">
-                    <li>分布均匀</li>
-                    <li>辐射状的树结构</li>
-                    <li>层级明显</li>
-                    <li>不能有重叠</li>
+                    <li class="item outfocus-fade">分布均匀</li>
+                    <li class="item outfocus-fade">辐射状的树结构</li>
+                    <li class="item outfocus-fade">层级明显</li>
+                    <li class="item outfocus-fade">不能有重叠</li>
                 </ul>
             </article>
             <article class="center">
                 <h2>力引导布局算法优化</h2>
-                <ul class="content list">
-                    <li>辐射状 -> 树形预布局</li>
-                    <li>防止节点和边重叠 -> 节点和边的斥力</li>
-                    <li>层级明显 -> 层方向上的力约束</li>
-                    <li>复杂图的均匀分布 -> 不同高度子树的均匀分布</li>
-                    <li>性能 -> Node 脚本预计算</li>
+                <ul class="content list" id="force-optimize-list">
+                    <li>
+                        树形预布局
+                        <p>不同高度子树的均匀分布</p>
+                    </li>
+                    <li>
+                        带约束的里引导布局
+                        <p>层方向上的力约束</p>
+                        <p>节点和边的斥力</p>
+                    </li>
+<!--
+                    <li><span class="item">中心辐射状</span><span class="item"> -> 树形预布局</span></li>
+                    <li><span class="item">防止节点和边重叠</span><span class="item"> -> 节点和边的斥力</span></li>
+                    <li><span class="item">层级明显<span class="item"> -> 层方向上的力约束</span></li>
+                    <li><span class="item">复杂图的均匀分布</span><span class="item"> -> 不同高度子树的均匀分布</span></li>
+                    <li><span class="item">性能</span><span class="item"> -> Node 脚本预计算</span></li>
+-->
                 </ul>
+                配图说明
             </article>
-            <article>
-                效果
+            <article class="center">
+                <h2>其它细节</h2>
+                <ul class="content list">
+                    <li>丰富的交互动画</li>
+                    <li>优化
+                        <p>分层渲染</p>
+                        <p>对屏幕外的图形裁剪</p>
+                    </li>
+                    <li>屏外节点的标签提示</li>
+                </ul>
             </article>
             <article>
                 数据
             </article>
-            <article>
+            <article class="center">
                 <h2>搜狗的人物图谱</h2>
+                <img src="img/sougou-tupu.png" alt="">
             </article>
 
             <article class="center">
@@ -147,26 +187,26 @@
                         能够实时展现的图形在千级别
                         <p>Trick：像素操作</p>
                     </li>
-                    <li>主要用于二维</li>
+                    <li>主要用于展现二维</li>
+                    <img class="item" src="img/webgl.png" alt="">
                 </ul>
-                <h3>WebGL</h3>
             </article>
             <article class="center">
                 <h2>ECharts-X</h2>
                 <ul class="content list">
-                    <li>能够实时展现几万到几十万的数据</li>
-                    <li>效果更吸引眼球</li>
-                    <li>三维数据可视化</li>
+                    <li class="item outfocus-fade">能够实时展现几万到几十万的数据</li>
+                    <li class="item outfocus-fade">效果更吸引眼球</li>
+                    <li class="item outfocus-fade">三维数据可视化</li>
                 </ul>
             </article>
             <article class="center">
                 <h2>技术点</h2>
                 <ul class="content list">
-                    <li>整合 2D 和 3D 图形的绘制和管理</li>
-                    <li>GPU 加速的动画和粒子特效</li>
-                    <li>大数据的展现优化</li>
-                    <li>日照信息表现</li>
-                    <li>...</li>
+                    <li class="item outfocus-fade">整合 2D 和 3D 图形的绘制和管理</li>
+                    <li class="item outfocus-fade">GPU 加速的动画和粒子特效</li>
+                    <li class="item outfocus-fade">大数据的展现优化</li>
+                    <li class="item outfocus-fade">日照信息表现</li>
+                    <li class="item outfocus-fade">...</li>
                 </ul>
             </article>
             <article class="center">
@@ -217,7 +257,7 @@
 
         <div id="timer"></div>
         <div id="slide-info">
-            <h1 id="title">前端技术与可视化</h1>
+            <h1 id="title">2015秋职称评定述职</h1>
             <ul class="aboutme">
                 <li id="author">沈毅</li>
                 <li id="date">2015-07-11</li>

@@ -96,3 +96,15 @@ article h2 {
     margin: 0;
     padding: 10px;
 }
+
+.side {
+    position: absolute;
+    left: 10px;
+    top: 100px;
+    text-align: left;
+}
+
+.side pre,
+pre.side {
+    margin: 0;
+}

@@ -19,3 +19,26 @@ article h2.subtitle {
 .list {
     font-size: 22px;
 }
+
+.outfocus-fade {
+    font-size: 26px;
+}
+
+.outfocus-fade.prev {
+    opacity: 0.4;
+    /*transform: scale(0.9);*/
+    transform-origin: left;
+}
+
+#year-three article {
+    background-color: rgba(60, 148, 236, 0.56)
+}
+
+#year-three h1 {
+    background: none;
+    text-shadow:none;
+    box-shadow: none;
+}
+#year-three h2 {
+    text-shadow: none;
+}
