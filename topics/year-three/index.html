@@ -19,29 +19,36 @@
                 <img data-src="" class="avatar" alt="">
                 <ul class="content list" style="font-size:22px;">
                     <li>2012 / 07 入职</li>
-                    <li>2D 和 3D 图形，可视化开发</li>
-                    <li>EFE-TC Data Visualization</li>
+                    <li>2D 和 3D 图形绘制，可视化</li>
+                    <li>EFE Data Visualization</li>
                     <li>W3C Data Visualization Community Group</li>
-                    <li>上次晋升：1年前</li>
+                    <li>上次晋升：14年秋</li>
                 </ul>
             </article>
             <article class="center">
                 <h2>2014 - 2015 主要负责和参与的项目</h2>
                 <ul class="content list">
-                    <li class="item outfocus-fade">ECharts 和 ZRender 维护</li>
-                    <li class="item outfocus-fade">负责人物图谱前端开发</li>
-                    <li class="item outfocus-fade">WebGL 框架 QTEK 的维护</li>
+                    <li class="item outfocus-fade">开发维护 ECharts</li>
+                    <li class="item outfocus-fade">负责人物图谱前端开发（14/11 - 15/03)</li>
                     <li class="item outfocus-fade">ECharts-X 开发以及 Grapher.js</li>
+                    <li class="item outfocus-fade">WebGL 框架 QTEK 的维护</li>
+                    <!--
                     <li class="item outfocus-fade">展厅大屏</li>
+                    -->
                 </ul>
             </article>
             <article class="center">
-                <h2>ECharts 和 ZRender</h2>
+                <h2>ECharts</h2>
                 <ul class="content list">
-                    <!-- 工具链 -->
-                    <li class="item outfocus-fade">ZRender 维护和优化</li>
+                    <!-- 之前林峰还在的时候主要是负责 ECharts 底层的 2D 图形库 ZRender 的开发优化，
+                    今年年初林峰离职创业后，就把主要的精力都放在 ECharts 开发上了  -->
+                    <li class="item outfocus-fade">ZRender 优化</li>
                     <li class="item outfocus-fade">ECharts 工具链</li>
-                    <li class="item outfocus-fade">ECharts 中 Bug 修复以及功能改进</li>
+                    <li class="item outfocus-fade">ECharts 的完善
+                        <p>MarkLine 性能优化</p>
+                        <p>和弦图和力导向图优化</p>
+                        <p>Bug 修复，版本迭代</p>
+                    </li>
                 </ul>
             </article>
             <article class="center">
@@ -67,19 +74,20 @@
             </article>
             <article class="center">
                 <h2>方案</h2>
-                <ul class="content list" style="line-height:50px;">
-                    <li style="margin-top:20px;">Path2D 抽象
-                        <p>代理路径绘制</p>
-                        <p>路径绘制数据存储</p>
-                        <p>包围盒计算</p>
-                        <p>点在图形上的精确判断</p>
-                    </li>
-                    <li>JavaScript 实现完备的点在图形上的精确判断
-                        <p>绘制模式：Fill, Stroke</p>
-                        <p>路径：Bezier, Arc, Line</p>
-                    </li>
-                </ul>
-                结构图
+                <div class="row content" style="width:1000px;">
+                    <ul class="left list" style="line-height:50px;width:40%;">
+                        <li style="margin-top:20px;">Path2D 抽象
+                            <p>代理路径绘制</p>
+                            <p>路径绘制数据存储</p>
+                            <p>包围盒计算</p>
+                        </li>
+                        <li>JavaScript 精确判断点在路径上
+                            <p>绘制模式：Fill, Stroke</p>
+                            <p>路径：Bezier, Arc, Line</p>
+                        </li>
+                    </ul>
+                    <img class="right" style="margin-top:60px;width:60%;" data-src="img/zr-architecture-path2d.png" alt="">
+                </div>
             </article>
             <article class="center">
                 <h2>优点</h2>
@@ -104,22 +112,117 @@
             </article>
             <article class="center">
                 <h2>ZRender 优化 - 多个渲染模块</h2>
+                <div class="row content" style="width:1000px;">
+                    <ul class="list left" style="width:30%;">
+                        <li>Canvas - 高性能
+                            <p>分层绘制</p>
+                            <p>像素操作</p>
+                        </li>
+                        <li>SVG - 移动
+                            <p style="opacity:0.3">服务器生成</p>
+                        </li>
+                        <li>VML - IE8
+                            <p>替代 excanvas</p>
+                        </li>
+                    </ul>
+                    <img class="right" style="width:70%;margin-top:60px;" data-src="img/zr-architecture-painter.png" alt="">
+                </div>
+            </article>
+            <article class="center">
+                <h2>工具链</h2>
+                <!-- 过渡方案 -->
                 <ul class="content list">
-                    <li>Canvas - 高性能</li>
-                    <li class="item">SVG - 移动</li>
-                    <li class="item">VML - IE8</li>
+                    <li>在线构建工具
+                        <p>对前端不熟悉的用户打包困难，默认的非 AMD 模块代码包太大</p>
+                    </li>
+                    <li>在线地图数据生成工具
+                        <p>用户觉得地图数据老旧，数据更新量大，更新频繁</p>
+                    </li>
+                    <li>Option 索引工具
+                        <p>用户不知道如何查找配置项</p>
+                    </li>
                 </ul>
-                <p>架构图</p>
+            </article>
+
+            <article class="center">
+                <h2>Canvas 瓶颈</h2>
+                <ul class="content list">
+                    <li>
+                        能够实时展现的图形在千级别
+                        <p>Trick：像素操作</p>
+                    </li>
+                    <li>主要用于展现二维</li>
+                    <img class="item" src="img/webgl.png" alt="">
+                </ul>
             </article>
             <article class="center">
-                <h2>在线打包工具</h2>
-                <p style="color:red">对前端不熟悉的用户打包困难，默认的非 AMD 模块代码包太大</p sty>
-                <img data-src="img/echarts-builder-web.png" alt="">
+                <h2>ECharts-X</h2>
+                <ul class="content list">
+                    <li class="item outfocus-fade">能够实时展现几万到几十万的数据</li>
+                    <li class="item outfocus-fade">效果更吸引眼球</li>
+                    <li class="item outfocus-fade">三维数据可视化</li>
+                </ul>
             </article>
             <article class="center">
-                <h2>在线地图数据生成工具</h2>
-                <p style="color:red">用户觉得地图数据老旧，数据更新量大，更新频繁</p>
-                <img data-src="img/echarts-map-tool.png" alt="">
+                <h2>技术点</h2>
+                <ul class="content list">
+                    <li>整合 2D 和 3D 图形的管理和绘制</li>
+                    <li>GPU 加速的动画和粒子特效</li>
+                    <li>大数据的展现优化</li>
+                    <li>日照信息表现</li>
+                    <li>...</li>
+                </ul>
+            </article>
+            <article class="center">
+                <h1>2D 和 3D 图形统一的管理</h1>
+            </article>
+            <article class="center">
+                <img src="img/ecx-architecture.png" height="600" alt="">
+            </article>
+            <article data-action="showLayeredEcx">
+                <h2>分层</h2>
+                <div class="fullscreen" id="layered-ecx"></div>
+                <div class="item" data-action="transformLayeredEcx"></div>
+            </article>
+            <article>
+                <h1>其它技术点</h1>
+            </article>
+            <article>
+                <h2>GPU 加速的动画</h2>
+            </article>
+            <article>
+                <h2>向量场粒子特效</h2>
+                <p>效果</p>
+                <p>实现思路</p>
+            </article>
+            <article>
+                <h2>日照表现</h2>
+            </article>
+            <article class="center">
+                <h2><img data-src="img/grapher.png" style="width:70px;height:70px;vertical-align:middle;margin-right:10px;" alt="">Grapher.js</h2>
+                <p style="opacity:0.7">Wise 端数学公式的 3D 展现</p>
+                <ul class="content list">
+                    <li>
+                        体积控制
+                        <p>QTEK 模块粒度和依赖小，最后打包 150k</p>
+                        <p>Three.js 400k+</p>
+                    </li>
+                    <li>移动端支持多浏览器
+                        <p>Canvas绘制3D</p>
+                    </li>
+                </ul>
+            </article>
+            <article class="center">
+                <div class="row">
+                    <div class="left">
+                        <img src="img/surface-eq.svg" style="width:300px;" alt="">
+                        <canvas data-action="showSurface" class="item" style="width: 400px; height:400px;"></canvas>
+                    </div>
+                    <div class="right">
+                        <img src="img/parametric-eq.svg" style="width:400px;" alt="">
+                        <canvas data-action="showParametricSurface" class="item" style="width: 400px; height:400px;"></canvas>
+                    </div>
+                </div>
             </article>
 
             <article class="center">
@@ -147,7 +250,7 @@
                         <p>不同高度子树的均匀分布</p>
                     </li>
                     <li>
-                        带约束的里引导布局
+                        带约束的力引导布局
                         <p>层方向上的力约束</p>
                         <p>节点和边的斥力</p>
                     </li>
@@ -159,7 +262,7 @@
                     <li><span class="item">性能</span><span class="item"> -> Node 脚本预计算</span></li>
 -->
                 </ul>
-                配图说明
+                <!-- TODO 配图说明 -->
             </article>
             <article class="center">
                 <h2>其它细节</h2>
@@ -177,78 +280,33 @@
             </article>
             <article class="center">
                 <h2>搜狗的人物图谱</h2>
-                <img src="img/sougou-tupu.png" alt="">
+                <a href="https://www.sogou.com/tupu/person.html?q=%E9%AB%98%E5%9C%86%E5%9C%86" target="_blank">
+                    <img src="img/sougou-tupu.png" alt="">
+                </a>
             </article>
 
             <article class="center">
-                <h2>Canvas 瓶颈</h2>
-                <ul class="content list">
-                    <li>
-                        能够实时展现的图形在千级别
-                        <p>Trick：像素操作</p>
-                    </li>
-                    <li>主要用于展现二维</li>
-                    <img class="item" src="img/webgl.png" alt="">
-                </ul>
-            </article>
-            <article class="center">
-                <h2>ECharts-X</h2>
-                <ul class="content list">
-                    <li class="item outfocus-fade">能够实时展现几万到几十万的数据</li>
-                    <li class="item outfocus-fade">效果更吸引眼球</li>
-                    <li class="item outfocus-fade">三维数据可视化</li>
-                </ul>
-            </article>
-            <article class="center">
-                <h2>技术点</h2>
-                <ul class="content list">
-                    <li class="item outfocus-fade">整合 2D 和 3D 图形的绘制和管理</li>
-                    <li class="item outfocus-fade">GPU 加速的动画和粒子特效</li>
-                    <li class="item outfocus-fade">大数据的展现优化</li>
-                    <li class="item outfocus-fade">日照信息表现</li>
-                    <li class="item outfocus-fade">...</li>
-                </ul>
-            </article>
-            <article class="center">
-                <h2>整合 2D 和 3D 图形的绘制和管理</h2>
-                <p>架构图</p>
-            </article>
-            <article>
-                <h2>向量场粒子特效</h2>
-                <p>实现思路</p>
-            </article>
-            <article>
-                效果
-            </article>
-            <article>
-                <h2>日照表现</h2>
-            </article>
-            <article class="center">
-                <h2>Grapher.js</h2>
-                <p>Wise 端数学公式的 3D 展现</p>
-                <ul class="content list">
-                    <li>
-                        体积控制
-                        <p>QTEK 模块粒度和依赖小，最后打包 150k</p>
-                        <p>Three.js 400k+</p>
-                    </li>
-                    <li>移动端支持多浏览器
-                        <p>Canvas 绘制3D</p>
-                    </li>
-                </ul>
-            </article>
-            <article>
-                <h2>Grapher.js</h2>
-                <p>演示</p>
-            </article>
-            <article class="center">
                 <h2>接下来 - ECharts 重构</h2>
-                <ul class="content list">
-                    <li>移动版优化，代码体积，崩溃</li>
-                    <li>更易于扩展新的可视化手段</li>
-                    <li>方便开发人员扩展</li>
-                    <li>深度集成 3D</li>
-                </ul>
+                <div class="row content" style="width:800px;">
+                    <div class="left">
+                        <ul class="list">
+                            <li>减小模块粒度</li>
+                            <li>展现和数据处理分离</li>
+                            <li>抽象底层模块</li>
+                            <li>梳理数据流</li>
+                        </ul>
+                    </div>
+                    <div class="right">
+                        <ul class="list">
+                            <li>移动版优化
+                                <p>代码体积，易崩溃</p>
+                            </li>
+                            <li>更易于扩展新的可视化手段</li>
+                            <li>方便开发人员扩展</li>
+                            <li>深度集成 3D</li>
+                        </ul>
+                    </div>
+                </div>
             </article>
             <article>
                 <h1>谢 谢！</h1>
@@ -286,7 +344,8 @@
             require.config({
                 paths: {
                     echarts: '../../js/lib/echarts',
-                    'echarts-x': '../../js/lib/echarts-x'
+                    'echarts-x': '../../js/lib/echarts-x',
+                    'grapher': '../../js/lib/grapher'
                 }
             });
             require(['js/main']);

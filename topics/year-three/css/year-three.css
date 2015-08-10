@@ -31,7 +31,7 @@ article h2.subtitle {
 }
 
 #year-three article {
-    background-color: rgba(60, 148, 236, 0.56)
+    background-color: rgb(33, 83, 132)
 }
 
 #year-three h1 {
@@ -41,4 +41,16 @@ article h2.subtitle {
 }
 #year-three h2 {
     text-shadow: none;
+}
+#layered-ecx {/*
+    perspective: 500px;
+    transform-style: preserve-3d;   */
+}
+
+#layered-ecx canvas {
+    transition: transform 1s linear;
+}
+.ecx-layer-stack {
+    border: 1px solid #FFF;
+    background-color: rgba(255, 255, 255, 0.2);
 }
