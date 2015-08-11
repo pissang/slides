@@ -72,6 +72,15 @@ define(function (require) {
             leave: function () {
                 require('./showContainBench').dispose();
             }
+        },
+
+        showGlobePopulation: {
+            enter: function (dom) {
+                require('./showGlobePopulation').init(dom);
+            },
+            leave: function () {
+                require('./showGlobePopulation').dispose();
+            }
         }
     };
 
