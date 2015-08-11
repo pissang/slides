@@ -80,6 +80,7 @@
                             <p>代理路径绘制</p>
                             <p>路径绘制数据存储</p>
                             <p>包围盒计算</p>
+                            <p>相交判断</p>
                         </li>
                         <li>JavaScript 精确判断点在路径上
                             <p>绘制模式：Fill, Stroke</p>
@@ -108,7 +109,7 @@
             </article>
             <article>
                 <h2>性能</h2>
-                <p>性能对比</p>
+                <div class="item" style="height:500px;" data-action="showContainBench"></div>
             </article>
             <article class="center">
                 <h2>ZRender 优化 - 多个渲染模块</h2>
@@ -131,17 +132,24 @@
             <article class="center">
                 <h2>工具链</h2>
                 <!-- 过渡方案 -->
-                <ul class="content list">
-                    <li>在线构建工具
-                        <p>对前端不熟悉的用户打包困难，默认的非 AMD 模块代码包太大</p>
-                    </li>
-                    <li>在线地图数据生成工具
-                        <p>用户觉得地图数据老旧，数据更新量大，更新频繁</p>
-                    </li>
-                    <li>Option 索引工具
-                        <p>用户不知道如何查找配置项</p>
-                    </li>
-                </ul>
+                <div class="content row" style="width:100%;">
+                    <ul class="list left" style="width:40%">
+                        <li>在线构建工具
+                            <p>对前端不熟悉的用户打包困难，默认的非 AMD 模块代码包太大</p>
+                        </li>
+                        <li>在线地图数据生成工具
+                            <p>用户觉得地图数据老旧，数据更新量大，更新频繁</p>
+                        </li>
+                        <li>Option 索引工具
+                            <p>用户不知道如何查找配置项</p>
+                        </li>
+                    </ul>
+                    <div class="right" style="width:60%;position:relative;">
+                        <img class="item shadow" style="right:20px;position:absolute;top:50px;width:90%;" data-src="img/echarts-builder-web.png" alt="">
+                        <img class="item shadow" style="right:10px;position:absolute;top:70px;width:90%;" data-src="img/echarts-map-tool.png" alt="">
+                        <img class="item shadow" style="right:0px;position:absolute;top:90px;width:90%;" data-src="img/echarts-option-tool.png" alt="">
+                    </div>
+                </div>
             </article>
 
             <article class="center">
@@ -152,13 +160,13 @@
                         <p>Trick：像素操作</p>
                     </li>
                     <li>主要用于展现二维</li>
-                    <img class="item" src="img/webgl.png" alt="">
+                    <img class="item" data-src="img/webgl.png" alt="">
                 </ul>
             </article>
             <article class="center">
                 <h2>ECharts-X</h2>
                 <ul class="content list">
-                    <li class="item outfocus-fade">能够实时展现几万到几十万的数据</li>
+                    <li class="item outfocus-fade">实时展现几万到几十万的数据</li>
                     <li class="item outfocus-fade">效果更吸引眼球</li>
                     <li class="item outfocus-fade">三维数据可视化</li>
                 </ul>
@@ -177,26 +185,36 @@
                 <h1>2D 和 3D 图形统一的管理</h1>
             </article>
             <article class="center">
-                <img src="img/ecx-architecture.png" height="600" alt="">
+                <img data-src="img/ecx-architecture.png" height="600" alt="">
             </article>
             <article data-action="showLayeredEcx">
                 <h2>分层</h2>
                 <div class="fullscreen" id="layered-ecx"></div>
                 <div class="item" data-action="transformLayeredEcx"></div>
             </article>
+            <article class="center">
+                <h2>Canvas Surface 事件和重绘</h2>
+                <img data-src="img/canvas-surface.png" style="height:500px;" alt="">
+            </article>
             <article>
                 <h1>其它技术点</h1>
             </article>
-            <article>
+            <article data-action="showGlobeFlights">
                 <h2>GPU 加速的动画</h2>
+                <div class="fullscreen" id="globe-flights-container"></div>
             </article>
-            <article>
-                <h2>向量场粒子特效</h2>
-                <p>效果</p>
-                <p>实现思路</p>
+            <article class="center" data-action="showGlobeWind">
+                <h2>GPU 加速的向量场粒子特效</h2>
+                <div class="fullscreen" id="globe-wind-container"></div>
+                <img class="item" style="margin-top:100px;position:relative;z-index:1" data-src="img/gpgpu.png" alt="">
             </article>
-            <article>
+            <article data-action="showGlobe">
                 <h2>日照表现</h2>
+                <div class="fullscreen" id="globe-container"></div>
+                <ul class="item side content" style="font-size:30px;">
+                    <li>Lambert Shading</li>
+                    <li>Bump Mapping</li>
+                </ul>
             </article>
             <article class="center">
                 <h2><img data-src="img/grapher.png" style="width:70px;height:70px;vertical-align:middle;margin-right:10px;" alt="">Grapher.js</h2>
@@ -215,26 +233,36 @@
             <article class="center">
                 <div class="row">
                     <div class="left">
-                        <img src="img/surface-eq.svg" style="width:300px;" alt="">
+                        <img data-src="img/surface-eq.svg" style="width:300px;" alt="">
                         <canvas data-action="showSurface" class="item" style="width: 400px; height:400px;"></canvas>
                     </div>
                     <div class="right">
-                        <img src="img/parametric-eq.svg" style="width:400px;" alt="">
+                        <img data-src="img/parametric-eq.svg" style="width:400px;" alt="">
                         <canvas data-action="showParametricSurface" class="item" style="width: 400px; height:400px;"></canvas>
                     </div>
                 </div>
             </article>
-
+            <article>
+                <h1>人物图谱</h1>
+            </article>
             <article class="center">
-                <h2>人物图谱 - 娱乐圈人物关系的聚合展现</h2>
-                <ul class="list content side" style="margin-top:100px;">
+                <h2>知识图谱运营产品</h2>
+                <img data-src="img/worldcup2.png" class="item shadow" alt="">
+                <img style="margin-top:-400px;margin-left:100px;" data-src="img/xiaoshidai.png" class="item shadow" alt="">
+                <img style="margin-top:-400px;margin-left:200px;" data-src="img/ice_bucket.png" class="item shadow" alt="">
+            </article>
+            <article class="center">
+                <h2>通用人物图谱 - 娱乐圈人物关系的聚合展现</h2>
+                <a href="http://tupu.baidu.com/tupu/261975.html">
+                    <img class="item shadow" data-src="img/tupu.png" style="width:600px;" alt="">
+                </a>
+                <ul class="list content" style="width:400px;">
                     <li class="item">没有可以参考的产品</li>
                     <li class="item">从无到有确定展现方案和交互细节</li>
                 </ul>
-                <img class="item" data-src="img/tupu.png" style="float:right;" alt="">
             </article>
             <article class="center">
-                <h2>关系图布局 - 目标</h2>
+                <h2>关键点 - 自动布局</h2>
                 <ul class="content list">
                     <li class="item outfocus-fade">分布均匀</li>
                     <li class="item outfocus-fade">辐射状的树结构</li>
@@ -281,7 +309,7 @@
             <article class="center">
                 <h2>搜狗的人物图谱</h2>
                 <a href="https://www.sogou.com/tupu/person.html?q=%E9%AB%98%E5%9C%86%E5%9C%86" target="_blank">
-                    <img src="img/sougou-tupu.png" alt="">
+                    <img class="shadow" data-src="img/sougou-tupu.png" alt="">
                 </a>
             </article>
 
@@ -313,7 +341,6 @@
             </article>
         </div>
 
-        <div id="timer"></div>
         <div id="slide-info">
             <h1 id="title">2015秋职称评定述职</h1>
             <ul class="aboutme">

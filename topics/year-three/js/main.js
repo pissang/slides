@@ -36,6 +36,42 @@ define(function (require) {
             enter: function (dom) {
                 require('./showLayeredEcx').transform(dom);
             }
+        },
+
+        showGlobe: {
+            enter: function (dom) {
+                require('./showGlobe').init(dom);
+            },
+            leave: function () {
+                require('./showGlobe').dispose();
+            }
+        },
+
+        showGlobeWind: {
+            enter: function (dom) {
+                require('./showGlobeWind').init(dom, true);
+            },
+            leave: function () {
+                require('./showGlobeWind').dispose();
+            }
+        },
+
+        showGlobeFlights: {
+            enter: function (dom) {
+                require('./showGlobeFlights').init(dom);
+            },
+            leave: function () {
+                require('./showGlobeFlights').dispose();
+            }
+        },
+
+        showContainBench: {
+            enter: function (dom) {
+                require('./showContainBench').init(dom);
+            },
+            leave: function () {
+                require('./showContainBench').dispose();
+            }
         }
     };
 
