@@ -28,7 +28,7 @@ define(function (require) {
                     // },
                     grid: {
                         borderWidth: 0,
-                        x: '50%'
+                        x: '30%'
                     },
                     xAxis: {
                         type: 'category',
@@ -85,9 +85,9 @@ define(function (require) {
                             }
                         },
                         data: [{}],
-                        mapLocation: {
-                            width: '80%'
-                        },
+                        // mapLocation: {
+                        //     width: '80%'
+                        // },
                         roam: {
                             autoRotate: true,
                             autoRotateAfterStill: 0
@@ -98,7 +98,7 @@ define(function (require) {
                         data: [1400532, 2898133, 11027922, 22000729, 32346738, 63508421, 70441599, 71918394],
                         itemStyle: {
                             normal: {
-                                color: 'rgba(255, 255, 255, 0.7)'
+                                color: 'rgba(255, 0, 0, 0.7)'
                             }
                         }
                     }]

@@ -56,7 +56,7 @@ define(function (require) {
                             return item[0];
                         }),
                         selected: {},
-                        x: 100,
+                        x: 'right',
                         y: 100,
                         orient: 'vertical',
                         textStyle: {

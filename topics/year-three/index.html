@@ -28,48 +28,47 @@
             <article class="center">
                 <h2>2014 - 2015 主要负责和参与的项目</h2>
                 <ul class="content list">
-                    <li class="item outfocus-fade">开发维护 ECharts</li>
-                    <li class="item outfocus-fade">负责人物图谱前端开发（14/11 - 15/03)</li>
-                    <li class="item outfocus-fade">ECharts-X 开发以及 Grapher.js</li>
-                    <li class="item outfocus-fade">WebGL 框架 QTEK 的维护</li>
-                    <!--
-                    <li class="item outfocus-fade">展厅大屏</li>
-                    -->
+                    <li class="item">前端可视化项目 ECharts</li>
+                    <li class="item">负责人物图谱前端开发（14/11 - 15/03)</li>
+                    <li class="item">ECharts-X 开发以及 Grapher.js</li>
+                    <li class="item">WebGL 框架 QTEK 的维护</li>
                 </ul>
             </article>
+            <article>
+                <h1>ECharts</h1>
+            </article>
             <article class="center">
-                <h2>ECharts</h2>
-                <ul class="content list">
-                    <!-- 之前林峰还在的时候主要是负责 ECharts 底层的 2D 图形库 ZRender 的开发优化，
-                    今年年初林峰离职创业后，就把主要的精力都放在 ECharts 开发上了  -->
-                    <li class="item outfocus-fade">ZRender 优化</li>
-                    <li class="item outfocus-fade">ECharts 工具链</li>
-                    <li class="item outfocus-fade">ECharts 的完善
-                        <p>MarkLine 性能优化</p>
-                        <p>和弦图和力导向图优化</p>
-                        <p>Bug 修复，版本迭代</p>
-                    </li>
-                </ul>
+                <h2>应用 - 百度</h2>
+                <img data-src="img/logos-baidu.png" alt="">
+            </article>
+            <article class="center">
+                <h2>应用 - 其它</h2>
+                <img data-src="img/logos-other.png" alt="">
+            </article>
+            <!-- TODO ECharts 示例 -->
+            <article class="center">
+                <img data-src="img/ec-architecture.png" style="max-width:900px;" alt="">
             </article>
             <article class="center">
                 <h2>ZRender 优化 - 图形扩展</h2>
-                <div class="content">
-                    <div>
-                        <h3>问题</h3>
-                        <ul class="list">
-                            <li>
-                                图形扩展麻烦
-                                <p>需要每个图形自己实现判断是否和鼠标坐标相交</p>
-                            </li>
-                            <li>复杂图形判断不精确</li>
-                        </ul>
+                <div class="content row" style="width:1000px;">
+                    <div class="left" style="width:40%;">
+                        <div>
+                            <h3>问题</h3>
+                            <ul class="list">
+                                <li>图形扩展麻烦</li>
+                                <li>复杂图形判断不精确</li>
+                                <li>无法使用 isPointInPath</li>
+                            </ul>
+                        </div>
+                        <div class="item">
+                            <h3>期望</h3>
+                            <ul class="list">
+                                <li>只用关心图形形状的描述</li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="item">
-                        <h3>期望</h3>
-                        <ul class="list">
-                            <li>只用关心图形形状的描述</li>
-                        </ul>
-                    </div>
+                    <img style="margin-top:60px;width:60%;" class="right" data-src="img/zr-architecture-nopath.png" alt="">
                 </div>
             </article>
             <article class="center">
@@ -87,7 +86,7 @@
                             <p>路径：Bezier, Arc, Line</p>
                         </li>
                     </ul>
-                    <img class="right" style="margin-top:60px;width:60%;" data-src="img/zr-architecture-path2d.png" alt="">
+                    <img class="right" style="margin-top:60px;width:60%;" data-src="img/zr-architecture-path.png" alt="">
                 </div>
             </article>
             <article class="center">
@@ -95,7 +94,7 @@
                 <ul class="content list">
                     <li class="item">
                         性能
-                        <p>根据图形的复杂度，是 Native 方式的十几倍到几十倍</p>
+                        <p>不用构建路径，速度是使用 isPointInPath 方式的十几倍</p>
                     </li>
                     <li class="item">
                         扩展方便
@@ -120,7 +119,7 @@
                             <p>像素操作</p>
                         </li>
                         <li>SVG - 移动
-                            <p style="opacity:0.3">服务器生成</p>
+                            <p style="opacity:0.3">服务器渲染</p>
                         </li>
                         <li>VML - IE8
                             <p>替代 excanvas</p>
@@ -134,13 +133,13 @@
                 <!-- 过渡方案 -->
                 <div class="content row" style="width:100%;">
                     <ul class="list left" style="width:40%">
-                        <li>在线构建工具
+                        <li><a href="http://ecomfe.github.io/echarts-builder-web/" target="_blank">在线构建工具</a>
                             <p>对前端不熟悉的用户打包困难，默认的非 AMD 模块代码包太大</p>
                         </li>
-                        <li>在线地图数据生成工具
+                        <li><a href="http://ecomfe.github.io/echarts-map-tool/" target="_blank">在线地图数据生成工具
                             <p>用户觉得地图数据老旧，数据更新量大，更新频繁</p>
                         </li>
-                        <li>Option 索引工具
+                        <li><a href="http://echarts.baidu.com/doc/option.html" target="_blank">Option 索引工具</a>
                             <p>用户不知道如何查找配置项</p>
                         </li>
                     </ul>
@@ -166,9 +165,9 @@
             <article class="center">
                 <h2>ECharts-X</h2>
                 <ul class="content list">
-                    <li class="item outfocus-fade">实时展现几万到几十万的数据</li>
-                    <li class="item outfocus-fade">效果更吸引眼球</li>
-                    <li class="item outfocus-fade">三维数据可视化</li>
+                    <li class="item">实时展现几万到几十万的数据</li>
+                    <li class="item">效果更吸引眼球</li>
+                    <li class="item">三维数据可视化</li>
                 </ul>
             </article>
             <article class="center">
@@ -194,13 +193,35 @@
             </article>
             <article class="center">
                 <h2>Canvas Surface 事件和重绘</h2>
-                <img data-src="img/canvas-surface.png" style="height:500px;" alt="">
+                <div class="row">
+                    <div class="left" style="text-align:left;">
+                        <h3>绘制</h3>
+                        <ul>
+                            <li>2D 图形管理</li>
+                            <li>重绘管理</li>
+                        </ul>
+                        <h3>交互</h3>
+                        <ul>
+                            <li>3D 射线求交</li>
+                            <li>求出交点的纹理坐标</li>
+                            <li>计算出在 Canvas 中的坐标</li>
+                            <li>2D 图形拾取</li>
+                        </ul>
+                    </div>
+                    <div class="right">
+                        <img height="500px" data-src="img/canvas-surface.png" alt="">
+                    </div>
+                </div>
             </article>
             <article>
                 <h1>其它技术点</h1>
             </article>
             <article data-action="showGlobeFlights">
                 <h2>GPU 加速的动画</h2>
+                <ul class="item side content" style="font-size:30px;position:relative;z-index:1;width:200px;">
+                    <li>17k 数据</li>
+                    <li>200k+ 顶点</li>
+                </ul>
                 <div class="fullscreen" id="globe-flights-container"></div>
             </article>
             <article class="center" data-action="showGlobeWind">
@@ -248,26 +269,28 @@
             <article class="center">
                 <h2>知识图谱运营产品</h2>
                 <img data-src="img/worldcup2.png" class="item shadow" alt="">
-                <img style="margin-top:-400px;margin-left:100px;" data-src="img/xiaoshidai.png" class="item shadow" alt="">
-                <img style="margin-top:-400px;margin-left:200px;" data-src="img/ice_bucket.png" class="item shadow" alt="">
+                <img style="margin-top:-400px;margin-left:50px;" data-src="img/xiaoshidai.png" class="item shadow" alt="">
+                <img style="margin-top:-400px;margin-left:100px;" data-src="img/ice_bucket.png" class="item shadow" alt="">
             </article>
             <article class="center">
                 <h2>通用人物图谱 - 娱乐圈人物关系的聚合展现</h2>
-                <a href="http://tupu.baidu.com/tupu/261975.html">
-                    <img class="item shadow" data-src="img/tupu.png" style="width:600px;" alt="">
-                </a>
-                <ul class="list content" style="width:400px;">
-                    <li class="item">没有可以参考的产品</li>
-                    <li class="item">从无到有确定展现方案和交互细节</li>
-                </ul>
+                <div class="item">
+                    <a target="_blank" href="http://tupu.baidu.com/tupu/261975.html">
+                        <img class="shadow" data-src="img/tupu.png" alt="">
+                    </a>
+                    <br />
+                    <br />
+                    <a target="_blank" style="text-decoration:none;font-size:22px;" href="http://tupu.baidu.com/tupu/261975.html">http://tupu.baidu.com/tupu/261975.html</a>
+                    <img data-src="img/tupu-sidebar.png" class="side shadow" alt="" />
+                </div>
             </article>
             <article class="center">
                 <h2>关键点 - 自动布局</h2>
                 <ul class="content list">
-                    <li class="item outfocus-fade">分布均匀</li>
-                    <li class="item outfocus-fade">辐射状的树结构</li>
-                    <li class="item outfocus-fade">层级明显</li>
-                    <li class="item outfocus-fade">不能有重叠</li>
+                    <li class="item">分布均匀</li>
+                    <li class="item">辐射状的树结构</li>
+                    <li class="item">层级明显</li>
+                    <li class="item">不能有重叠</li>
                 </ul>
             </article>
             <article class="center">
@@ -303,9 +326,7 @@
                     <li>屏外节点的标签提示</li>
                 </ul>
             </article>
-            <article>
-                数据
-            </article>
+            <!-- TODO 数据 -->
             <article class="center">
                 <h2>搜狗的人物图谱</h2>
                 <a href="https://www.sogou.com/tupu/person.html?q=%E9%AB%98%E5%9C%86%E5%9C%86" target="_blank">
@@ -313,29 +334,6 @@
                 </a>
             </article>
 
-            <article class="center">
-                <h2>接下来 - ECharts 重构</h2>
-                <div class="row content" style="width:800px;">
-                    <div class="left">
-                        <ul class="list">
-                            <li>减小模块粒度</li>
-                            <li>展现和数据处理分离</li>
-                            <li>抽象底层模块</li>
-                            <li>梳理数据流</li>
-                        </ul>
-                    </div>
-                    <div class="right">
-                        <ul class="list">
-                            <li>移动版优化
-                                <p>代码体积，易崩溃</p>
-                            </li>
-                            <li>更易于扩展新的可视化手段</li>
-                            <li>方便开发人员扩展</li>
-                            <li>深度集成 3D</li>
-                        </ul>
-                    </div>
-                </div>
-            </article>
             <article>
                 <h1>谢 谢！</h1>
             </article>
