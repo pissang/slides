@@ -74,13 +74,20 @@ define(function (require) {
                         name: 'Globe',
                         type: 'map3d',
                         mapType: 'world',
+
                         baseLayer: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.3)'
+                            backgroundColor: '',
+                            backgroundImage: 'asset/earth.jpg',
+                            quality: 'high'
                         },
+
                         itemStyle: {
                             normal: {
+                                label: {
+                                    show: true
+                                },
                                 areaStyle: {
-                                    color: 'rgba(255, 255, 255, 0.7)' 
+                                    color: 'rgba(0, 0, 0, 0)' 
                                 }
                             }
                         },
@@ -98,7 +105,7 @@ define(function (require) {
                         data: [1400532, 2898133, 11027922, 22000729, 32346738, 63508421, 70441599, 71918394],
                         itemStyle: {
                             normal: {
-                                color: 'rgba(255, 0, 0, 0.7)'
+                                color: 'rgba(150, 0, 0, 0.7)'
                             }
                         }
                     }]

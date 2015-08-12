@@ -185,6 +185,7 @@
             </article>
             <article class="center">
                 <h2>ECharts-X</h2>
+                <!-- 4w 人口数据 -->
                 <ul class="content list" style="z-index:1;position:relative;">
                     <li class="item">实时展现几万到几十万的数据</li>
                     <li class="item">效果更吸引眼球</li>
@@ -203,15 +204,17 @@
                 </ul>
             </article>
             <article class="center">
+                <!-- 首先是要解决如何管理 2D 和 3D 图形这个问题 -->
                 <h1>2D 和 3D 图形统一的管理</h1>
             </article>
-            <article class="center">
-                <img data-src="img/ecx-architecture.png" height="600" alt="">
-            </article>
             <article data-action="showLayeredEcx">
+                <!-- 比如当一个图表里既有二维图表，也有三维图表的时候,像这个示例 -->
                 <h2>2D 和 3D 层</h2>
                 <div class="fullscreen" id="layered-ecx"></div>
                 <div class="item" data-action="transformLayeredEcx"></div>
+            </article>
+            <article class="center">
+                <img data-src="img/ecx-architecture.png" height="600" alt="">
             </article>
             <article class="center">
                 <h2>Canvas Surface 事件和重绘</h2>
@@ -313,29 +316,29 @@
                     <li class="item">分布均匀</li>
                     <li class="item">辐射状的树结构</li>
                     <li class="item">层级明显</li>
-                    <li class="item">不能有重叠</li>
+                    <li class="item">解决重叠</li>
                 </ul>
             </article>
             <article class="center">
                 <h2>力引导布局算法优化</h2>
-                <ul class="content list" id="force-optimize-list">
-                    <li>
-                        树形预布局
-                        <p>不同高度子树的均匀分布</p>
-                    </li>
-                    <li>
-                        带约束的力引导布局
-                        <p>层方向上的力约束</p>
-                        <p>节点和边的斥力</p>
-                    </li>
-<!--
-                    <li><span class="item">中心辐射状</span><span class="item"> -> 树形预布局</span></li>
-                    <li><span class="item">防止节点和边重叠</span><span class="item"> -> 节点和边的斥力</span></li>
-                    <li><span class="item">层级明显<span class="item"> -> 层方向上的力约束</span></li>
-                    <li><span class="item">复杂图的均匀分布</span><span class="item"> -> 不同高度子树的均匀分布</span></li>
-                    <li><span class="item">性能</span><span class="item"> -> Node 脚本预计算</span></li>
--->
-                </ul>
+                <div class="row content" style="width:800px;">
+                    <ul class="list left" id="force-optimize-list">
+                        <li>
+                            树形预布局
+                            <p>减少迭代次数</p>
+                            <p>不同高度子树的均匀分布</p>
+                        </li>
+                        <li>
+                            带约束的力引导布局
+                            <p>层方向上的力约束</p>
+                            <p>节点和边的斥力</p>
+                        </li>
+                    </ul>
+                    <div class="right" style="position:relative;">
+                        <img class="item shadow" style="right:20px;position:absolute;top:50px;width:90%;" data-src="img/layout0.png" alt="">
+                        <img class="item shadow" style="right:10px;position:absolute;top:70px;width:90%;" data-src="img/layout1.png" alt="">
+                    </div>
+                </div>
                 <!-- TODO 配图说明 -->
             </article>
             <article class="center">

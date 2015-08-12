@@ -22,6 +22,7 @@ define(function (require) {
                 if (! myChart) {
                     return;
                 }
+                console.log(data.length);
 
                 var max = -Infinity;
                 data = data.map(function (item) {
