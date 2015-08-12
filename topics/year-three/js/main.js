@@ -81,6 +81,15 @@ define(function (require) {
             leave: function () {
                 require('./showGlobePopulation').dispose();
             }
+        },
+
+        showMigration: {
+            enter: function (dom) {
+                require('./showMigration').init(dom);
+            },
+            leave: function () {
+                require('./showMigration').dispose();
+            }
         }
     };
 

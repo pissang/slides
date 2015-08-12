@@ -47,11 +47,19 @@
                 <h2>应用 - 其它</h2>
                 <img data-src="img/logos-other.png" alt="">
             </article>
+            <article class="center" data-action="showMigration"></article>
             <!-- TODO ECharts 示例 -->
             <article class="center">
-                <img data-src="img/ec-architecture.png" style="max-width:900px;" alt="">
+                <img data-src="img/ec-architecture.png" alt="">
+                <ul class="content list">
+                    <!-- 工具链 -->
+                    <li class="item outfocus-fade">ZRender 维护和优化</li>
+                    <li class="item outfocus-fade">ECharts 模块维护，新图表开发</li>
+                    <li class="item outfocus-fade">ECharts 工具链</li>
+                </ul>
             </article>
             <article class="center">
+                <!-- ZRender 优化中非常重要的一块是图形扩展 -->
                 <h2>ZRender 优化 - 图形扩展</h2>
                 <div class="content row" style="width:1000px;">
                     <div class="left" style="width:40%;">
@@ -85,7 +93,7 @@
                         </li>
                         <li>JavaScript 精确判断点在路径上
                             <p>绘制模式：Fill, Stroke</p>
-                            <p>路径：Bezier, Arc, Line</p>
+                            <p>矢量路径：Bezier, Arc, Line</p>
                         </li>
                     </ul>
                     <img class="right" style="margin-top:60px;width:60%;" data-src="img/zr-architecture-path.png" alt="">
@@ -95,6 +103,7 @@
                 <h2>优点</h2>
                 <ul class="content list">
                     <li class="item">
+                    <!-- tip: 性能是实现的时候比较着重考虑的一块 -->
                         性能
                         <p>不用构建路径，速度是使用 isPointInPath 方式的十几倍</p>
                     </li>
@@ -113,6 +122,7 @@
                 <div class="item" style="height:500px;" data-action="showContainBench"></div>
             </article>
             <article class="center">
+                <!-- 第二块是渲染模块的抽象 -->
                 <h2>ZRender 优化 - 多个渲染模块</h2>
                 <div class="row content" style="width:1000px;">
                     <ul class="list left" style="width:30%;">
@@ -130,6 +140,7 @@
                     <img class="right" style="width:70%;margin-top:60px;" data-src="img/zr-architecture-painter.png" alt="">
                 </div>
             </article>
+            <!-- TODO 其它优化 -->
             <article class="center">
                 <h2>工具链</h2>
                 <!-- 过渡方案 -->
@@ -138,7 +149,7 @@
                         <li><a href="http://ecomfe.github.io/echarts-builder-web/" target="_blank">在线构建工具</a>
                             <p>对前端不熟悉的用户打包困难，默认的非 AMD 模块代码包太大</p>
                         </li>
-                        <li><a href="http://ecomfe.github.io/echarts-map-tool/" target="_blank">在线地图数据生成工具
+                        <li><a href="http://ecomfe.github.io/echarts-map-tool/" target="_blank">在线地图数据生成工具</a>
                             <p>用户觉得地图数据老旧，数据更新量大，更新频繁</p>
                         </li>
                         <li><a href="http://echarts.baidu.com/doc/option.html" target="_blank">Option 索引工具</a>
