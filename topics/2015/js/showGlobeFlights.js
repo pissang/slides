@@ -95,13 +95,16 @@ define(function (require) {
                     }]
                 };
 
-                // opts.legend.data.forEach(function (name) {
-                //     if (name.indexOf('American Airlines') >= 0) {
-                //         opts.legend.selected[name] = true;
-                //     } else {
-                //         opts.legend.selected[name] = false;
-                //     }
-                // });
+                opts.legend.data.forEach(function (name, idx) {
+                    // if (name.indexOf('China') >= 0) {
+                    //     opts.legend.selected[name] = true;
+                    // } else {
+                    //     opts.legend.selected[name] = false;
+                    // }
+                    if (idx <= 6 || idx >= 10) {
+                        opts.legend.selected[name] = false;
+                    }
+                });
 
                 data.airlines.forEach(function (item) {
                     var airlineName = item[0];

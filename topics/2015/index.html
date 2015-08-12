@@ -6,7 +6,7 @@
         <link rel=stylesheet type=text/css href="../../css/slide.css" />
         <link rel=stylesheet type=text/css href="../../css/slide2.css" />
         <link rel=stylesheet type=text/css href="../../css/desert.css" />
-        <link rel=stylesheet type=text/css href="css/year-three.css" />
+        <link rel=stylesheet type=text/css href="css/2015.css" />
     </head>
     <body id="year-three">
         <div id="articles">
@@ -28,12 +28,20 @@
             </article>
             <article class="center">
                 <h2>2014 - 2015 主要负责和参与的项目</h2>
-                <ul class="content list" style="margin-top:50px;">
-                    <li>前端可视化项目 ECharts</li>
-                    <li>负责人物图谱前端开发（14/11 - 15/03)</li>
-                    <li>ECharts-X 开发</li>
-                    <li>WebGL 框架 QTEK 的维护</li>
-                </ul>
+                <div class="row content" style="width:1000px;">
+                    <ul class="list left" style="margin-top:50px; width:40%;">
+                        <li>前端可视化项目 ECharts</li>
+                        <li>人物图谱前端开发（14/11 - 15/03)</li>
+                        <li>ECharts-X 开发</li>
+                        <li>WebGL 框架 QTEK 的维护</li>
+                    </ul>
+                    <div class="right" id="screenshots" style="width:60%;">
+                        <img class="shadow" data-src="img/qianxi.png" style="margin-top:0;" alt="" />
+                        <img class="shadow" data-src="img/tupu.png" style="margin-left:50px;" alt="" />
+                        <img class="shadow" data-src="img/baiduscreen.png" style="margin-left:100px;"  alt="" />
+                        <img class="shadow" data-src="img/worldcup.png" style="margin-left:150px;"  alt="" />
+                    </div>
+                </div>
             </article>
             <article>
                 <h1>ECharts</h1>
@@ -53,9 +61,9 @@
                 <img data-src="img/ec-architecture.png" alt="">
                 <ul class="content list">
                     <!-- 工具链 -->
-                    <li class="item outfocus-fade">ZRender 维护和优化</li>
-                    <li class="item outfocus-fade">ECharts 模块维护，新图表开发</li>
-                    <li class="item outfocus-fade">ECharts 工具链</li>
+                    <li>ZRender 维护和优化</li>
+                    <li>ECharts 维护，新图表开发</li>
+                    <li>ECharts 工具链</li>
                 </ul>
             </article>
             <article class="center">
@@ -228,13 +236,14 @@
                 </div>
             </article>
             <article>
-                <h1>其它技术点</h1>
+                <h1>特效绘制</h1>
             </article>
             <article data-action="showGlobeFlights">
                 <h2>GPU 加速的动画</h2>
-                <ul class="item side content" style="font-size:30px;position:relative;z-index:1;width:200px;">
-                    <li>17k 数据</li>
-                    <li>200k+ 顶点</li>
+                <ul class="item side content" style="font-size:26px;position:relative;z-index:1;width:300px;">
+                    <li>多个顶点模拟尾迹</li>
+                    <li>Vertex Shader 贝塞尔插值</li>
+                    <li>17k 数据, 200k+ 顶点</li>
                 </ul>
                 <div class="fullscreen" id="globe-flights-container"></div>
             </article>
@@ -346,6 +355,9 @@
                 <a href="https://www.sogou.com/tupu/person.html?q=%E9%AB%98%E5%9C%86%E5%9C%86" target="_blank">
                     <img class="shadow" data-src="img/sougou-tupu.png" alt="">
                 </a>
+                <br />
+                <br />
+                <a style="text-decoration:none;font-size:22px;" href="https://www.sogou.com/tupu/person.html?q=%E9%AB%98%E5%9C%86%E5%9C%86" target="_blank">https://www.sogou.com/tupu/person.html?q=高圆圆</a>
             </article>
 
             <article>
