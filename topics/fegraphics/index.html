@@ -12,7 +12,7 @@
             <article>
                 <h1 class="title">Graphics in Front End Developing</h1>
             </article>
-            <article data-action="showIframe" data-src="http://cq01-rdqa-dev076.cq01.baidu.com:8848/baixiaodu/index.html">
+            <article data-action="showIframe" data-src="http://pissang.github.io/baixiaodu/">
                 <div style="position:absolute; left: 0; top: 0; right: 0; bottom: 0;">
                     <iframe width="100%" height="100%" frameborder="0"></iframe>
                 </div>
@@ -51,7 +51,7 @@
             </article>
 
             <article class="center">
-                <!-- canvas 是 html5 里面新加入的一个标准，我们可以用 javassript 在 canvas 上绘制自己想要的 2D 图形 -->
+                <!-- tip: canvas 是 html5 里面新加入的一个标准，我们可以用 javassript 在 canvas 上绘制自己想要的 2D 图形 -->
                 <ul class="content list" style="margin-top:100px;">
                     <li>2D Graphics API
                         <p>Added in HTML5, used to draw graphics via scripting in JavaScript</p>
@@ -226,7 +226,8 @@ ctx.fill();
                             <p>
                             -ctx.lineWidth = 2;<br />
                             -ctx.lineCap = 'butt', 'round', 'square';<br />
-                            -ctx.lineJoin = 'round', 'bevel';
+                            <!-- 斜接 -->
+                            -ctx.lineJoin = 'round', 'bevel', 'miter';
                             </p>
                         </li>
                         <li>Shadow
@@ -410,8 +411,9 @@ ctx.globalAlpha = 1;
             </article>
     
             <article class="center">
-                <h2>Particle Texture</h2>
-                <!-- 我们也可以利用粒子效果制作漂亮的纹理，比如这张很像星云的图片。
+                <!--tip: 生成设计， 生成设计就是根据程序定义的一些规则去生成漂亮的，充满艺术感的，脑洞很大很多时候会出乎意料的一些视频，音频，图片，最典型的一个例子就是分形 -->
+                <h2>Particle Texture - Generative Design</h2>
+                <!--tip: 我们也可以利用粒子效果制作漂亮的纹理，比如这张很像星云的图片。
                 我们如果每个粒子加点随机的颜色，每一帧不清除上一帧的画面，然后在粒子运动的过程中加点噪声比如柏林噪声去改变速度。哦对还要设置颜色混合为叠加模式。这样画的粒子很多的区域就会变得很亮。
                 -->
                 <a href="http://29a.ch/sandbox/2011/neonflames/" target="_blank">
@@ -467,7 +469,7 @@ pixels[i + 2] = lum;
                 <h2>Gaussian Blur</h2>
                 <div class="row canvas-demo">
                     <!-- tip: 记得处理边界情况 -->
-                    <!-- tip: 这个卷积核的大小就是高斯模糊的半径，也可以对同一张图片处理多次 -->
+                    <!-- tip: 对图片的高斯模糊就是对图片做了一个卷积过滤掉了高频信息，这个卷积核的大小就是高斯模糊的半径，也可以对同一张图片处理多次 -->
                     <!-- tip: 这里有个简单有效的优化技巧，有些卷积核，像这个高斯模糊的，是可分离的，它可以在两个方向上分别做一维的卷积，效果跟二维卷积相同，但是时间复杂度从 k2 变成 2k, 如果卷积核的大小为 k x k 的话-->
 
                     <div class="left" style="margin-top:-50px;">
