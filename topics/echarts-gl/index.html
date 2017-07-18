@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>ECharts GL 在数据可视化中探索高品质的渲染</title>
+        <link rel="stylesheet" href="./css/reveal.css">
+        <link rel="stylesheet" href="./theme/ec.css" id="theme">
+        <link rel="stylesheet" href="./css/highlight/zenburn.css">
+        <link rel="stylesheet" href="./css/print/paper.css" type="text/css" media="print">
+
+    </head>
+    <body>
+
+        <div class="reveal">
+            <div class="slides"><section  data-markdown><script type="text/template">
+
+<!--.slide: data-background="./asset/img/taxi.jpg" -->
+
+
+# ECharts GL - 在数据可视化中探索高品质的渲染
+
+<aside class="notes"></aside></script></section><section ><section data-markdown><script type="text/template">
+<img data-src="asset/img/tr-compare.png" alt="">
+
+<aside class="notes"><p>我们先来看一长很经典的描述这二十年游戏画面的进步的图，就是古墓丽影里劳拉这个角色的演变。
+大家如果玩游戏的话应该有看过这张图片</p>
+</aside></script></section><section data-markdown><script type="text/template">
+
+<img data-src="asset/img/tr1.jpg" alt="">
+
+<aside class="notes"><p>早起的古墓丽影因为机器性能的限制，只能用非常少的多边形，光影效果也很简单，甚至是没有光影，只有简陋的贴图。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<!--.slide: data-background="asset/img/rise-of-the-tomb-raider.jpg" -->
+
+<aside class="notes"><p>更真实会带来更强的临场感和沉浸感</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<img data-src="asset/img/tr-settings.webp" alt="">
+
+<aside class="notes"></aside></script></section><section data-markdown><script type="text/template">
+
+<img  data-src="asset/img/city-graphic-low.jpg" alt="">
+</script></section><section data-markdown><script type="text/template">
+<!--.slide: data-background="./asset/img/city-graphic-high.jpg" -->
+</script></section></section><section  data-markdown><script type="text/template">
+## ECharts GL 里的渲染技术
+
++ 光影
+
++ 材质
+
++ 后期
+
+<aside class="notes"><p>光影是场景有立体感的主要来源。有真实感的材质能够让我们看到一个图形后立马联想到这是什么东西，后期可以模拟一些摄像机或者 ps 的效果让画面更有质感。</p>
+</aside></script></section><section ><section data-markdown><script type="text/template">
+## 光影
+
++ 日光和阴影
+
++ 环境光和阴影
+
++ 自发光
+
+<aside class="notes"><p>ECharts GL 中的场景主要有两种光源，日光和环境光。这些是图形或者三维场景中的物体接受到的光照，除此之外，一些需要突出的物体可能还会有自发光。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## 日光
+
+<img data-src="asset/img/dir-light.png" alt="">
+
+<aside class="notes"><p>日光作为大部分场景的主要光源，可以有效的给整个场景区分整体的明暗面。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/globe-sun.html"></iframe>
+
+<aside class="notes"><p>现在是凌晨 4 点北京的上空</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## 阴影
+
+<img style="width:45%" data-src="asset/img/buildings-raw.jpg" alt="">
+<img style="width:45%" data-src="asset/img/buildings-shadow.jpg" alt="">
+
+<aside class="notes"><p>日光被遮挡的地方会产生阴影。</p>
+<p>在图中这样建筑可视化的示例中，阴影是用来增强空间感的一个非常重要的手段，如果没有阴影，我们可能会觉得这些区域就是一片连起来的，建筑也是浮在地面上的感觉。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/geo3D-shadow.html"></iframe>
+
+<aside class="notes"><p>这是一个三维的地图动态阴影的效果。前段时间设计圈特别流行制作长阴影，差不多就是这样的一个效果</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## 环境光
+
++ Image Based Lightning
+
+<img width="60%" data-src="asset/img/canyon.jpg" alt="">
+
+<aside class="notes"><p>基于图片的环境光作为补充，提供了各个方向的光源，可以让场景的光照不那么单一，在一些背光面也能获取到一些光照信息而不是完全黑色的。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<img style="width:35%" data-src="asset/img/no-pbr.png" alt="">
+<img style="width:35%" data-src="asset/img/pbr.png" alt="">
+</script></section><section data-markdown><script type="text/template">
+## 环境光的阴影
+
++ Screen Space Ambient Occulusion
+
+![](data:image/jpg;base64,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)
+
+<aside class="notes"><p>计算环境光的阴影是一件开销非常大的事，所以实时的渲染一般都用非常取巧的屏幕空间的环境光遮蔽。</p>
+<p>就是像这种图中那样在图形表面的半球内采样，估计一个点上面能够受到多少环境光，被其它物体包围得越多的地方就会越暗。一般实时的渲染里为了性能只会采样十几次到几十次，所以噪点会非常多，还需要一层额外的双边滤波去减少噪点。</p>
+<p>它作为阴影的补充可以让整个画面更有层次感，不会让阴影显得很单调。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/buildings-ssao.html"></iframe>
+
+<aside class="notes"><p>可以看下有环境光遮蔽和没有的区别。</p>
+<p>环境光遮蔽可以让这些挨得比较近的建筑因为光照不够显得比较暗。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## 自发光
+
+<aside class="notes"><p>除了外来的光源。有些物体它本身也会发光，而不会因为阴影的缘故无法被看到。比如各种霓虹灯，这些因为自发光而高亮的点非常容易吸引人的注意力</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/globe-night.html"></iframe>
+
+<aside class="notes"><p>比如我们拿这张夜晚的图片放到地球上，它里面的星星点点的灯光就属于灯光的自发光。它们不会受太阳暗面的影响，反而因为其它地方都暗下来了，更容易突出哪些地方比较繁华，大些地方夜生活比价少，哪些地方几乎没有人烟。</p>
+</aside></script></section></section><section ><section data-markdown><script type="text/template">
+## 材质
+
++ 真实感
+
++ 风格化
+
+<aside class="notes"><p>渲染的第二块是材质</p>
+<p>渲染里的材质有两个极端，一种是追求真实，要真实感，还有一种是风格化，就是按某种特定的风格去渲染，比如模拟卡通效果，电子效果，素描效果等等。不管是真实感还是风格化，材质的存在都是为了能够让人增加对图形的感知，看到这个东西后一下就产生代入感和沉浸感。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## 真实感
+</script></section><section data-markdown><script type="text/template">
+## Physically Based Rendering
+
++ HDR 的环境光照贴图
+
++ 对环境光照的积分预计算（prefilter）
+
++ 能量守恒的光照公式
+
++ <s>经验模型</s> 直观的公式参数。
+
+<img width="40%" data-src="asset/img/canyon.jpg" alt="">
+<img width="40%" data-src="asset/img/canyon-convolve.jpg" alt="">
+
+<aside class="notes"><p>GL 的真实感渲染主要是基于 PBR 的材质。大家如果玩游戏的话可能有听过这个词。</p>
+<p>一般基于物理的渲染有这么几点，首先刚才提到过的它需要一张环境光照贴图。这个贴图格式是 HDR 的，刚才提到过更大范围的颜色可以表达更丰富的光照强度。</p>
+<p>然后因为光照计算需要做积分计算这张环境贴图里每一个像素产生光照贡献，如果是实时做的话就会性能很差，所以一般会对这张环境光照的贴图做积分的预计算。得到右边这张看起来像是被模糊了的图。这种预计算的卷积可能不是完全正确的结果，但是足够以假乱真了。实际上实时渲染基本上就是在用各种 trick 去实现以假乱真的效果。</p>
+<p>Ok，然后最后我们再使用一个能量守恒的光照公式应用到像素上。</p>
+<p>// 实时渲染肯定很难做到离线渲染的品质和逼真程度，但是我们希望通过一些 trick 让画面达到以假乱真的品质</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## 金属和光泽度
+
++ metalness
+
+    + 0 非金属
+
+    + 1 金属
+
++ roughness
+
+    + 0 完全光滑
+
+    + 1 完全粗糙
+
+<aside class="notes"><p>金属度和光泽度是刚才提到的公式中非常重要的两个参数，这两个参数是 normalize 后的，比如金属度 metalness，0 就是非金属，1就是金属，0 - 1 之间的值实际上是两者之间的插值，用得比较少。roughness 的话 0 就是全光滑</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/globe-material.html"></iframe>
+
+<aside class="notes"><p>金属和非金属有个区别是因为菲尼尔反射的参数不一样，上面的塑料材质的边缘视角和平面角度小反射比较强，中间正对着的反射比较弱，金属的是不管什么角度反射都差不多。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## 风格化
+
+<aside class="notes"><p>风格化则是渲染的另外一个极端</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## Cross Hatching
+
+<aside class="notes"><p>Cross Hatching 在有些场景下有奇效</p>
+</aside></script></section><section data-markdown><script type="text/template">
+
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/surface-hatching.html"></iframe>
+
+<aside class="notes"><p>不知道下面有没有学习绘画的朋友，想到自己练习速写的日子。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/buildings-hatching.html"></iframe>
+
+</script></section></section><section ><section data-markdown><script type="text/template">
+## 摄影与后期
+
+<aside class="notes"><p>渲染的第二块加一些摄影中常见的镜头效果以及后期处理</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## 景深
+
+<img data-src="asset/img/dof-example.jpg" width="50%" alt="">
+</script></section><section data-markdown><script type="text/template">
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/bar3D-dof.html"></iframe>
+
+<aside class="notes"><p>景深可以让整个场景有一种微缩模型的感觉</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/globe-dof.html"></iframe>
+
+<aside class="notes"><p>景深焦散所带来的光斑也让整个画面更有德味</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## 调色 Color Grading
+
+<img style="width:45%" data-src="asset/img/buildings-cold.jpg" alt="">
+<img style="width:45%" data-src="asset/img/buildings-warm.jpg" alt="">
+
+<aside class="notes"><p>当然跟摄影一样，你可能会对图片出来的整个色调不满意，所以一般再会有一个颜色纠正的操作，</p>
+<p>TODO
+其它更多数字艺术的作品, Glitch, Dot Screen</p>
+</aside></script></section></section><section ><section data-markdown><script type="text/template">
+## 渐进增强
+
++ 将采样分布到多帧中
+
++ 交互的时候能够立刻反馈
+
++ 停止交互后渐进增强画面
+
+<aside class="notes"><p>前面提到的效果，比如环境光遮蔽，都是需要大量的采样才能达到比较好的效果，还有比如锯齿本质上也是因为屏幕像素有限时对几何边缘采样不足导致的。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<img style="width:45%" data-src="asset/img/surface-no-taa.png" alt="">
+<img style="width:45%" data-src="asset/img/surface-taa.png" alt="">
+
+<aside class="notes"><p>左边是没有渐进式增强而且效果配置比较低的，右边是同样的配置但是渐进式增强后的画面，可以看到画面质量提升了很多，包括像这些高频部分更加平滑，还有线条的质量，阴影的质量，都有了很大的改善。</p>
+</aside></script></section></section><section ><section data-markdown><script type="text/template">
+## 案例
+</script></section><section data-markdown><script type="text/template">
+## 像素
+
+<aside class="notes"><p>首先来看一个图片的像素数据的例子。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/bar3D-image-pixels.html"></iframe>
+
+<aside class="notes"><p>图片的像素数据呢它是二维的，每一个像素有 x, y, r, g, b, a 的属性。</p>
+<p>我们可以把每个像素画成一个柱子。柱子的颜色就是像素的颜色。然后切换到三维视角。</p>
+<p>然后把每个像素计算出来的亮度映射到柱子的高度，然后再加上后期效果，就可以得到这个非常奇幻有点像是丛林和火山的形状</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## 音频
+
+<iframe data-src="asset/ec-demo2/audio-waveform.html" width="800" height="150" frameborder="0"></iframe>
+
+<aside class="notes"><p>这是一个最基础的把音频的波形可视化出来的效果，横轴是时间</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/bar3D-music.html"></iframe>
+
+<aside class="notes"><p>我们可以使用 WebAudio 的 API 把时域的波形图转成频域。</p>
+<p>同时通过镜头动画辅助表达整个音乐的节奏，可以让用户更容易被这 Motion 带入节奏。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## 地图
+
+<img data-src="asset/img/geo-example.png" width="600" alt="">
+
+<aside class="notes"><p>ECharts 中的地图使用的是存储行政区域或者国家轮廓的 GeoJSON 数据。我们用 Canvas 把这些轮廓画出来，在不同的国家或者行政区域填充不同的颜色。</p>
+<p>这个是我们设计师用 echarts 制作的一张旅行城市的地图。</p>
+</aside></script></section><section data-markdown><script type="text/template">
++ GeoJSON
+
+    + Polygon
+
++ Triangulation
+
+![](data:image/gif;base64,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)
+
+<aside class="notes"><p>我们需要做的就是把通过三角化的算法把多边形转成更适合 WebGL 绘制的三角面。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/map3D.html"></iframe>
+
+
+<aside class="notes"><p>TODO MAPBOX 例子</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## 函数
+
+<iframe data-src="asset/ec-demo2/polar.html" width="400" height="300" frameborder="0"></iframe>
+
+<aside class="notes"><p>如果要可视化的是一个函数或者方程的话，连输入的数据都可以是根据函数的规则程序生成了</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## 参数曲面
+
+```javascript
+u: { min: -PI, max: PI, step: PI / 20 },
+v: { min: 0, max: PI, step: PI / 20 },
+
+x: (u, v) => sin(v) * sin(u),
+y: (u, v) => sin(v) * cos(u),
+z: (u, v) => cos(v)
+
+```
+
+<aside class="notes"><p>例如参数曲面</p>
+<p>参数曲面是三维空间中表达参数方程的曲面图。</p>
+<p>这段代码描述的一个球面</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/surface-sphere.html"></iframe>
+</script></section><section data-markdown><script type="text/template">
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/surface-parametric.html"></iframe>
+
+<aside class="notes"><p>如果参数方程复杂点我们还看到更有意思的曲面，比如这个像零件一样的曲面一直是我最喜欢的一个参数曲面，因为那它来试验各种渲染算法效果非常好。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+#### Metalness Map
+
+<img height="150" data-src="asset/texture/iron-rusted4/iron-rusted4-metalness.png" alt="">
+
+#### Roughness Map
+
+<img height="150" data-src="asset/texture/iron-rusted4/iron-rusted4-roughness.png" alt="">
+
+<aside class="notes"><p>为了描述更复杂的材质，我们可以把描述材质的属性存到各个纹理上。这样就可以精确到像素的去描述每个像素的材质了。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/surface-complex-material.html"></iframe>
+
+<aside class="notes"><p>比如这么一个生锈的零件</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/surface-leather.html"></iframe>
+</script></section></section><section ><section data-markdown><script type="text/template">
+## 开普敦的出租车线路
+</script></section><section data-markdown><script type="text/template">
+<img  data-src="asset/img/qgis-capetown.png" alt="">
+
+<aside class="notes"><p>从开普敦的政府网上获取的两份开放数据，出租车路线和建筑群，然后用 QGIS 大概清理了下，保留了左边这块比较密集的建筑群。不然体积太大加载会比较慢。然后用 ECharts GL 组件画在了 mapbox 上。</p>
+</aside></script></section><section data-markdown><script type="text/template">
+<iframe class="fullscreen" frameborder="0" data-src="asset/ec-demo2/mapbox-taxi.html"></iframe>
+
+</script></section></section><section ><section data-markdown><script type="text/template">
+<!--.slide: data-background="./asset/img/london-city.jpg" -->
+
+# Thanks
+</script></section><section data-markdown><script type="text/template">
+<!--.slide: data-background="./asset/img/gallery-demo.jpg" data-background-opacity="0.3" -->
+
+<h1 style="text-transform: lowercase;background-color: rgba(0,0,0,0.7)">http://gallery.echartsjs.com</h1>
+</script></section></section><section  data-markdown><script type="text/template"></script></section></div>
+        </div>
+
+        <script src="./lib/js/head.min.js"></script>
+        <script src="./js/reveal.js"></script>
+
+        <script>
+            function extend() {
+              var target = {};
+              for (var i = 0; i < arguments.length; i++) {
+                var source = arguments[i];
+                for (var key in source) {
+                  if (source.hasOwnProperty(key)) {
+                    target[key] = source[key];
+                  }
+                }
+              }
+              return target;
+            }
+
+            // Optional libraries used to extend on reveal.js
+            var deps = [
+              { src: './lib/js/classList.js', condition: function() { return !document.body.classList; } },
+              { src: './plugin/markdown/marked.js', condition: function() { return !!document.querySelector('[data-markdown]'); } },
+              { src: './plugin/markdown/markdown.js', condition: function() { return !!document.querySelector('[data-markdown]'); } },
+              { src: './plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+              { src: './plugin/zoom-js/zoom.js', async: true },
+              { src: './plugin/notes/notes.js', async: true },
+              { src: './plugin/math/math.js', async: true }
+            ];
+
+            // default options to init reveal.js
+            var defaultOptions = {
+              controls: true,
+              progress: true,
+              history: true,
+              center: true,
+              transition: 'default', // none/fade/slide/convex/concave/zoom
+              dependencies: deps
+            };
+
+            // options from URL query string
+            var queryOptions = Reveal.getQueryHash() || {};
+
+            var options = {"controls":true,"transition":"slide","backgroundTransition":"zoom","viewDistance":2,"margin":0,"width":1280,"height":720};
+            options = extend(defaultOptions, options, queryOptions);
+            Reveal.initialize(options);
+        </script>
+
+          <script src="./asset/common/jquery.min.js"></script>
+          <script src="./asset/common/echarts.min.js"></script>
+          <script src="./ec.js"></script>
+    </body>
+</html>
